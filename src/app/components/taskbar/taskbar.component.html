@@ -1,0 +1,31 @@
+<!-- Toolbar -->
+<div style="min-width: 500px;">
+    <div class="input-group">
+        <button type="button" class="btn btn-primary" (click) = "getIssues()">Search</button>
+        <button type="button" class="btn btn-outline-primary" [ngClass] = "{'btn-primary' : filterByInputedChk, 'btn-outline-primary' : !filterByInputedChk}" (click)="changeCheckValue()">Issues to log</button>
+        <button type="button" class="btn btn-outline-primary" >Filters</button>
+        <input #box type="text" (keyup.enter)="filterIssueByName(box.value)" (blur)="filterIssueByName(box.value)" class="form-control outline-primary" placeholder="Search a issue">
+        <label for="exampleDataList" class="form-label"></label>
+        <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Search a user">
+        <datalist id="datalistOptions">
+            <option value="San Francisco">
+            <option value="New York">
+            <option value="Seattle">
+            <option value="Los Angeles">
+            <option value="Chicago">
+        </datalist>
+    </div>
+    <!-- List of issues -->
+    <div class="list-group">
+        <div *ngIf="!filterByInputedChk">
+            <ng-container *ngFor="let issue of issuesParam; let i = index">
+                <button *ngIf="filterIssue(issue) && !issue.hidden" class = "list-group-item list-group-item-action text-white mt-2 bg-dark" data-bs-toggle="modal" data-bs-target="#issueModal"
+                [ngClass] = "{'bg-dark' : !issue.toggled, 'bg-primary' : issue.toggled}" (click) = "emitIssueEvent(issue)">{{issue.key}} | {{issue.summary}}</button>
+            </ng-container>
+        </div>
+        <div *ngIf="filterByInputedChk">
+            <button class = "list-group-item list-group-item-action text-white mt-2 bg-primary" data-bs-toggle="modal" data-bs-target="#issueModal" *ngFor="let issue of issuesToInputParam; let i = index"
+            (click) = "emitIssueEvent(issue)">{{issue.key}} | {{issue.summary}} <div>Time logged: {{issue.loggedHours}}h {{issue.loggedMinutes}}m</div></button>
+        </div>
+    </div>
+</div>

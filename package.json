@@ -1,5 +1,5 @@
 {
-  "name": "appprueba",
+  "name": "angular-proyect",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -18,6 +18,12 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "@popperjs/core": "^2.11.6",
+    "@types/bootstrap": "^5.2.6",
+    "@types/jquery": "^3.5.14",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.2",
+    "jquery": "^3.6.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
@@ -26,6 +32,7 @@
     "@angular-devkit/build-angular": "^15.0.0",
     "@angular/cli": "~15.0.0",
     "@angular/compiler-cli": "^15.0.0",
+    "@angular/localize": "^15.0.0",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
