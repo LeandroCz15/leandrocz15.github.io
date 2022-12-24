@@ -83,9 +83,53 @@ export class TaskbarComponent {
         });
       }
     }
+
+    inputIssues(){
+      let date = new Date();
+      this.issuesToInputParam.forEach(async issue => {
+        console.log("Currently input in: " + issue.key);
+        let data = {
+          "timeSpentSeconds": (issue.loggedHours * 60 * 60) + (issue.loggedMinutes * 60),
+          "comment": {
+            "type": "doc",
+            "version": 1,
+            "content": [{
+              "type": "paragraph",
+              "content": [{
+                "text": issue.loggedText,
+                "type": "text"
+              }]
+            }]
+          },
+          "started": "2021-01-17T12:34:00.000+0000"
+        }
+        console.log(data);
+        await fetch(herokuappUrl + this.loginDomain + jiraLogWorkUrl.replace("?", issue.key), {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + btoa(this.loginEmail + ':' + this.loginToken),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        }).then(response => {
+          console.log(response);
+          if(response.ok){
+            this.issuesToInputParam.splice(this.issuesToInputParam.indexOf(issue), 1);
+            console.log(issue.key + " logged correctly");
+          }
+        });
+      });
+      //empieza peticion.
+      //esconder issues.
+      //mostrar carga.
+      //termina peticion.
+      //mover issues a arreglo de issues no inputados.
+    }
   
 }
 
 const herokuappUrl : string = "https://guarded-reef-52511.herokuapp.com/";
 const jiraSearchUrl : string = "https://etendoproject.atlassian.net/rest/api/3/search?jql=assignee=currentUser()";
+const jiraLogWorkUrl: string = "/rest/api/3/issue/?/worklog";
 
