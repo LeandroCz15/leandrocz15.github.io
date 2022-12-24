@@ -104,7 +104,7 @@ export class TaskbarComponent {
           "started": "2021-01-17T12:34:00.000+0000"
         }
         console.log(data);
-        await fetch(this.loginDomain + jiraLogWorkUrl.replace("?", issue.key), {
+        await fetch(herokuappUrl + this.loginDomain + jiraLogWorkUrl.replace("?", issue.key), {
           method: 'POST',
           headers: {
             'Authorization': 'Basic ' + btoa(this.loginEmail + ':' + this.loginToken),
