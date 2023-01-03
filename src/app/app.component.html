@@ -2,49 +2,63 @@
 <app-navbar></app-navbar>
 
 <app-issue-modal [issue]="currentIssue" (addOrRemoveIssue)="changeIssueInput($event)"></app-issue-modal>
-<app-login-modal (validLogin)="changeCredentials($event)"></app-login-modal>
+<app-login-modal (validLogin)="changeJiraCredentials($event)"></app-login-modal>
 
-<main class="d-flex flex-nowrap" style="position: fixed; height: 92vh; width: 100vw;">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 170px;">
+<main id="mainContainer" class="d-flex flex-nowrap" style="width: 100%; height: 100%;">
+  <div id="leftBar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 170px; position: static;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <svg width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
       <span class="fs-4">Sidebar</span>
     </a>
     <hr>
+    <!--Add buttons here for left taskbar-->
     <ul class="nav nav-pills flex-column mb-auto">
       <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg" (changePage)="updatePage($event)"></app-navbarelement>
       <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
+      <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
     </ul>
+    <!--End of add buttons here for left taskbar-->
     <hr>
+    <!--Dropdown button-->
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
         <strong>mdo</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#loginModal" *ngIf="!this.logged">Log in</button></li>
-        <li><button class="dropdown-item" (click)="logout()" type="button" *ngIf="this.logged">Log out</button></li>
+        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#loginModal" *ngIf="this.jiraCredentials === null">Log in</button></li>
+        <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="this.jiraCredentials !== null">Log out</button></li>
       </ul>
     </div>
+    <!--End of dropdown button-->
   </div>
-    <div class="container-fluid overflow-auto mt-1">
-      <ng-container [ngSwitch]="selectedPageIndex">
-        <!--Container for Jira integration-->
-        <ng-container *ngSwitchCase="1">
-          <ng-container *ngIf="this.logged">
-            <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [loginDomain]="this.gDomain" [loginEmail]="this.gEmail" [loginToken]="this.gToken" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
+  <!--Main content-->
+    <div id="mainBoxContent" class="container-fluid" style="overflow-y: auto; overflow-x: hidden;">
+      <div class="mt-2 ms-2 me-2">
+        <ng-container [ngSwitch]="selectedPageIndex">
+          <!--Container for Jira integration-->
+          <ng-container *ngSwitchCase="1">
+            <ng-container *ngIf="this.jiraCredentials !== null">
+              <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchCredentials]="this.jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
+            </ng-container>
+            <ng-container *ngIf="this.jiraCredentials === null">
+              <div class="child">
+                  <h1>You must log in to use this app</h1>
+                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%" style="left: 500px; margin-left: 50px;">
+              </div>
+            </ng-container>
           </ng-container>
-          <ng-container *ngIf="!this.logged">
-            <div class="d-flex flex-column align-items-center justify-content-center" style="height: 100%; width: 100%;">
-                <h1>You must log in to use this app</h1>
-                <img src="assets/plug-svgrepo-com.svg" width="30%" height="30%">
-            </div>
+          <!--End of container for Jira integration-->
+          <!--Container for Products-->
+          <ng-container *ngSwitchCase="2">
+            <div class="container" style="min-width: 500px;" style="overflow-x: hidden;"></div>
+            <app-product-list></app-product-list>
           </ng-container>
+          <!--End of container for Products-->
         </ng-container>
-        <!--End of container for Jira integration-->
-      </ng-container>
+      </div>
     </div>
+  <!--End of main content-->
 </main>
 
-  
 <router-outlet></router-outlet>

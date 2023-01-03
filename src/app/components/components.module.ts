@@ -9,6 +9,9 @@ import { IssueModalComponent } from './issue-modal/issue-modal.component';
 import { DropdownButtonComponent } from './dropdown-button/dropdown-button.component';
 import { SearchUserModalComponent } from './search-user-modal/search-user-modal.component';
 import { LoginModalComponent } from './login-modal/login-modal.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ProductBoxComponent } from './product-box/product-box.component';
+
 
 
 @NgModule({
@@ -21,6 +24,8 @@ import { LoginModalComponent } from './login-modal/login-modal.component';
     DropdownButtonComponent,
     SearchUserModalComponent,
     LoginModalComponent,
+    ProductListComponent,
+    ProductBoxComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +41,8 @@ import { LoginModalComponent } from './login-modal/login-modal.component';
     DropdownButtonComponent,
     SearchUserModalComponent,
     LoginModalComponent,
+    ProductListComponent,
+    ProductBoxComponent,
   ]
 })
 export class ComponentsModule { 
