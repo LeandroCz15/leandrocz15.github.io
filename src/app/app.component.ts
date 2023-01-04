@@ -54,6 +54,14 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(){
+    adjustMainLayout();
+    window.onresize = function(event){
+      adjustMainLayout();
+    }
+    }
+  }
+
+  function adjustMainLayout(){
     let topBarPx = document.getElementById("topNavbar")!.clientHeight;
     let leftBar : HTMLElement | null = document.getElementById("leftBar");
     leftBar!.style.height = window.innerHeight - topBarPx + "px";
@@ -62,4 +70,3 @@ export class AppComponent implements AfterViewInit, OnInit {
     mainContent!.style.width = document.getElementById("mainContainer")!.clientWidth - leftBar!.clientWidth + "px";
   }
 
-}

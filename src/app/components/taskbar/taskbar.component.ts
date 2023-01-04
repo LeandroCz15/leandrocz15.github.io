@@ -96,11 +96,10 @@ export class TaskbarComponent {
               "type": "paragraph",
               "content": [{
                 "text": issue.loggedText,
-                "type": "text"
+                "type": "text",
               }]
             }]
           },
-          "started": "2021-01-17T12:34:00.000+0000"
         }
         await fetch(herokuappUrl + this.fetchCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
           method: 'POST',
