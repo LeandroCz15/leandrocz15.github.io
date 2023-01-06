@@ -26,7 +26,7 @@ export class TaskbarComponent {
   }
 
   async getIssues(){
-    await fetch("/rest/api/3/search?jql=assignee=currentUser()", {
+    await fetch(herokuappUrl + jiraSearchUrl, {
       method: 'GET',
       headers: {
         'Authorization': 'Basic ' + btoa(this.fetchCredentials!.email + ':' + this.fetchCredentials!.token),
@@ -135,6 +135,6 @@ export class TaskbarComponent {
 }
 
 const herokuappUrl : string = "https://guarded-reef-52511.herokuapp.com/";
-const jiraSearchUrl : string = "/rest/api/3/search?jql=assignee=currentUser()";
+const jiraSearchUrl : string = "https://etendoproject.atlassian.net/rest/api/3/search?jql=assignee=currentUser()";
 const jiraLogWorkUrl: string = "/rest/api/3/issue/?/worklog";
 
