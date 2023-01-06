@@ -49,11 +49,12 @@ export class TaskbarComponent {
           }
         });
       });
-      fetch('/Query?tableName=users', {
+      fetch('http://localhost:8080/LeandroApp/Query?tableName=users', {
         method: 'GET',
         headers: {
           'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
           'Accept': 'application/json',
+          'Origin': 'http://localhost:4200'
         }
       }).then(response => response.json())
       .then(data => console.log(data));

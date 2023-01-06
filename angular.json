@@ -39,7 +39,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "700kb",
                   "maximumError": "1mb"
                 },
                 {
@@ -63,18 +63,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "Angular-proyect:build",
-            "proxyConfig": "proxy.conf.json"
-          },
           "configurations": {
             "production": {
-              "browserTarget": "Angular-proyect:build:production",
-              "proxyConfig": "proxy.conf.json"
+              "browserTarget": "Angular-proyect:build:production"
             },
             "development": {
-              "browserTarget": "Angular-proyect:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "browserTarget": "Angular-proyect:build:development"
             }
           },
           "defaultConfiguration": "development"
