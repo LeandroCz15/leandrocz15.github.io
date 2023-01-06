@@ -49,7 +49,7 @@ export class TaskbarComponent {
           }
         });
       });
-      fetch('https://leandroapp-env-1.eba-sg55vjwj.sa-east-1.elasticbeanstalk.com/Query?tableName=users', {
+      fetch('http://leandroapp-env-1.eba-sg55vjwj.sa-east-1.elasticbeanstalk.com/Query?tableName=users', {
         method: 'GET',
         headers: {
           'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
