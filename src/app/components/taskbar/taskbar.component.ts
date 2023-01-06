@@ -26,7 +26,7 @@ export class TaskbarComponent {
   }
 
   async getIssues(){
-    await fetch(herokuappUrl + jiraSearchUrl, {
+    await fetch("/rest/api/3/search?jql=assignee=currentUser()", {
       method: 'GET',
       headers: {
         'Authorization': 'Basic ' + btoa(this.fetchCredentials!.email + ':' + this.fetchCredentials!.token),
@@ -49,6 +49,14 @@ export class TaskbarComponent {
           }
         });
       });
+      fetch('/Query?tableName=users', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
+          'Accept': 'application/json',
+        }
+      }).then(response => response.json())
+      .then(data => console.log(data));
     }
 
     checkExistingIssue(id : string) {
@@ -127,6 +135,6 @@ export class TaskbarComponent {
 }
 
 const herokuappUrl : string = "https://guarded-reef-52511.herokuapp.com/";
-const jiraSearchUrl : string = "https://etendoproject.atlassian.net/rest/api/3/search?jql=assignee=currentUser()";
+const jiraSearchUrl : string = "/rest/api/3/search?jql=assignee=currentUser()";
 const jiraLogWorkUrl: string = "/rest/api/3/issue/?/worklog";
 

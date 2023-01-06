@@ -1,0 +1,7 @@
+{
+    "/Query/*":{
+        "target":"http://leandroapp-env-1.eba-sg55vjwj.sa-east-1.elasticbeanstalk.com",
+        "secure":true,
+        "logLevel":"debug"
+    }
+}
