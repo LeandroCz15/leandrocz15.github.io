@@ -49,12 +49,12 @@ export class TaskbarComponent {
           }
         });
       });
-      fetch('http://leandroapp-env-1.eba-sg55vjwj.sa-east-1.elasticbeanstalk.com/Query?tableName=users', {
+      fetch('https://leandroapp-env-1.eba-sg55vjwj.sa-east-1.elasticbeanstalk.com/Query?tableName=users', {
         method: 'GET',
         headers: {
           'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
           'Accept': 'application/json',
-          'Origin': 'http://leandrocz15.github.io/'
+          'Origin': 'https://leandrocz15.github.io/'
         }
       }).then(response => response.json())
       .then(data => console.log(data));
