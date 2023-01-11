@@ -2,12 +2,12 @@ export class Product {
     name: string;
     description: string;
     price: number;
-    //images: Array<ArrayBuffer>;
+    imageUrl: string;
   
-    constructor(name: string, description: string, price: number, /*images: Array<ArrayBuffer>*/){
+    constructor(name: string, description: string, price: number, imageUrl: string){
         this.name = name;
         this.description = description;
         this.price = price;
-        //this.images = images;
+        this.imageUrl = imageUrl;
     }
 }

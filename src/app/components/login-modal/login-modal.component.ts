@@ -37,9 +37,11 @@ export class LoginModalComponent {
       this.loading = false;
       return;
     }
-    $('#loginModal').modal('hide');
+    $('#jiraLoginModal').modal('hide');
     this.validLogin.emit(this.registerForm.value);
     this.loading = false;
+    this.registerForm.reset();
+    this.submited = false;
    }
 
   onReset(){

@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AppCredentials } from './classes/credentials/app-credentials';
 import { Issue } from './classes/issue/issue';
 import { JiraLoginCredentials } from './classes/login-credentials/login-credentials';
 
@@ -8,18 +9,23 @@ import { JiraLoginCredentials } from './classes/login-credentials/login-credenti
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit, OnInit {
-  title = 'Angular-proyect';
+  title = 'Leandro\'s-proyect';
   selectedPageIndex : string = "0";
   currentIssue : Issue = new Issue("", "", "", 0, 0, "", -1);
   issuesToInput : Issue[] = [];
   issues : Issue[] = [];
-  jiraCredentials : JiraLoginCredentials | null = null; 
-  logged : boolean = false;
-  gDomain : string = "";
-  gEmail : string = "";
-  gToken : string = "";
+  jiraCredentials : JiraLoginCredentials | null = null;
+  appCredentials : AppCredentials | null = null;
 
-  changeJiraCredentials(credentials : any){
+  appLogin(credentials : any){
+    this.appCredentials = new AppCredentials(credentials.form.appEmail, credentials.form.appPassword, credentials.admin);
+  }
+
+  appLogout(){
+    this.appCredentials = null;
+  }
+
+  jiraLogin(credentials : any){
     this.jiraCredentials = new JiraLoginCredentials(credentials.domain, credentials.email, credentials.token);
   }
 

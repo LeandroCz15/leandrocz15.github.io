@@ -49,15 +49,6 @@ export class TaskbarComponent {
           }
         });
       });
-      fetch('https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Query?tableName=users', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
-          'Accept': 'application/json',
-          'Origin': 'https://leandrocz15.github.io/'
-        }
-      }).then(response => response.json())
-      .then(data => console.log(data));
     }
 
     checkExistingIssue(id : string) {

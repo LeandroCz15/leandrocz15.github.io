@@ -8,6 +8,13 @@ import { Product } from 'src/app/classes/product/product';
 })
 export class ProductBoxComponent {
 
-  @Input() product: Product | undefined = undefined;
-  
+  @Input() product! : Product;
+
+  ngOnInit(){
+    console.log(this.product);
+  }
+
+  constructor(){
+
+  }
 }
