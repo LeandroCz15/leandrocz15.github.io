@@ -84,29 +84,22 @@ export class TaskbarComponent {
     }
 
     inputIssues(){
-      let date = new Date();
       this.issuesToInputParam.forEach(issue => {
         let data = {
-          timeSpentSeconds: (issue.loggedHours * 60 * 60) + (issue.loggedMinutes * 60),
-          comment: {
-            type: "doc",
-            version: 1,
-            content: [{
-              type: "paragraph",
-              content: [{
-                text: issue.loggedText,
-                type: "text",
-              }]
-            }]
-          },
-          started: new Date().toISOString.toString()
+          url: this.fetchJiraCredentials!.domain,
+          issue: issue.key,
+          email: this.fetchJiraCredentials!.email,
+          token: this.fetchJiraCredentials!.token,
+          seconds: (issue.loggedHours * 60 * 60) + (issue.loggedMinutes * 60),
+          text: issue.loggedText
         }
-        fetch(herokuappUrl + this.fetchJiraCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
+        fetch("https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Jira", {
           method: 'POST',
           headers: {
             'Authorization': 'Basic ' + btoa(this.fetchJiraCredentials!.email + ':' + this.fetchJiraCredentials!.token),
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'Origin': 'https://leandrocz15.github.io/'
           },
           body: JSON.stringify(data)
         }).then(response => {
