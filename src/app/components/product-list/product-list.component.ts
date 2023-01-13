@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AppCredentials } from 'src/app/classes/credentials/app-credentials';
+import { AppCredentials } from 'src/app/classes/app-credentials/app-credentials';
 import { Product } from 'src/app/classes/product/product';
 
 @Component({
@@ -8,6 +8,7 @@ import { Product } from 'src/app/classes/product/product';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent {
+  @Input() fetchApplicationCredentials!: AppCredentials | null;
   productList: Array<Product> = [];
 
   ngOnInit(){
@@ -22,7 +23,7 @@ export class ProductListComponent {
     await fetch('https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Query?tableName=products', {
       method: 'GET',
       headers: {
-        'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
+        'Authorization': 'Basic ' + btoa(this.fetchApplicationCredentials!.email + ':' + this.fetchApplicationCredentials!.password),
         'Accept': 'application/json',
         'Origin': 'https://leandrocz15.github.io/'
       }

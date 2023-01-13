@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Issue } from 'src/app/classes/issue/issue';
-import { JiraLoginCredentials } from 'src/app/classes/login-credentials/login-credentials';
+import { JiraLoginCredentials } from 'src/app/classes/jira-login-credentials/jira-login-credentials';
 
 @Component({
   selector: 'app-taskbar',
@@ -10,7 +10,7 @@ import { JiraLoginCredentials } from 'src/app/classes/login-credentials/login-cr
 export class TaskbarComponent {
   @Input() issuesParam! : Issue[];
   @Input() issuesToInputParam! : Issue[];
-  @Input() fetchCredentials! : JiraLoginCredentials | null;
+  @Input() fetchJiraCredentials! : JiraLoginCredentials | null;
   @Output() changeCurrentIssueEvent = new EventEmitter<Issue>();
 
   filterByInputedChk : boolean = false;
@@ -29,7 +29,7 @@ export class TaskbarComponent {
     await fetch(herokuappUrl + jiraSearchUrl, {
       method: 'GET',
       headers: {
-        'Authorization': 'Basic ' + btoa(this.fetchCredentials!.email + ':' + this.fetchCredentials!.token),
+        'Authorization': 'Basic ' + btoa(this.fetchJiraCredentials!.email + ':' + this.fetchJiraCredentials!.token),
         'Accept': 'application/json'
       }
     })
@@ -101,10 +101,10 @@ export class TaskbarComponent {
             }]
           },
         }
-        await fetch(herokuappUrl + this.fetchCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
+        await fetch(herokuappUrl + this.fetchJiraCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
           method: 'POST',
           headers: {
-            'Authorization': 'Basic ' + btoa(this.fetchCredentials!.email + ':' + this.fetchCredentials!.token),
+            'Authorization': 'Basic ' + btoa(this.fetchJiraCredentials!.email + ':' + this.fetchJiraCredentials!.token),
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { AppCredentials } from './classes/credentials/app-credentials';
+import { AppCredentials } from './classes/app-credentials/app-credentials';
 import { Issue } from './classes/issue/issue';
-import { JiraLoginCredentials } from './classes/login-credentials/login-credentials';
+import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-login-credentials';
 
 @Component({
   selector: 'app-root',

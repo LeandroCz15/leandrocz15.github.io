@@ -2,7 +2,7 @@
 <app-issue-modal [issue]="currentIssue" (addOrRemoveIssue)="changeIssueInput($event)"></app-issue-modal>
 <app-jira-login-modal (validLogin)="jiraLogin($event)"></app-jira-login-modal>
 <app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
-<app-product-modal></app-product-modal>
+<app-product-modal [fetchApplicationCredentials]="appCredentials"></app-product-modal>
 
 <!--Top navbar-->
 <nav id="topNavbar" class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" style="position: sticky;">
@@ -38,10 +38,10 @@
         <strong>mdo</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal" *ngIf="this.jiraCredentials === null">Jira log in</button></li>
-        <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="this.jiraCredentials !== null">Jira log out</button></li>
-        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal" *ngIf="this.appCredentials === null">App log in</button></li>
-        <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="this.appCredentials !== null">App log out</button></li>
+        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal" *ngIf="jiraCredentials === null">Jira log in</button></li>
+        <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="jiraCredentials !== null">Jira log out</button></li>
+        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal" *ngIf="appCredentials === null">App log in</button></li>
+        <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="appCredentials !== null">App log out</button></li>
       </ul>
     </div>
   </div>
@@ -51,8 +51,8 @@
         <ng-container [ngSwitch]="selectedPageIndex">
           <!--Container for Jira integration-->
           <ng-container *ngSwitchCase="1">
-            <ng-container *ngIf="this.jiraCredentials !== null">
-              <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchCredentials]="this.jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
+            <ng-container *ngIf="jiraCredentials !== null">
+              <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchJiraCredentials]="jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
             </ng-container>
             <ng-container *ngIf="this.jiraCredentials === null">
               <div class="child">
@@ -63,7 +63,7 @@
           </ng-container>
           <!--Container for Products-->
           <ng-container *ngSwitchCase="2">
-            <app-product-list></app-product-list>
+            <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
           </ng-container>
         </ng-container>
       </div>

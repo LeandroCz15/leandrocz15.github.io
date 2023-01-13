@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AppCredentials } from 'src/app/classes/app-credentials/app-credentials';
 import { Product } from 'src/app/classes/product/product';
 
 @Component({
@@ -8,6 +9,7 @@ import { Product } from 'src/app/classes/product/product';
 })
 export class ProductModalComponent {
 
+  @Input() fetchApplicationCredentials!: AppCredentials | null;
   newProduct: Product = new Product("", "", 0, undefined, "");
 
   resetProduct(fileInput: HTMLInputElement){
@@ -29,7 +31,7 @@ export class ProductModalComponent {
     fetch('https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Product', {
       method: 'POST',
       headers: {
-        'Authorization': 'Basic ' + btoa('Leandro' + ':' + 'cacholamcp'),
+        'Authorization': 'Basic ' + btoa(this.fetchApplicationCredentials!.email + ':' + this.fetchApplicationCredentials!.password),
         'Accept': 'application/json',
         'Origin': 'https://leandrocz15.github.io/'
       },
@@ -37,7 +39,6 @@ export class ProductModalComponent {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
       });
   }
 
