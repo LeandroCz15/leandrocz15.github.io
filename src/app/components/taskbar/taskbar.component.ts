@@ -85,23 +85,23 @@ export class TaskbarComponent {
 
     inputIssues(){
       let date = new Date();
-      this.issuesToInputParam.forEach(async issue => {
-        console.log("Currently input in: " + issue.key);
+      this.issuesToInputParam.forEach(issue => {
         let data = {
-          "timeSpentSeconds": (issue.loggedHours * 60 * 60) + (issue.loggedMinutes * 60),
-          "comment": {
-            "type": "doc",
-            "version": 1,
-            "content": [{
-              "type": "paragraph",
-              "content": [{
-                "text": issue.loggedText,
-                "type": "text",
+          timeSpentSeconds: (issue.loggedHours * 60 * 60) + (issue.loggedMinutes * 60),
+          comment: {
+            type: "doc",
+            version: 1,
+            content: [{
+              type: "paragraph",
+              content: [{
+                text: issue.loggedText,
+                type: "text",
               }]
             }]
           },
+          started: new Date().toISOString.toString()
         }
-        await fetch(herokuappUrl + this.fetchJiraCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
+        fetch(herokuappUrl + this.fetchJiraCredentials!.domain + jiraLogWorkUrl.replace("?", issue.key), {
           method: 'POST',
           headers: {
             'Authorization': 'Basic ' + btoa(this.fetchJiraCredentials!.email + ':' + this.fetchJiraCredentials!.token),
@@ -110,10 +110,8 @@ export class TaskbarComponent {
           },
           body: JSON.stringify(data)
         }).then(response => {
-          console.log(response);
           if(response.ok){
             this.issuesToInputParam.splice(this.issuesToInputParam.indexOf(issue), 1);
-            console.log(issue.key + " logged correctly");
           }
         });
       });

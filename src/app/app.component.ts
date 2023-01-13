@@ -30,6 +30,8 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   jiraLogout(){
+    this.issues.splice(0);
+    this.issuesToInput.splice(0);
     this.jiraCredentials = null;
   }
 
