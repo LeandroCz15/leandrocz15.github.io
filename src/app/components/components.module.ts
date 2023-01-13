@@ -7,10 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IssueModalComponent } from './issue-modal/issue-modal.component';
 import { DropdownButtonComponent } from './dropdown-button/dropdown-button.component';
 import { SearchUserModalComponent } from './search-user-modal/search-user-modal.component';
-import { LoginModalComponent } from './login-modal/login-modal.component';
+import { JiraLoginModalComponent } from './jira-login-modal/jira-login-modal.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductBoxComponent } from './product-box/product-box.component';
-import { AppLoginComponent } from './app-login/app-login.component';
+import { ApplicationLoginModalComponent } from './application-login-modal/application-login-modal.component';
+import { ProductModalComponent } from './product-modal/product-modal.component';
 
 
 
@@ -22,10 +23,11 @@ import { AppLoginComponent } from './app-login/app-login.component';
     IssueModalComponent,
     DropdownButtonComponent,
     SearchUserModalComponent,
-    LoginModalComponent,
+    JiraLoginModalComponent,
     ProductListComponent,
     ProductBoxComponent,
-    AppLoginComponent,
+    ApplicationLoginModalComponent,
+    ProductModalComponent,
   ],
   imports: [
     CommonModule,
@@ -39,10 +41,11 @@ import { AppLoginComponent } from './app-login/app-login.component';
     IssueModalComponent,
     DropdownButtonComponent,
     SearchUserModalComponent,
-    LoginModalComponent,
+    JiraLoginModalComponent,
     ProductListComponent,
     ProductBoxComponent,
-    AppLoginComponent,
+    ApplicationLoginModalComponent,
+    ProductModalComponent,
   ]
 })
 export class ComponentsModule { 

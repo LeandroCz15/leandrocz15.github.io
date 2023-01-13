@@ -1,8 +1,8 @@
 <!--Modals-->
 <app-issue-modal [issue]="currentIssue" (addOrRemoveIssue)="changeIssueInput($event)"></app-issue-modal>
-<app-login-modal (validLogin)="jiraLogin($event)"></app-login-modal>
-<app-app-login (validAppLogin)="appLogin($event)"></app-app-login>
-<!--End of modals-->
+<app-jira-login-modal (validLogin)="jiraLogin($event)"></app-jira-login-modal>
+<app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
+<app-product-modal></app-product-modal>
 
 <!--Top navbar-->
 <nav id="topNavbar" class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" style="position: sticky;">
@@ -11,11 +11,11 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       </ul>
-      <button class="btn btn-primary" type="button" *ngIf="appCredentials !== null && appCredentials.admin">Add product</button>
+      <!--Buttons of admin-->
+      <button class="btn btn-primary" type="button" *ngIf="appCredentials !== null && appCredentials.admin" data-bs-toggle="modal" data-bs-target="#addProductModal">Add product</button>
     </div>
   </div>
 </nav>
-<!--End of top navbar-->
 
 <main id="mainContainer" class="d-flex flex-nowrap" style="width: 100%; height: 100%;">
   <div id="leftBar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 170px; position: static;">
@@ -30,7 +30,6 @@
       <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
       <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
     </ul>
-    <!--End of add buttons here for left taskbar-->
     <hr>
     <!--Dropdown button-->
     <div class="dropdown">
@@ -45,7 +44,6 @@
         <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="this.appCredentials !== null">App log out</button></li>
       </ul>
     </div>
-    <!--End of dropdown button-->
   </div>
   <!--Main content-->
     <div id="mainBoxContent" class="container-fluid" style="overflow-y: auto; overflow-x: hidden;">
@@ -63,12 +61,10 @@
               </div>
             </ng-container>
           </ng-container>
-          <!--End of container for Jira integration-->
           <!--Container for Products-->
           <ng-container *ngSwitchCase="2">
             <app-product-list></app-product-list>
           </ng-container>
-          <!--End of container for Products-->
         </ng-container>
       </div>
     </div>

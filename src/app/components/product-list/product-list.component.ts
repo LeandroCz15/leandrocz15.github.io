@@ -30,7 +30,7 @@ export class ProductListComponent {
     .then(data => {
       data.result.forEach((product: any) => {
         this.productList.push(new Product(product.products_name, product.products_description,
-          product.products_price, product.products_image_url));
+          product.products_price, product.products_image_url, product.products_sku));
       });
     });
   }

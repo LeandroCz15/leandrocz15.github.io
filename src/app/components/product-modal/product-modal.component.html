@@ -1,0 +1,36 @@
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title me-2">Add a product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body overflow-auto" style="height: 100%;">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Name" aria-label="ProductName" aria-describedby="basic-addon1" [(ngModel)]="newProduct.name">
+            </div>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="SKU" aria-label="sku" aria-describedby="basic-addon1" [(ngModel)]="newProduct.sku">
+            </div>
+            <div class="input-group mb-3" style="height: 30%;">
+                <textarea class="form-control" aria-label="With textarea" placeholder="Description..." [(ngModel)]="newProduct.description"></textarea>
+            </div>  
+            <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" placeholder="Add a price"aria-describedby="basic-addon1" [(ngModel)]="newProduct.price">
+            </div>
+                Add an image for this product
+            <div class="input-group mb-3">
+                <input #file type="file" class="form-control" id="inputGroupFile01" accept="image/*" (change)="onFileSelected($event)">
+            </div>
+            <div id="showImageError" hidden="true">
+                The image size needs to be less than 1MB and it must be a 450 height x 300 width
+            </div>
+        </div>
+        <div class="modal-footer overflow-auto">
+          <button type="button" class="btn btn-secondary" (click)="resetProduct(file)" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="saveProduct()" *ngIf="newProduct.name[0] != null && newProduct.price >= 0 && newProduct.price <= 9999999 && newProduct.sku[0] && newProduct.imageUrl != undefined">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>

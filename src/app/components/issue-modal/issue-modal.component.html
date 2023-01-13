@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="modal-footer overflow-auto">
-          <button type="button" class="btn btn-secondary" (click)="updateBars()" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="emitIssueEvent(issue)" *ngIf="issue.loggedText[0] != null && (issue.loggedMinutes > 0 || issue.loggedHours > 0) && !issue.toggled">Save changes</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="issue.cleanProperties() ; emitIssueEvent(issue) ; updateBars()" *ngIf="issue.toggled">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">

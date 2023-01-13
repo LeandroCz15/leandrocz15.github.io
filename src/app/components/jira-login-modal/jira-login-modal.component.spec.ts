@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppLoginComponent } from './app-login.component';
+import { JiraLoginModalComponent } from './jira-login-modal.component';
 
-describe('AppLoginComponent', () => {
-  let component: AppLoginComponent;
-  let fixture: ComponentFixture<AppLoginComponent>;
+describe('JiraLoginModalComponent', () => {
+  let component: JiraLoginModalComponent;
+  let fixture: ComponentFixture<JiraLoginModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppLoginComponent ]
+      declarations: [ JiraLoginModalComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppLoginComponent);
+    fixture = TestBed.createComponent(JiraLoginModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

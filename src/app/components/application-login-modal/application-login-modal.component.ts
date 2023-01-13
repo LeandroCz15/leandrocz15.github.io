@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 declare var $: any; 
 
 @Component({
-  selector: 'app-app-login',
-  templateUrl: './app-login.component.html',
-  styleUrls: ['./app-login.component.css']
+  selector: 'app-application-login-modal',
+  templateUrl: './application-login-modal.component.html',
+  styleUrls: ['./application-login-modal.component.css']
 })
-export class AppLoginComponent {
+export class ApplicationLoginModalComponent {
   @Output() validAppLogin = new EventEmitter<{form : string[], admin : boolean}>();
   registerForm : any = FormGroup;
   submited : boolean = false;
@@ -49,7 +49,7 @@ export class AppLoginComponent {
   }
 
   async fetchCredentials(email : string, password : string) : Promise<number>{
-    await fetch("https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Login", {
+    return await fetch("https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Login", {
       method: 'GET',
        headers: {
        'Authorization': 'Basic ' + btoa(email + ':' + password),
@@ -61,7 +61,6 @@ export class AppLoginComponent {
      .then(data => {
       return data.level;
      });
-     return -1;
   }
 
 }

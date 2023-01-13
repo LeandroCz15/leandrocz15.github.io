@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 declare var $: any; 
 
 @Component({
-  selector: 'app-login-modal',
-  templateUrl: './login-modal.component.html',
-  styleUrls: ['./login-modal.component.css']
+  selector: 'app-jira-login-modal',
+  templateUrl: './jira-login-modal.component.html',
+  styleUrls: ['./jira-login-modal.component.css']
 })
-export class LoginModalComponent {
+export class JiraLoginModalComponent {
   @Output() validLogin = new EventEmitter<string[]>();
   registerForm : any = FormGroup;
   submited : boolean = false;
@@ -32,7 +32,7 @@ export class LoginModalComponent {
       return;
     }
     this.loading = true;
-    let responseStatus : number = await this.fetchIssues("", this.registerForm.value.email, this.registerForm.value.token);
+    let responseStatus : number = await this.fetchForLogin(this.registerForm.value.domain, this.registerForm.value.email, this.registerForm.value.token);
     if(responseStatus !== 200){
       this.loading = false;
       return;
@@ -49,9 +49,8 @@ export class LoginModalComponent {
     this.registerForm.reset();
   }
 
-  async fetchIssues(domain : string, email : string, token : string) : Promise<number>{
-    let responseStatus : number = 0;
-    await fetch(herokuappUrl + jiraSearchUrl, {
+  async fetchForLogin(domain : string, email : string, token : string) : Promise<number>{
+    return await fetch(herokuappUrl + "https://" + domain + jiraSearchUrl, {
       method: 'GET',
        headers: {
        'Authorization': 'Basic ' + btoa(email + ':' + token),
@@ -59,12 +58,11 @@ export class LoginModalComponent {
        }
      })
      .then(response => {
-       return responseStatus = response.status;
-     });
-     return responseStatus;
+      return response.status;
+     })
   }
 }
   
 
 const herokuappUrl : string = "https://guarded-reef-52511.herokuapp.com/";
-const jiraSearchUrl : string = "https://etendoproject.atlassian.net/rest/api/3/search?jql=assignee=currentUser()&maxResults=1";
+const jiraSearchUrl : string = "/rest/api/3/search?jql=assignee=currentUser()&maxResults=1";
