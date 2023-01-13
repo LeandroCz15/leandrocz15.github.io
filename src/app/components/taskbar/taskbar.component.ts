@@ -119,5 +119,4 @@ export class TaskbarComponent {
 
 const herokuappUrl : string = "https://guarded-reef-52511.herokuapp.com/";
 const jiraSearchUrl : string = "https://etendoproject.atlassian.net/rest/api/3/search?jql=assignee=currentUser()";
-const jiraLogWorkUrl: string = "/rest/api/3/issue/?/worklog";
 
