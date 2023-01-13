@@ -54,16 +54,24 @@
             <ng-container *ngIf="jiraCredentials !== null">
               <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchJiraCredentials]="jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
             </ng-container>
-            <ng-container *ngIf="this.jiraCredentials === null">
+            <ng-container *ngIf="jiraCredentials === null">
               <div class="child">
-                  <h1>You must log in to use this app</h1>
+                  <h1>You must log in via Jira login to use this app</h1>
                   <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%" style="left: 500px; margin-left: 50px;">
               </div>
             </ng-container>
           </ng-container>
           <!--Container for Products-->
           <ng-container *ngSwitchCase="2">
-            <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
+            <ng-container *ngIf="appCredentials !== null">
+              <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
+            </ng-container>
+            <ng-container *ngIf="appCredentials === null">
+              <div class="child">
+                  <h1>You must log in via App login to use this app</h1>
+                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%" style="left: 500px; margin-left: 50px;">
+              </div>
+            </ng-container>
           </ng-container>
         </ng-container>
       </div>
