@@ -57,7 +57,7 @@
 
         <div class="row w-100 m-0 bg-dark navbar-row">
 
-          <div class="col" style="padding: 0;">
+          <div class="col p-0">
 
             <button class="top-navbar-btn mt-2 bg-dark" (click)="toggleSidebar()" style="height: 60%;">
 
@@ -75,10 +75,10 @@
 
         </div>
 
-        <div class="row w-100 m-0 flex-grow-1">
+        <div class="row w-100 m-0 flex-grow-1 mt-5">
           
           <div class="col w-100 p-1 main-content-col">
-            
+
             <ng-container [ngSwitch]="selectedPageIndex">
           
               <ng-container *ngSwitchCase="1">
