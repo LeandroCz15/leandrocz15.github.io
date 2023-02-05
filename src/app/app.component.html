@@ -4,79 +4,139 @@
 <app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
 <app-product-modal [fetchApplicationCredentials]="appCredentials"></app-product-modal>
 
-<!--Top navbar-->
-<nav id="topNavbar" class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" style="position: sticky;">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      </ul>
-      <!--Buttons of admin-->
-      <button class="btn btn-primary" type="button" *ngIf="appCredentials !== null && appCredentials.admin" data-bs-toggle="modal" data-bs-target="#addProductModal">Add product</button>
-    </div>
-  </div>
-</nav>
+<div class="container-fluid vw-100 vh-100 p-0">
 
-<main id="mainContainer" class="d-flex flex-nowrap" style="width: 100%; height: 100%;">
-  <div id="leftBar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 170px; position: static;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-      <span class="fs-4">Sidebar</span>
-    </a>
-    <hr>
-    <!--Add buttons here for left taskbar-->
-    <ul class="nav nav-pills flex-column mb-auto">
-      <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg" (changePage)="updatePage($event)"></app-navbarelement>
-      <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
-      <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
-    </ul>
-    <hr>
-    <!--Dropdown button-->
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>mdo</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal" *ngIf="jiraCredentials === null">Jira log in</button></li>
-        <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="jiraCredentials !== null">Jira log out</button></li>
-        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal" *ngIf="appCredentials === null">App log in</button></li>
-        <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="appCredentials !== null">App log out</button></li>
-      </ul>
-    </div>
-  </div>
-  <!--Main content-->
-    <div id="mainBoxContent" class="container-fluid" style="overflow-y: auto; overflow-x: hidden;">
-      <div class="mt-2 ms-2 me-2">
-        <ng-container [ngSwitch]="selectedPageIndex">
-          <!--Container for Jira integration-->
-          <ng-container *ngSwitchCase="1">
-            <ng-container *ngIf="jiraCredentials !== null">
-              <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchJiraCredentials]="jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
-            </ng-container>
-            <ng-container *ngIf="jiraCredentials === null">
-              <div class="child">
-                  <h1>You must log in via Jira login to use this app</h1>
-                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%" style="left: 500px; margin-left: 50px;">
-              </div>
-            </ng-container>
-          </ng-container>
-          <!--Container for Products-->
-          <ng-container *ngSwitchCase="2">
-            <ng-container *ngIf="appCredentials !== null">
-              <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
-            </ng-container>
-            <ng-container *ngIf="appCredentials === null">
-              <div class="child">
-                  <h1>You must log in via App login to use this app</h1>
-                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%" style="left: 500px; margin-left: 50px;">
-              </div>
-            </ng-container>
-          </ng-container>
-        </ng-container>
+  <div class="row h-100 w-100 m-0">
+
+    <div class="col-auto h-100 p-0">
+
+      <!--Left taskbar-->
+      <div id="side-bar" class="d-flex flex-column flex-shrink-0 p-2 text-bg-dark h-100 side-bar">
+
+        <a href="/" class="d-flex align-items-center justify-content-center">
+
+          <img src="assets/programming.svg" style="height: 50px; width: 50px;">
+
+        </a>
+
+        <hr>
+
+        <!--Add buttons here for left taskbar-->
+        <ul class="nav nav-pills flex-column mb-auto side-bar-btn-list">
+
+          <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg" (changePage)="updatePage($event)"></app-navbarelement>
+
+          <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
+
+          <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
+
+        </ul>
+
+        <hr>
+        
+        <!--Dropdown button-->
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle side-bar-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong>mdo</strong>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal" *ngIf="jiraCredentials === null">Jira log in</button></li>
+            <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="jiraCredentials !== null">Jira log out</button></li>
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal" *ngIf="appCredentials === null">App log in</button></li>
+            <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="appCredentials !== null">App log out</button></li>
+          </ul>
+        </div>
       </div>
+
     </div>
-  <!--End of main content-->
-</main>
+
+    <div class="col w-100 h-100 p-0">
+
+      <div class="container-fluid w-100 h-100 p-0 main-content-container d-flex flex-column">
+
+        <div class="row w-100 m-0 bg-dark navbar-row">
+
+          <div class="col" style="padding: 0;">
+
+            <button class="top-navbar-btn mt-2 bg-dark" (click)="toggleSidebar()" style="height: 60%;">
+
+              <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%">
+
+            </button>
+
+              <button class="m-2 bg-primary text-white" style="width: fit-content; height: 60%; float: right; border: none; border-radius: 8px;" *ngIf="appCredentials !== null && appCredentials.admin">
+
+                Add product
+
+              </button>
+
+          </div>
+
+        </div>
+
+        <div class="row w-100 m-0 flex-grow-1">
+          
+          <div class="col w-100 p-1 main-content-col">
+            
+            <ng-container [ngSwitch]="selectedPageIndex">
+          
+              <ng-container *ngSwitchCase="1">
+
+                <ng-container *ngIf="jiraCredentials !== null">
+
+                  <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchJiraCredentials]="jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
+                
+                </ng-container>
+
+                <ng-container *ngIf="jiraCredentials === null">
+
+                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    
+                      <h1>You must log in via Jira login to use this app</h1>
+
+                      <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
+
+                    </div>
+
+                </ng-container>
+
+              </ng-container>
+
+              <ng-container *ngSwitchCase="2">
+
+                <ng-container *ngIf="appCredentials !== null">
+
+                  <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
+
+                </ng-container>
+
+                <ng-container *ngIf="appCredentials === null">
+
+                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    
+                    <h1>You must log in via App login to use this app</h1>
+
+                    <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
+
+                  </div>
+
+                </ng-container>
+
+              </ng-container>
+
+            </ng-container>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <router-outlet></router-outlet>

@@ -1,0 +1,11 @@
+  .navbar-button{
+    white-space: nowrap;
+    padding: 6px 0px 6px 7px;
+  }
+
+  .btn-text{
+    top: 3px; 
+    left: 2px; 
+    position: relative;
+    display: inline;
+  }

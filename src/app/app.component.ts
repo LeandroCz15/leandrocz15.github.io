@@ -8,7 +8,7 @@ import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-logi
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements AfterViewInit {
   title = 'Leandro\'s-proyect';
   selectedPageIndex : string = "0";
   currentIssue : Issue = new Issue("", "", "", 0, 0, "", -1);
@@ -16,6 +16,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   issues : Issue[] = [];
   jiraCredentials : JiraLoginCredentials | null = null;
   appCredentials : AppCredentials | null = null;
+  sideBarToggled: boolean = false;
 
   appLogin(credentials : any){
     this.appCredentials = new AppCredentials(credentials.form.appEmail, credentials.form.appPassword, credentials.admin);
@@ -61,20 +62,25 @@ export class AppComponent implements AfterViewInit, OnInit {
     document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#0d6efd";
   }
 
-  ngOnInit(){
-    adjustMainLayout();
-    window.onresize = function(event){
-      adjustMainLayout();
+  toggleSidebar(){
+    let sideBar: HTMLElement | null = document.getElementById("side-bar");
+    let sideBarButtons: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName("btn-text") as HTMLCollectionOf<HTMLElement>;
+    let sideBarToggler: HTMLElement | null = document.getElementById("side-bar-toggler");
+    if(!this.sideBarToggled) {
+      sideBarToggler!.setAttribute("src", "assets/right-arrow.svg");
+      sideBar!.style.width = "55px";
+      for(let i = 0 ; i < sideBarButtons.length ; i++){
+        sideBarButtons.item(i)!.style.display = "none"; 
+      }
+    } else {
+      sideBarToggler!.setAttribute("src", "assets/left-arrow.svg");
+      sideBar!.style.width = "155px";
+      for(let i = 0 ; i < sideBarButtons.length ; i++){
+        sideBarButtons.item(i)!.style.display = "inline"; 
+      }
     }
-    }
+    this.sideBarToggled = !this.sideBarToggled;
   }
 
-  function adjustMainLayout(){
-    let topBarPx = document.getElementById("topNavbar")!.clientHeight;
-    let leftBar : HTMLElement | null = document.getElementById("leftBar");
-    leftBar!.style.height = window.innerHeight - topBarPx + "px";
-    let mainContent : HTMLElement | null = document.getElementById("mainBoxContent");
-    mainContent!.style.height = window.innerHeight - topBarPx + "px";
-    mainContent!.style.width = document.getElementById("mainContainer")!.clientWidth - leftBar!.clientWidth + "px";
-  }
+}
 

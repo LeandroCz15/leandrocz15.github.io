@@ -1,6 +1,35 @@
-.child {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -50px 0 0 -50px;
+  .side-bar{
+    width: 155px;
+    transition: width 0.5s;
+    /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca*/
+  }
+
+  .navbar-row{
+    height: 55px;
+  }
+
+  .main-content-col{
+    word-break: break-all;
+  }
+
+  .main-content-container{
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  strong{
+    margin-left: 5px;
+  }
+
+  .side-bar-dropdown{
+    margin-left: 2.5px
+  }
+
+  .side-bar-btn-list{
+    overflow: hidden;
+  }
+
+  .top-navbar-btn{
+    border-radius: 5px;
+    border: none;
   }
