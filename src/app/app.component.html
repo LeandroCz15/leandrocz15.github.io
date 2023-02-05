@@ -22,7 +22,7 @@
         <hr>
 
         <!--Add buttons here for left taskbar-->
-        <ul class="nav nav-pills flex-column mb-auto side-bar-btn-list">
+        <ul class="nav flex-column mb-auto side-bar-btn-list">
 
           <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg" (changePage)="updatePage($event)"></app-navbarelement>
 
@@ -55,27 +55,56 @@
 
       <div class="container-fluid w-100 h-100 p-0 main-content-container d-flex flex-column">
 
-        <div class="row w-100 m-0 bg-dark navbar-row">
+        <nav id="navbar" class="navbar navbar-expand-lg bg-light navbar-dark bg-dark top-navbar">
 
-          <div class="col p-0">
+          <div class="container-fluid ps-0">
 
-            <button class="top-navbar-btn mt-2 bg-dark" (click)="toggleSidebar()" style="height: 60%;">
+            <button class="top-navbar-btn bg-dark p-0" (click)="toggleSidebar()">
 
               <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%">
 
             </button>
 
-              <button class="m-2 bg-primary text-white" style="width: fit-content; height: 60%; float: right; border: none; border-radius: 8px;" *ngIf="appCredentials !== null && appCredentials.admin">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled">Disabled</a>
+                </li>
+              </ul>
 
-                Add product
+              <div class="d-flex">
 
-              </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal" *ngIf="appCredentials !== null && appCredentials.admin">Add product</button>
+
+              </div>
+
+            </div>
 
           </div>
+          
+        </nav>
 
-        </div>
-
-        <div class="row w-100 m-0 flex-grow-1 mt-5">
+        <div class="row w-100 m-0 flex-grow-1 main-content-row">
           
           <div class="col w-100 p-1 main-content-col">
 

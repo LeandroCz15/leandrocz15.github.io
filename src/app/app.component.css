@@ -11,6 +11,10 @@
     z-index: 6;
   }
 
+  .main-content-row{
+    padding-top: 55px;
+  }
+
   .main-content-col{
     word-break: break-all;
   }
@@ -29,10 +33,19 @@
   }
 
   .side-bar-btn-list{
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block;
   }
 
   .top-navbar-btn{
     border-radius: 5px;
     border: none;
+    width: 35px;
+    height: 35px;
+  }
+
+  .top-navbar{
+    transition: width 0.5s;
+    position: fixed;
   }
