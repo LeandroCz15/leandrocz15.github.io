@@ -12,7 +12,7 @@ import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-logi
 export class AppComponent implements AfterViewInit {
   title = 'Leandro\'s-proyect';
   selectedPageIndex : string = "0";
-  currentIssue : Issue = new Issue("", "", "", 0, 0, "", -1);
+  currentIssue : Issue = new Issue("", "", "", 0, 0, "", 0);
   issuesToInput : Issue[] = [];
   issues : Issue[] = [];
   jiraCredentials : JiraLoginCredentials | null = null;
