@@ -9,7 +9,7 @@ import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-logi
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements AfterViewInit {
   title = 'Leandro\'s-proyect';
   selectedPageIndex : string = "0";
   currentIssue : Issue = new Issue("", "", "", 0, 0, "", -1);
@@ -63,11 +63,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#0d6efd";
   }
 
-  ngOnInit(){
-    this.resizeTopNavbarOnWindowChange()
-    this.resizeTopNavbarOnInit();
-  }
-
   toggleSidebar(){
     //toggler function of left sidebar
     let newWidth: number;
@@ -90,27 +85,6 @@ export class AppComponent implements AfterViewInit, OnInit {
       }
     }
     this.sideBarToggled = !this.sideBarToggled;
-    this.resizeTopNavbarOnSideBarChange(newWidth);
-  }
-
-  resizeTopNavbarOnSideBarChange(newSize: number){
-    let navBar: HTMLElement | null = document.getElementById("navbar");
-    navBar!.style.width = window.innerWidth - newSize + "px";
-  }
-
-  resizeTopNavbarOnInit(){
-    //function to handle the size of the top navbar, since i didnt find a way to make it look good when adding property fixed to the navbar
-    let navBar: HTMLElement | null = document.getElementById("navbar");
-    let sideBar: HTMLElement | null = document.getElementById("side-bar");
-    navBar!.style.width = window.innerWidth - sideBar!.clientWidth + "px";
-  }
-
-  resizeTopNavbarOnWindowChange(){
-    window.onresize = function(){
-      let navBar: HTMLElement | null = document.getElementById("navbar");
-      let sideBar: HTMLElement | null = document.getElementById("side-bar");
-      navBar!.style.width = window.innerWidth - sideBar!.clientWidth + "px";
-    }
   }
 
 }
