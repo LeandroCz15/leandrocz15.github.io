@@ -4,7 +4,7 @@
 <app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
 <app-product-modal [fetchApplicationCredentials]="appCredentials"></app-product-modal>
 
-<div class="container-fluid vw-100 vh-100 p-0">
+<div class="container-fluid vw-100 vh-100 p-0 all-container">
 
   <div class="row h-100 w-100 m-0">
 
@@ -59,9 +59,9 @@
 
           <div class="container-fluid ps-0">
 
-            <button class="top-navbar-btn bg-dark p-0" (click)="toggleSidebar()">
+            <button class="top-navbar-btn bg-dark p-0">
 
-              <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%">
+              <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%" (click)="toggleSidebar()">
 
             </button>
 
@@ -122,7 +122,7 @@
 
                   <div class="d-flex flex-column align-items-center justify-content-center h-100">
                     
-                      <h1>You must log in via Jira login to use this app</h1>
+                      <h1 class="text-break">You must log in via Jira login to use this app</h1>
 
                       <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
 
@@ -144,7 +144,7 @@
 
                   <div class="d-flex flex-column align-items-center justify-content-center h-100">
                     
-                    <h1>You must log in via App login to use this app</h1>
+                    <h1 class="text-break">You must log in via App login to use this app</h1>
 
                     <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
 

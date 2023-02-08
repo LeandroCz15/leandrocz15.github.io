@@ -3,9 +3,23 @@
     padding: 6px 0px 6px 7px;
   }
 
+  /* Replace of toggleSidebar() with pure CSS */
+
   .btn-text{
     top: 3px; 
     left: 2px; 
     position: relative;
     display: inline;
   }
+
+  @media screen and (max-width: 500px) {
+    
+    .btn-text{
+      top: 3px; 
+      left: 2px; 
+      position: relative;
+      display: none;
+    }
+  }
+
+  /* End replace of toggleSidebar() with pure CSS */

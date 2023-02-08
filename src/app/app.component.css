@@ -1,9 +1,3 @@
-  .side-bar{
-    width: 155px;
-    transition: width 0.5s;
-    /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca*/
-  }
-
   .main-content-col{
     word-break: break-all;
   }
@@ -40,3 +34,50 @@
     top: 0;
     z-index: 6;
   }
+
+  .all-container{
+    min-width: 350px;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 9px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+  /* Replace of toggleSidebar() with pure CSS */
+
+  .side-bar{
+    width: 155px;
+    transition: width 0.5s;
+    /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca */
+  }
+
+  @media screen and (max-width: 500px) {
+
+    #side-bar{
+      width: 55px;
+      transition: width 0.5s;
+    }
+
+    #side-bar-toggler{
+      display: none;
+    }
+
+  }
+
+  /* End replace of toggleSidebar() with pure CSS */

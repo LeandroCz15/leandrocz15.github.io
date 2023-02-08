@@ -1,5 +1,5 @@
 <!-- Toolbar -->
-    <div class="input-group">
+    <div class="input-group d-flex flex-nowrap text-break">
         <button type="button" class="btn btn-primary" (click) = "getIssues()">Search</button>
         <button type="button" class="btn btn-outline-primary" [ngClass] = "{'btn-primary' : filterByInputedChk, 'btn-outline-primary' : !filterByInputedChk}" (click)="changeCheckValue()">Issues to log</button>
         <button type="button" class="btn btn-outline-primary" >Filters</button>
@@ -21,7 +21,7 @@
     <div class="list-group">
         <div *ngIf="!filterByInputedChk">
             <ng-container *ngFor="let issue of issuesParam; let i = index">
-                <button *ngIf="filterIssue(issue) && !issue.hidden" class = "list-group-item list-group-item-action text-white mt-2 bg-dark" data-bs-toggle="modal" data-bs-target="#issueModal"
+                <button *ngIf="filterIssue(issue) && !issue.hidden" class = "list-group-item list-group-item-action text-white mt-2 bg-dark text-break" data-bs-toggle="modal" data-bs-target="#issueModal"
                 [ngClass] = "{'bg-dark' : !issue.toggled, 'bg-primary' : issue.toggled}" (click) = "emitIssueEvent(issue)">{{issue.key}} | {{issue.summary}}</button>
             </ng-container>
         </div>
