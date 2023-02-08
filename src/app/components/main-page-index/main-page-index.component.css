@@ -1,0 +1,13 @@
+.move-from-bottom-to-top{
+    position: sticky;
+    animation: slideInFromBottom 2s ease-out;
+}
+
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(-150%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}

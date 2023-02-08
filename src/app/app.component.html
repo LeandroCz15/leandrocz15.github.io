@@ -109,6 +109,12 @@
           <div class="col w-100 p-1 main-content-col">
 
             <ng-container [ngSwitch]="selectedPageIndex">
+
+              <ng-container *ngSwitchCase="0">
+
+                <app-main-page-index></app-main-page-index>
+
+              </ng-container>
           
               <ng-container *ngSwitchCase="1">
 

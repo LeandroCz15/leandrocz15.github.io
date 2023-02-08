@@ -12,6 +12,7 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { ProductBoxComponent } from './product-box/product-box.component';
 import { ApplicationLoginModalComponent } from './application-login-modal/application-login-modal.component';
 import { ProductModalComponent } from './product-modal/product-modal.component';
+import { MainPageIndexComponent } from './main-page-index/main-page-index.component';
 
 
 
@@ -28,6 +29,7 @@ import { ProductModalComponent } from './product-modal/product-modal.component';
     ProductBoxComponent,
     ApplicationLoginModalComponent,
     ProductModalComponent,
+    MainPageIndexComponent,
   ],
   imports: [
     CommonModule,
@@ -46,6 +48,7 @@ import { ProductModalComponent } from './product-modal/product-modal.component';
     ProductBoxComponent,
     ApplicationLoginModalComponent,
     ProductModalComponent,
+    MainPageIndexComponent,
   ]
 })
 export class ComponentsModule { 
