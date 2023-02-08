@@ -9,15 +9,25 @@ import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-logi
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
-  title = 'Leandro\'s-proyect';
+export class AppComponent implements AfterViewInit, OnInit {
+
+  /* Page index variable */
   selectedPageIndex : string = "0";
-  currentIssue : Issue = new Issue("", "", "", 0, 0, "", 0);
+
+  /* Jira integration related variables */
   issuesToInput : Issue[] = [];
   issues : Issue[] = [];
+  currentIssue : Issue = new Issue("", "", "", 0, 0, "", 0);
+
+  /* Credentials variables */
   jiraCredentials : JiraLoginCredentials | null = null;
   appCredentials : AppCredentials | null = null;
-  sideBarToggled: boolean = false;
+
+  /* Sidebar util variables */
+  sidebarToggled: boolean = false;
+  sidebar: HTMLElement | null = null;
+  sidebarButtons: HTMLCollectionOf<HTMLElement> | null = null;
+  sidebarToggler: HTMLElement | null = null;
 
   appLogin(credentials : any){
     this.appCredentials = new AppCredentials(credentials.form.appEmail, credentials.form.appPassword, credentials.admin);
@@ -63,28 +73,33 @@ export class AppComponent implements AfterViewInit {
     document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#0d6efd";
   }
 
+  ngOnInit(){
+    this.initVariables();
+  }
+
   toggleSidebar(){
-    //toggler function of left sidebar
-    let sideBar: HTMLElement | null = document.getElementById("side-bar");
-    let sideBarButtons: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName("btn-text") as HTMLCollectionOf<HTMLElement>;
-    let sideBarToggler: HTMLElement | null = document.getElementById("side-bar-toggler");
-    if(!this.sideBarToggled) {
-      sideBarToggler!.setAttribute("src", "assets/right-arrow.svg");
-      sideBar!.style.width = "55px";
-      for(let i = 0 ; i < sideBarButtons.length ; i++){
-        sideBarButtons.item(i)!.style.display = "none"; 
+    if(!this.sidebarToggled) {
+      this.sidebarToggler!.setAttribute("src", "assets/right-arrow.svg");
+      this.sidebar!.style.width = "55px";
+      for(let i = 0 ; i < this.sidebarButtons!.length ; i++){
+        this.sidebarButtons!.item(i)!.style.display = "none"; 
       }
     } else {
-      //destogle remove styles
       //remove style so the sidebar will stay with the default configuration, otherwise it will get overlap
-      sideBarToggler!.setAttribute("src", "assets/left-arrow.svg");
-      sideBar!.removeAttribute("style");
-      for(let i = 0 ; i < sideBarButtons.length ; i++){
+      this.sidebarToggler!.setAttribute("src", "assets/left-arrow.svg");
+      this.sidebar!.removeAttribute("style");
+      for(let i = 0 ; i < this.sidebarButtons!.length ; i++){
         //remove style so the buttons will stay with the default configuration, otherwise it will get overlap
-        sideBarButtons.item(i)!.removeAttribute("style"); 
+        this.sidebarButtons!.item(i)!.removeAttribute("style"); 
       }
     }
-    this.sideBarToggled = !this.sideBarToggled;
+    this.sidebarToggled = !this.sidebarToggled;
+  }
+
+  initVariables(){
+    this.sidebar = document.getElementById("side-bar");
+    this.sidebarButtons = document.getElementsByClassName("btn-text") as HTMLCollectionOf<HTMLElement>;
+    this.sidebarToggler = document.getElementById("side-bar-toggler");
   }
 
 }
