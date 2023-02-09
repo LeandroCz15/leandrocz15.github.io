@@ -29,7 +29,7 @@ export class MainPageIndexComponent implements OnInit {
   }
 
   showMagePresentation(): void{
-    setTimeout(this.startMageTalk, 2200); //2200 ms to show first dialog
+    setTimeout(this.startMageTalk, 2100); //2100 ms to show first dialog
   }
 
   startMageTalk = async () => {
