@@ -1,0 +1,30 @@
+<app-email-address-modal></app-email-address-modal>
+
+<div class="input-group">
+  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addProgrammedEmail"
+    (click)="openProgrammedEmail({})">
+    <i class="bi bi-plus-lg"></i>
+  </button>
+</div>
+
+<div class="list-group">
+  <div class="row-auto justify-content-center">
+    <button class="list-group-item list-group-item-action text-white mt-2 text-break"
+      *ngFor="let programmedEmail of programmedEmailList; let i = index; trackBy: trackByFn"
+      [ngClass]="programmedEmail.active ? 'bg-primary' : 'bg-dark'" (click)="openProgrammedEmail(programmedEmail)"
+      data-bs-toggle="modal" data-bs-target="#addProgrammedEmail">
+      {{ programmedEmail.name }} - Programmed at {{programmedEmail.sendHour | twoDigit}}:{{programmedEmail.sendMinute |
+      twoDigit}}:{{programmedEmail.sendSecond | twoDigit}}
+    </button>
+  </div>
+</div>
+
+<!--Contenedor de aviso de logueo-->
+<!--
+<ng-container>
+  <div class="d-flex flex-column align-items-center justify-content-center h-100">
+    <h1 class="text-break">You must log in via App login to use this app</h1>
+    <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
+  </div>
+</ng-container>
+-->

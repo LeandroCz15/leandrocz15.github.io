@@ -1,0 +1,24 @@
+.move-from-bottom-to-top{
+    animation: slideInFromBottom 2s ease-out;
+}
+
+.stack-item{
+    margin-bottom: 10px;
+    width: 100px;
+    height: 100px;
+}
+
+#mage-container{
+    top: 60px;
+    position: fixed;
+    z-index: 1000;
+}
+
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(-150%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}

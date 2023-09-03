@@ -3,6 +3,10 @@
 <app-jira-login-modal (validLogin)="jiraLogin($event)"></app-jira-login-modal>
 <app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
 <app-product-modal [fetchApplicationCredentials]="appCredentials"></app-product-modal>
+<app-email-modal></app-email-modal>
+
+<!--Mage-->
+ <!-- <app-mage></app-mage> -->
 
 <div class="container-fluid vw-100 vh-100 p-0 all-container">
 
@@ -29,6 +33,8 @@
           <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
 
           <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
+
+          <app-navbarelement pageNumber=3 title="Emails" imagePath="assets/email.svg" (changePage)="updatePage($event)"></app-navbarelement>
 
         </ul>
 
@@ -106,13 +112,13 @@
 
         <div class="row w-100 m-0 flex-grow-1">
           
-          <div class="col w-100 p-1 main-content-col">
+          <div class="col w-100 p-0 main-content-col">
 
             <ng-container [ngSwitch]="selectedPageIndex">
 
               <ng-container *ngSwitchCase="0">
 
-                <app-main-page-index></app-main-page-index>
+                <!-- <app-main-page-index></app-main-page-index> -->
 
               </ng-container>
           
@@ -140,23 +146,13 @@
 
               <ng-container *ngSwitchCase="2">
 
-                <ng-container *ngIf="appCredentials !== null">
+                <app-product-view></app-product-view>
 
-                  <app-product-list [fetchApplicationCredentials]="appCredentials"></app-product-list>
+              </ng-container>
 
-                </ng-container>
+              <ng-container *ngSwitchCase="3">
 
-                <ng-container *ngIf="appCredentials === null">
-
-                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    
-                    <h1 class="text-break">You must log in via App login to use this app</h1>
-
-                    <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
-
-                  </div>
-
-                </ng-container>
+                <app-email-view></app-email-view>
 
               </ng-container>
 

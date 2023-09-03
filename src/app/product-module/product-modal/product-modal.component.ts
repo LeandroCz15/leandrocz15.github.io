@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AppCredentials } from 'src/app/classes/app-credentials/app-credentials';
-import { Product } from 'src/app/classes/product/product';
+import { Product } from '../classes/product';
 
 @Component({
   selector: 'app-product-modal',
@@ -10,13 +10,13 @@ import { Product } from 'src/app/classes/product/product';
 export class ProductModalComponent {
 
   @Input() fetchApplicationCredentials!: AppCredentials | null;
-  newProduct: Product = new Product("", "", 0, undefined, "");
+  newProduct: Product = new Product("", "", "", 0, "", "", "");
 
   resetProduct(fileInput: HTMLInputElement){
     this.newProduct.description = "";
     this.newProduct.name = "";
     this.newProduct.price = 0;
-    this.newProduct.imageUrl = undefined;
+    this.newProduct.imageUrl = "";
     fileInput.value = "";
   }
 
@@ -50,7 +50,7 @@ export class ProductModalComponent {
         document.getElementById("showImageError")!.hidden = true
       } else {
         document.getElementById("showImageError")!.hidden = false;
-        this.newProduct.imageUrl = undefined;
+        this.newProduct.imageUrl = "";
       }
      }
    }

@@ -8,28 +8,20 @@ import { IssueModalComponent } from './issue-modal/issue-modal.component';
 import { DropdownButtonComponent } from './dropdown-button/dropdown-button.component';
 import { SearchUserModalComponent } from './search-user-modal/search-user-modal.component';
 import { JiraLoginModalComponent } from './jira-login-modal/jira-login-modal.component';
-import { ProductListComponent } from './product-list/product-list.component';
-import { ProductBoxComponent } from './product-box/product-box.component';
-import { ApplicationLoginModalComponent } from './application-login-modal/application-login-modal.component';
-import { ProductModalComponent } from './product-modal/product-modal.component';
 import { MainPageIndexComponent } from './main-page-index/main-page-index.component';
-
-
+import { MageComponent } from './mage/mage.component';
 
 @NgModule({
   declarations: [
-    NavbarElementComponent, 
+    NavbarElementComponent,
     SidebarComponent,
     TaskbarComponent,
     IssueModalComponent,
     DropdownButtonComponent,
     SearchUserModalComponent,
     JiraLoginModalComponent,
-    ProductListComponent,
-    ProductBoxComponent,
-    ApplicationLoginModalComponent,
-    ProductModalComponent,
     MainPageIndexComponent,
+    MageComponent,
   ],
   imports: [
     CommonModule,
@@ -44,13 +36,10 @@ import { MainPageIndexComponent } from './main-page-index/main-page-index.compon
     DropdownButtonComponent,
     SearchUserModalComponent,
     JiraLoginModalComponent,
-    ProductListComponent,
-    ProductBoxComponent,
-    ApplicationLoginModalComponent,
-    ProductModalComponent,
     MainPageIndexComponent,
+    MageComponent,
   ]
 })
-export class ComponentsModule { 
-  
+export class ComponentsModule {
+
 }

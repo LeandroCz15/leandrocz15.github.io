@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProductBoxComponent } from './product-box.component';
+import { MageComponent } from './mage.component';
 
-describe('ProductBoxComponent', () => {
-  let component: ProductBoxComponent;
-  let fixture: ComponentFixture<ProductBoxComponent>;
+describe('MageComponent', () => {
+  let component: MageComponent;
+  let fixture: ComponentFixture<MageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProductBoxComponent ]
+      declarations: [ MageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ProductBoxComponent);
+    fixture = TestBed.createComponent(MageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
