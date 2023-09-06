@@ -2,11 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { Product } from "../classes/product";
 import { Credentials } from "src/app/login-module/credentials";
 
-
 @Component({
   selector: "app-product-view",
   templateUrl: "./product-view.component.html",
-  styleUrls: ["./product-view.component.css"]
+  styleUrls: ["./product-view.component.css"],
 })
 export class ProductViewComponent implements OnInit {
   productList: Array<Product> = [];
@@ -35,9 +34,5 @@ export class ProductViewComponent implements OnInit {
             product.description, product.price, product.creationDate, product.imageUrl, product.sku));
         });
       });
-  }
-
-  testF(){
-    console.log("down")
   }
 }

@@ -1,23 +1,21 @@
-<div class="d-flex flex-row mb-3 overflow-auto">
-    <div class="d-flex flex-column flex-nowrap flex-fill h-100 m-0 p-0" style="min-width: 20%;" cdkDrag>
-        <button class="form-control rounded-0 w-100" style="height: 45%;" cdkDrag>Test</button>
-        <input type="text" class="form-control rounded-0 w-100" style="height: 45%;">
+<div class="d-flex flex-column h-100 w-100">
+    <div class="d-flex w-100 overflow-auto" style="min-height: 12%; height: 12%;">
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;">
+            <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+                style="height: 45%;">Test</span>
+            <input type="text" class="form-control rounded-0" style="height: 45%;">
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;">
+            <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+                style="height: 45%;">Test</span>
+            <input type="text" class="form-control rounded-0" style="height: 45%;">
+        </div>
     </div>
-    <div class="d-flex flex-column flex-nowrap flex-fill h-100 m-0 p-0 mw-25" style="min-width: 20%;">
-        <button class="form-control rounded-0 w-100" style="height: 45%;">Test</button>
-        <input type="text" class="form-control rounded-0 w-100" style="height: 45%;">
+    <div class="flex-grow-1 w-100 overflow-auto">
+        <div class="row h-100 w-100 m-0 p-0 gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
+            <ng-container *ngFor="let singleProduct of productList; let i = index">
+                <app-product-card [product]="singleProduct"></app-product-card>
+            </ng-container>
+        </div>
     </div>
-    <div class="d-flex flex-column flex-nowrap flex-fill h-100 m-0 p-0 mw-25" style="min-width: 20%;">
-        <button class="form-control rounded-0 w-100" style="height: 45%;">Test</button>
-        <input type="text" class="form-control rounded-0 w-100" style="height: 45%;">
-    </div>
-    <div class="d-flex flex-column flex-nowrap flex-fill h-100 m-0 p-0 mw-25" style="min-width: 20%;">
-        <button class="form-control rounded-0 w-100" style="height: 45%;">Test</button>
-        <input type="text" class="form-control rounded-0 w-100" style="height: 45%;">
-    </div>
-</div>
-<div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-5 justify-content-center">
-    <ng-container *ngFor="let singleProduct of productList; let i = index">
-        <app-product-card [product]="singleProduct"></app-product-card>
-    </ng-container>
 </div>

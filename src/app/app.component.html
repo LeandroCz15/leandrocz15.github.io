@@ -6,20 +6,22 @@
 <app-email-modal></app-email-modal>
 
 <!--Mage-->
- <!-- <app-mage></app-mage> -->
+<!-- <app-mage></app-mage> -->
 
-<div class="container-fluid vw-100 vh-100 p-0 all-container">
+<!--Container of all the page-->
+<div class="container-fluid vw-100 vh-100 p-0 m-0 page-container">
 
-  <div class="row h-100 w-100 m-0">
+  <!--Row of all the page, same as his parent container-->
+  <div class="row h-100 w-100 p-0 m-0">
 
-    <div class="col-auto h-100 p-0">
-
+    <!--Column of the side bar-->
+    <div class="col-auto h-100 p-0 m-0">
       <!--Left taskbar-->
-      <div id="side-bar" class="d-flex flex-column flex-shrink-0 p-2 text-bg-dark h-100 side-bar">
+      <div id="side-bar" class="d-flex flex-column flex-shrink-0 p-2 bg-dark text-white h-100 side-bar">
 
         <a href="/" class="d-flex align-items-center justify-content-center">
 
-          <img src="assets/programming.svg" style="height: 50px; width: 50px;">
+          <img src="assets/ceibo.png" style="height: 50px; width: 100px; min-width: 100%; object-fit: scale-down">
 
         </a>
 
@@ -28,137 +30,148 @@
         <!--Add buttons here for left taskbar-->
         <ul class="nav flex-column mb-auto side-bar-btn-list">
 
-          <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg" (changePage)="updatePage($event)"></app-navbarelement>
+          <app-navbarelement pageNumber=0 title="Home" imagePath="assets/house-door.svg"
+            (changePage)="updatePage($event)"></app-navbarelement>
 
-          <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg" (changePage)="updatePage($event)"></app-navbarelement>
+          <app-navbarelement pageNumber=1 title="Jira log app" imagePath="assets/jira.svg"
+            (changePage)="updatePage($event)"></app-navbarelement>
 
-          <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg" (changePage)="updatePage($event)"></app-navbarelement>
+          <app-navbarelement pageNumber=2 title="Products" imagePath="assets/shop-bag.svg"
+            (changePage)="updatePage($event)"></app-navbarelement>
 
-          <app-navbarelement pageNumber=3 title="Emails" imagePath="assets/email.svg" (changePage)="updatePage($event)"></app-navbarelement>
+          <app-navbarelement pageNumber=3 title="Emails" imagePath="assets/email.svg"
+            (changePage)="updatePage($event)"></app-navbarelement>
 
         </ul>
 
         <hr>
-        
+
         <!--Dropdown button-->
         <div class="dropdown">
-          <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle side-bar-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <a href="#"
+            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle side-bar-dropdown"
+            data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
             <strong>mdo</strong>
           </a>
           <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal" *ngIf="jiraCredentials === null">Jira log in</button></li>
-            <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="jiraCredentials !== null">Jira log out</button></li>
-            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal" *ngIf="appCredentials === null">App log in</button></li>
-            <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="appCredentials !== null">App log out</button></li>
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#jiraLoginModal"
+                *ngIf="jiraCredentials === null">Jira log in</button></li>
+            <li><button class="dropdown-item" (click)="jiraLogout()" type="button" *ngIf="jiraCredentials !== null">Jira
+                log out</button></li>
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal"
+                *ngIf="appCredentials === null">App log in</button></li>
+            <li><button class="dropdown-item" (click)="appLogout()" type="button" *ngIf="appCredentials !== null">App
+                log out</button></li>
           </ul>
         </div>
       </div>
 
     </div>
 
-    <div class="col w-100 h-100 p-0">
+    <!--Column of the rest of page-->
+    <div class="col h-100 w-100 p-0 m-0 overflow-hidden">
 
-      <div class="container-fluid w-100 h-100 p-0 main-content-container d-flex flex-column">
+      <!--Top navigation bar-->
+      <nav id="navbar" class="navbar navbar-expand-lg bg-light navbar-dark top-navbar"
+        style="height: 10%; background-image: url('../assets/navbar-background.jpg'); background-size: cover; background-repeat: no-repeat;">
 
-        <nav id="navbar" class="navbar navbar-expand-lg bg-light navbar-dark bg-dark top-navbar">
+        <div class="container-fluid ps-0">
 
-          <div class="container-fluid ps-0">
+          <button class="top-navbar-btn bg-transparent p-0">
 
-            <button class="top-navbar-btn bg-dark p-0">
+            <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%" (click)="toggleSidebar()">
 
-              <img id="side-bar-toggler" src="assets/left-arrow.svg" width="100%" height="100%" (click)="toggleSidebar()">
+          </button>
 
-            </button>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled">Disabled</a>
+              </li>
+            </ul>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link disabled">Disabled</a>
-                </li>
-              </ul>
+            <div class="d-flex">
 
-              <div class="d-flex">
-
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal" *ngIf="appCredentials !== null && appCredentials.admin">Add product</button>
-
-              </div>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal"
+                *ngIf="appCredentials !== null && appCredentials.admin">Add product</button>
 
             </div>
 
           </div>
-          
-        </nav>
 
-        <div class="row w-100 m-0 flex-grow-1">
-          
-          <div class="col w-100 p-0 main-content-col">
+        </div>
 
-            <ng-container [ngSwitch]="selectedPageIndex">
+      </nav>
 
-              <ng-container *ngSwitchCase="0">
+      <!--Row with the rest of the page--><!--It is important that this row max-height is distributed along top navbar height (example: 10%-90%) -->
+      <div class="row h-100 w-100 p-0 m-0" style="max-height: 90%;">
 
-                <!-- <app-main-page-index></app-main-page-index> -->
+        <!--Column same as his parent row-->
+        <div class="col h-100 w-100 p-0 m-0 main-content-col">
 
-              </ng-container>
-          
-              <ng-container *ngSwitchCase="1">
+          <ng-container [ngSwitch]="selectedPageIndex">
 
-                <ng-container *ngIf="jiraCredentials !== null">
+            <ng-container *ngSwitchCase="0">
 
-                  <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput" [fetchJiraCredentials]="jiraCredentials" (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
-                
-                </ng-container>
+              <!-- <app-main-page-index></app-main-page-index> -->
 
-                <ng-container *ngIf="jiraCredentials === null">
+            </ng-container>
 
-                  <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                    
-                      <h1 class="text-break">You must log in via Jira login to use this app</h1>
+            <ng-container *ngSwitchCase="1">
 
-                      <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
+              <ng-container *ngIf="jiraCredentials !== null">
 
-                    </div>
-
-                </ng-container>
+                <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput"
+                  [fetchJiraCredentials]="jiraCredentials"
+                  (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
 
               </ng-container>
 
-              <ng-container *ngSwitchCase="2">
+              <ng-container *ngIf="jiraCredentials === null">
 
-                <app-product-view></app-product-view>
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
 
-              </ng-container>
+                  <h1 class="text-break">You must log in via Jira login to use this app</h1>
 
-              <ng-container *ngSwitchCase="3">
+                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
 
-                <app-email-view></app-email-view>
+                </div>
 
               </ng-container>
 
             </ng-container>
 
-          </div>
+            <app-product-view *ngSwitchCase="2"></app-product-view>
+
+            <app-email-view *ngSwitchCase="3"></app-email-view>
+
+          </ng-container>
 
         </div>
 
