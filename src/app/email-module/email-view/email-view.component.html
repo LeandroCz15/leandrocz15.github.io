@@ -4,12 +4,12 @@
 <div class="d-flex flex-column h-100 w-100">
   <!--Box with filters-->
   <div #scrollable1 class="d-flex w-100 overflow-auto hide-scrollbar" style="min-height: 11%; height: 11%;" (scroll)="syncScroll(0)">
-    <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in filters (1st with flex-grow-1)-->
+    <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in filters (1st with flex-grow-1)-->
       <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
         style="height: 45%;">Test</span>
       <input type="text" class="form-control rounded-0" style="height: 45%;">
     </div>
-    <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in filters-->
+    <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in filters-->
       <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
         style="height: 45%;">Test</span>
       <input type="text" class="form-control rounded-0" style="height: 45%;">
@@ -19,221 +19,221 @@
   <div #scrollable2 class="flex-grow-1 w-100 overflow-auto" (scroll)="syncScroll(1)">
     <div class="d-flex flex-column w-100">
       <div class="d-flex w-100"><!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row(1st with flex-grow-1)-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row(1st with flex-grow-1)-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100" cdkDrag> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-      </div>
-      <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-            style="height: 45%;">Test</span>
-        </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100"> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100"> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100"> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100"> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+      </div>
+      <div class="d-flex w-100"> <!--This is start of a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
+          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
+            style="height: 45%;">Test</span>
+        </div>
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>
       </div>
       <div class="d-flex w-100"> <!--This is start of a row-->
-        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
             style="height: 45%;">Test</span>
         </div>
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row-->
+        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"><!--This is start of a column in a row-->
           <button class="btn btn-primary justify-content-center align-items-center input-group-text rounded-0 text-centered w-100"
             style="height: 45%;">Test</button>
         </div>

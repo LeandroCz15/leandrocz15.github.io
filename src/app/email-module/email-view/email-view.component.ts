@@ -1,12 +1,15 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EmailService } from "../email-services/email.service";
 import { Credentials } from "src/app/login-module/credentials";
+import { CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
+import { NgFor } from "@angular/common";
 
 @Component({
   selector: "app-email-view",
   templateUrl: "./email-view.component.html",
-  styleUrls: ["./email-view.component.css"]
+  styleUrls: ["./email-view.component.css"],
 })
+
 export class EmailViewComponent implements OnInit, AfterViewInit {
 
   @ViewChild('scrollable1') scrollable1!: ElementRef;
