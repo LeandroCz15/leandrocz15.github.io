@@ -1,9 +1,9 @@
 <app-email-address-modal></app-email-address-modal>
 
 <!--All the available screen (aside top and side navbar)-->
-<div class="d-flex flex-column h-100 w-100 p-0 m-0" style="overflow-x: auto;">
+<div class="d-flex flex-column h-100 w-100">
   <!--Box with filters-->
-  <div class="d-flex w-100" style="min-height: 12%; height: 12%;">
+  <div #scrollable1 class="d-flex w-100 overflow-auto hide-scrollbar" style="min-height: 11%; height: 11%;" (scroll)="syncScroll(0)">
     <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in filters (1st with flex-grow-1)-->
       <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
         style="height: 45%;">Test</span>
@@ -16,7 +16,7 @@
     </div>
   </div>
   <!--Available screen aside box with filters-->
-  <div class="flex-grow-1 w-100" style="overflow-y: scroll; overflow-x: hidden; min-width: 100%;">
+  <div #scrollable2 class="flex-grow-1 w-100 overflow-auto" (scroll)="syncScroll(1)">
     <div class="d-flex flex-column w-100">
       <div class="d-flex w-100"><!--This is start of a row-->
         <div class="flex-grow-1 h-100 w-100 p-0 m-0" style="min-width: 60%;"><!--This is start of a column in a row(1st with flex-grow-1)-->

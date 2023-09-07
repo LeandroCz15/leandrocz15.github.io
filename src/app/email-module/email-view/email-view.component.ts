@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EmailService } from "../email-services/email.service";
 import { Credentials } from "src/app/login-module/credentials";
 
@@ -7,7 +7,10 @@ import { Credentials } from "src/app/login-module/credentials";
   templateUrl: "./email-view.component.html",
   styleUrls: ["./email-view.component.css"]
 })
-export class EmailViewComponent implements OnInit {
+export class EmailViewComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('scrollable1') scrollable1!: ElementRef;
+  @ViewChild('scrollable2') scrollable2!: ElementRef;
 
   public programmedEmailList: Array<{
     id: string,
@@ -43,6 +46,18 @@ export class EmailViewComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit() {
+    this.checkOverflow();
+  }
+
+  checkOverflow() {
+    if (this.scrollable2.nativeElement.scrollHeight > this.scrollable2.nativeElement.clientHeight) {
+      this.scrollable1.nativeElement.style.maxWidth = `calc(100% - 9px)`;
+    } else {
+      this.scrollable1.nativeElement.style.maxWidth = '100%';
+    }
+  }
+
   openProgrammedEmail(programmedEmail: any) {
     // Open a programmed email modal after clicking it
     programmedEmail.appUsser = this.credentials.getUsserId()!;
@@ -69,6 +84,14 @@ export class EmailViewComponent implements OnInit {
   trackByFn(index: number, item: any): number {
     // Function needed for *ngFor loop
     return index;
+  }
+
+  syncScroll(isListScroll: number) {
+    if (isListScroll) {
+      this.scrollable1.nativeElement.scrollLeft = this.scrollable2.nativeElement.scrollLeft;
+    } else {
+      this.scrollable2.nativeElement.scrollLeft = this.scrollable1.nativeElement.scrollLeft
+    }
   }
 
 }
