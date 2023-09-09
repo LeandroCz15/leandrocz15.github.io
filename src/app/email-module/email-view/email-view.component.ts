@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EmailService } from "../email-services/email.service";
 import { Credentials } from "src/app/login-module/credentials";
-import { CdkDrag, CdkDropList } from "@angular/cdk/drag-drop";
-import { NgFor } from "@angular/common";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { KeyValue } from "@angular/common";
 
 @Component({
   selector: "app-email-view",
@@ -12,8 +12,8 @@ import { NgFor } from "@angular/common";
 
 export class EmailViewComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('scrollable1') scrollable1!: ElementRef;
-  @ViewChild('scrollable2') scrollable2!: ElementRef;
+  @ViewChild('emailViewFilters') emailViewFilters!: ElementRef;
+  @ViewChild('emailViewRows') emailViewRows!: ElementRef;
 
   public programmedEmailList: Array<{
     id: string,
@@ -24,7 +24,15 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
     sendSecond: number,
   }> = [];
 
-  constructor(private emailService: EmailService, public credentials: Credentials) { }
+  //Amount of filters
+  public filtersBox: string[] = ["Letras", "Nombres", "Numeros"];
+  //Amount of rows
+  public rows: any[] = [{ id: "A", name: "Test", xd: "1" }, { id: "B", name: "Leandro", xd: "2" }];
+  //Amount of columns for each row
+  public rowValues: string[] = ["A", "B"];
+
+  constructor(private emailService: EmailService, public credentials: Credentials) { 
+  }
 
   ngOnInit() {
     this.fetchProgrammedEmailList();
@@ -51,14 +59,6 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkOverflow();
-  }
-
-  checkOverflow() {
-    if (this.scrollable2.nativeElement.scrollHeight > this.scrollable2.nativeElement.clientHeight) {
-      this.scrollable1.nativeElement.style.maxWidth = `calc(100% - 9px)`;
-    } else {
-      this.scrollable1.nativeElement.style.maxWidth = '100%';
-    }
   }
 
   openProgrammedEmail(programmedEmail: any) {
@@ -91,10 +91,47 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
 
   syncScroll(isListScroll: number) {
     if (isListScroll) {
-      this.scrollable1.nativeElement.scrollLeft = this.scrollable2.nativeElement.scrollLeft;
+      this.emailViewFilters.nativeElement.scrollLeft = this.emailViewRows.nativeElement.scrollLeft;
     } else {
-      this.scrollable2.nativeElement.scrollLeft = this.scrollable1.nativeElement.scrollLeft
+      this.emailViewRows.nativeElement.scrollLeft = this.emailViewFilters.nativeElement.scrollLeft;
     }
+  }
+
+  checkOverflow() {
+    if (this.emailViewRows.nativeElement.scrollHeight > this.emailViewRows.nativeElement.clientHeight) {
+      this.emailViewFilters.nativeElement.style.maxWidth = `calc(100% - 9px)`;
+    } else {
+      this.emailViewFilters.nativeElement.style.maxWidth = '100%';
+    }
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.filtersBox, event.previousIndex, event.currentIndex);
+      if (this.rows.length > 0) {
+        let updatedRows = [];
+        let properties: string[] = Object.keys(this.rows[0]);
+        moveItemInArray(properties, event.previousIndex, event.currentIndex);
+        for (let row of this.rows) {
+          updatedRows.push(this.reorderObject(row, properties));
+        }
+        this.rows = updatedRows;
+      }
+      //moveItemInArray(this.rowValues, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  reorderObject(obj: any, properties: string[]): void {
+    let newObj: any = {};
+    for (let property of properties) {
+      newObj[property] = obj[property];
+    }
+    return newObj;
+  }
+
+  sortKeys(a: KeyValue<number, string>, b: KeyValue<number, string>): number {
+    let filtersBox: string[] = ["Letras", "Nombres", "Numeros"];
+    return filtersBox.indexOf(a.key.toString()) > filtersBox.indexOf(b.key.toString()) ? 1 : 0;
   }
 
 }

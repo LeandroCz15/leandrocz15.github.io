@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Product } from "../classes/product";
 import { Credentials } from "src/app/login-module/credentials";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-product-view",
@@ -9,6 +10,8 @@ import { Credentials } from "src/app/login-module/credentials";
 })
 export class ProductViewComponent implements OnInit {
   productList: Array<Product> = [];
+
+  movies: string[] = ["A", "B"]
 
   ngOnInit() {
     this.fetchProducts();
@@ -34,5 +37,9 @@ export class ProductViewComponent implements OnInit {
             product.description, product.price, product.creationDate, product.imageUrl, product.sku));
         });
       });
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.movies, event.previousIndex, event.currentIndex);
   }
 }

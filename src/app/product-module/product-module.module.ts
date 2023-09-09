@@ -4,7 +4,7 @@ import { ProductCardComponent } from './product-card/product-card.component';
 import { ProductViewComponent } from './product-view/product-view.component';
 import { ProductModalComponent } from './product-modal/product-modal.component';
 import { Credentials } from '../login-module/credentials';
-import { CdkDrag } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -14,7 +14,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
   ],
   imports: [
     CommonModule,
-    CdkDrag
+    DragDropModule
   ],
   exports: [
     ProductCardComponent,

@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { TwoDigitPipe } from './two-digit.pipe';
 import { EmailAddressModalComponent } from './email-address-modal/email-address-modal.component';
 import { AddressService } from './email-services/address.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { AddressService } from './email-services/address.service';
   imports: [
     CommonModule,
     FormsModule,
+    DragDropModule,
   ],
   exports: [
     EmailViewComponent,
