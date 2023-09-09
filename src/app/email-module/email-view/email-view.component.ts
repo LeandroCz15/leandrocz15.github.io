@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, ViewChild } from "@angular/core";
 import { EmailService } from "../email-services/email.service";
 import { Credentials } from "src/app/login-module/credentials";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
@@ -15,6 +15,8 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
   @ViewChild('emailViewFilters') emailViewFilters!: ElementRef;
   @ViewChild('emailViewRows') emailViewRows!: ElementRef;
 
+  public reload: boolean = true;
+
   public programmedEmailList: Array<{
     id: string,
     name: string,
@@ -25,16 +27,18 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
   }> = [];
 
   //Amount of filters
-  public filtersBox: string[] = ["Letras", "Nombres", "Numeros"];
+  public filtersBox: string[] = ["id", "name", "number"];
   //Amount of rows
-  public rows: any[] = [{ id: "A", name: "Test", xd: "1" }, { id: "B", name: "Leandro", xd: "2" }];
-  //Amount of columns for each row
-  public rowValues: string[] = ["A", "B"];
+  public rows: any[] = [{ id: "A", name: "Test", number: 1 }, { id: "B", name: "Leandro", number: 2 }];
 
-  constructor(private emailService: EmailService, public credentials: Credentials) { 
+  constructor(private emailService: EmailService, public credentials: Credentials) {
   }
 
   ngOnInit() {
+    let i;
+    for (i = 0; i < 10000; i++) {
+      this.rows.push({ id: "A", name: "Test", number: 1 })
+    }
     this.fetchProgrammedEmailList();
     this.emailService.getUpdateProgrammedEmailObservable().subscribe(
       info => {
@@ -108,6 +112,8 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(this.filtersBox, event.previousIndex, event.currentIndex);
+      this.reloadRowView();
+      /*
       if (this.rows.length > 0) {
         let updatedRows = [];
         let properties: string[] = Object.keys(this.rows[0]);
@@ -117,21 +123,18 @@ export class EmailViewComponent implements OnInit, AfterViewInit {
         }
         this.rows = updatedRows;
       }
+      */
       //moveItemInArray(this.rowValues, event.previousIndex, event.currentIndex);
     }
   }
 
-  reorderObject(obj: any, properties: string[]): void {
-    let newObj: any = {};
-    for (let property of properties) {
-      newObj[property] = obj[property];
-    }
-    return newObj;
+  public reloadRowView() {
+    setTimeout(() => this.reload = false);
+    setTimeout(() => this.reload = true);
   }
 
-  sortKeys(a: KeyValue<number, string>, b: KeyValue<number, string>): number {
-    let filtersBox: string[] = ["Letras", "Nombres", "Numeros"];
-    return filtersBox.indexOf(a.key.toString()) > filtersBox.indexOf(b.key.toString()) ? 1 : 0;
+  sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
+    return this.filtersBox.indexOf(a.key.toString()) > this.filtersBox.indexOf(b.key.toString()) ? 1 : -1;
   }
 
 }
