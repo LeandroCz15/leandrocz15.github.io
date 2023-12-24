@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Product } from "../classes/product";
-import { Credentials } from "src/app/login-module/credentials";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { AuthService } from "src/app/login-module/auth-service";
 
 @Component({
   selector: "app-product-view",
@@ -17,16 +17,16 @@ export class ProductViewComponent implements OnInit {
     this.fetchProducts();
   }
 
-  constructor(public credentials: Credentials) { }
+  constructor(public authService: AuthService) { }
 
   async fetchProducts() {
-    if (this.credentials.getUsserId() == "") {
+    if (this.authService.getUser().id == "") {
       return;
     }
     fetch("http://localhost:8080/api/product/*", {
       method: "GET",
       headers: {
-        "Authorization": "Basic " + btoa(this.credentials.getEmail() + ":" + this.credentials.getPassword()),
+        "Authorization": "Basic " + btoa(this.authService.getUser().email + ":" + this.authService.getUser().password),
         "Accept": "application/json",
         "Origin": "https://leandrocz15.github.io/"
       }

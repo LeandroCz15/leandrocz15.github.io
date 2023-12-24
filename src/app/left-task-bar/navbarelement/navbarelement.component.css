@@ -1,0 +1,35 @@
+.navbar-button {
+  transition-duration: 0.2s;
+  border-radius: 8px;
+  background-color: #212529;
+  border-color: #212529;
+  border: 0;
+  white-space: nowrap;
+  padding: 6px 0px 6px 7px;
+}
+
+.navbar-button:hover {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+/* Replace of toggleSidebar() with pure CSS */
+
+.btn-text {
+  top: 3px;
+  left: 2px;
+  position: relative;
+  display: inline;
+}
+
+@media screen and (max-width: 500px) {
+
+  .btn-text {
+    top: 3px;
+    left: 2px;
+    position: relative;
+    display: none;
+  }
+}
+
+/* End replace of toggleSidebar() with pure CSS */

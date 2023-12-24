@@ -5,26 +5,29 @@
   <!--Box with filters-->
   <div #emailViewFilters class="d-flex w-100 overflow-auto hide-scrollbar" style="min-height: 11%; height: 11%;"
     (scroll)="syncScroll(0)" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-    <div class="flex-grow-1" style="min-width: 20%;" *ngFor="let filterColumn of filtersBox" cdkDrag
-      cdkDragLockAxis="x"><!--This is start of a column in filters-->
-      <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered"
-        style="height: 45%;"> {{filterColumn}} </span>
-      <input type="text" class="form-control rounded-0" style="height: 45%;">
+    <div class="flex-grow-1" style="min-width: 20%;" *ngFor="let filter of filters ; let i = index; trackBy: trackByFn"
+      cdkDrag cdkDragLockAxis="x"><!--This is start of a column in filters-->
+      <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered user-select-none"
+        style="height: 45%;"> {{filter.name}} </span>
+      <input [attr.id]="'emailview_input_' + i" #input type="text" class="form-control rounded-0" style="height: 45%;"
+        (keyup.enter)="filterRows(i, input.value)">
     </div>
   </div>
   <!--Available screen aside box with filters-->
-  <div #emailViewRows class="flex-grow-1 w-100 overflow-auto" (scroll)="syncScroll(1)">
+  <div #emailViewRows class="flex-grow-1 w-100 h-10 overflow-auto" (scroll)="syncScroll(1)"> <!--h-10 is custom-->
     <div class="d-flex flex-column w-100">
-
-      
-      <div class="d-flex w-100" *ngFor="let row of rows"><!--This is start of a row-->
+      <div class="d-flex w-100" *ngFor="let row of renderedRows; let i = index; trackBy: trackByFn">
         <ng-container *ngIf="reload">
-        <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;" *ngFor="let obj of row | keyvalue: sortKeys">
-          <!--This is start of a column in a row-->
-          <span class="justify-content-center align-items-center input-group-text rounded-0 text-centered" style="min-height: 100%;"> {{ obj.value }}
-          </span>
-        </div>
-      </ng-container>
+          <!--This is start of a row-->
+          <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"
+            *ngFor="let obj of row | keyvalue: sortKeys ; let i = index; trackBy: trackByFn">
+            <!--This is start of a column in a row-->
+            <span
+              class="justify-content-center align-items-center input-group-text rounded-0 text-centered user-select-none">
+              {{ obj.value }}
+            </span>
+          </div>
+        </ng-container>
       </div>
     </div>
 
@@ -42,5 +45,50 @@
       </button>
     </div>
     -->
+  </div>
+  <!--Footer-->
+  <div #footer class="d-flex flex-column justify-content-center w-100 h-10">
+    <div class="w-100 footer bg-dark" style="height: 50px; min-height: 50px;" (mousedown)="startDragging($event)"
+      (mouseup)="stopDragging()" (mousemove)="test($event)">
+    </div>
+
+    <div class="flex-grow-1 w-100" style="overflow: hidden;">
+      <div class="d-flex flex-column w-100 h-100">
+        <!--Box with filters-->
+        <div #belowFilters class="d-flex w-100 overflow-auto hide-scrollbar" style="height: 10vh;" cdkDropList
+          cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+          <div class="flex-grow-1" style="min-width: 20%;"
+            *ngFor="let filter of filters ; let i = index; trackBy: trackByFn" cdkDrag cdkDragLockAxis="x">
+            <!--This is start of a column in filters-->
+            <span
+              class="justify-content-center align-items-center input-group-text rounded-0 text-centered user-select-none"
+              style="height: 45%;"> {{filter.name}} </span>
+            <input [attr.id]="'emailview_input_' + i" #input type="text" class="form-control rounded-0"
+              style="height: 45%;" (keyup.enter)="filterRows(i, input.value)">
+          </div>
+        </div>
+
+        <div #belowRows class="h-100 w-100 overflow-auto">
+          <div class="d-flex w-100 p-0 m-0" style="min-width: 20%;"
+            *ngFor="let row of renderedRows; let i = index; trackBy: trackByFn">
+            <ng-container *ngIf="reload">
+              <!--This is start of a row-->
+              <div class="h-100 w-100 p-0 m-0" style="min-width: 20%;"
+                *ngFor="let obj of row | keyvalue: sortKeys ; let i = index; trackBy: trackByFn">
+                <!--This is start of a column in a row-->
+                <span
+                  class="justify-content-center align-items-center input-group-text rounded-0 text-centered user-select-none">
+                  {{ obj.value }}
+                </span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+
+
+
+      </div>
+    </div>
   </div>
 </div>

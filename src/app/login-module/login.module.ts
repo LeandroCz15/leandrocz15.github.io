@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Credentials } from './credentials';
+import { AuthService } from './auth-service';
 import { ApplicationLoginModalComponent } from './application-login-modal/application-login-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -17,7 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ApplicationLoginModalComponent
   ],
   providers: [
-    Credentials,
+    AuthService,
   ]
 })
 export class LoginModule { }

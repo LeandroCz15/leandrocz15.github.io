@@ -5,11 +5,7 @@
   strong {
     margin-left: 5px;
   }
-
-  .side-bar-dropdown {
-    margin-left: 2.5px
-  }
-
+  
   .side-bar-btn-list {
     overflow-x: hidden;
     overflow-y: auto;
@@ -26,7 +22,6 @@
   .page-container {
     min-width: 350px;
   }
-  
 
   /* width */
   ::-webkit-scrollbar {

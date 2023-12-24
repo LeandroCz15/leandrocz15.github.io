@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EmailService } from "../email-services/email.service";
-import { Credentials } from "src/app/login-module/credentials";
+import { AuthService } from "src/app/login-module/auth-service";
 import { AddressService } from "../email-services/address.service";
 
 @Component({
@@ -46,7 +46,7 @@ export class EmailModalComponent implements OnInit {
       addresses: [],
     };
 
-  constructor(private emailService: EmailService, private credentials: Credentials, private addressService: AddressService) { }
+  constructor(private emailService: EmailService, private authService: AuthService, private addressService: AddressService) { }
 
   ngOnInit() {
     this.emailService.getSelectedEmailObservable().subscribe(
@@ -74,10 +74,10 @@ export class EmailModalComponent implements OnInit {
     let postProgrammedEmail = await fetch("http://localhost:8080/api/programmedemail", {
       method: "POST",
       headers: {
-        "Authorization": "Basic " + btoa(this.credentials.getEmail() + ":" + this.credentials.getPassword()),
+        "Authorization": "Basic " + btoa(this.authService.getUser().email + ":" + this.authService.getUser().password),
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "X-CSRF-TOKEN": this.credentials.getToken()!
+        "X-CSRF-TOKEN": this.authService.getToken()!
       },
       body: JSON.stringify(this.programmedEmail)
     });

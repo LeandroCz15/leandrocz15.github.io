@@ -1,0 +1,42 @@
+<a href="/" class="d-flex align-items-center justify-content-center">
+    <img src="assets/ceibo.png" style="height: 50px; width: 100px; min-width: 100%; object-fit: scale-down">
+</a>
+<hr>
+<!--Menu items-->
+<div class="overflow-auto" *ngIf="viewReady; else elseBlock">
+    <app-navbarelement
+        *ngFor="let item of menuItems; let i = index; trackBy: trackByFn"
+        viewIdReference="{{item.viewId}}"
+        title="{{item.title}}"
+        imagePath="{{item.imageSrc}}"
+        buttonIndex="{{i}}"
+    ></app-navbarelement>
+</div>
+<ng-template #elseBlock>
+    <div class="d-flex h-100 justify-content-center align-items-center">
+        <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
+    </div>
+</ng-template>
+<!--
+<ul class="nav flex-column mb-auto side-bar-btn-list">
+    <app-navbarelement viewIdReference="6a822f89-3830-4ec2-9d70-0100332cfd83" title="Home"
+        imagePath="assets/house-door.svg"></app-navbarelement>
+    <app-navbarelement viewIdReference=1 title="Jira log app" imagePath="assets/jira.svg"></app-navbarelement>
+    <app-navbarelement viewIdReference=2 title="Products" imagePath="assets/shop-bag.svg"></app-navbarelement>
+    <app-navbarelement viewIdReference=3 title="Emails" imagePath="assets/email.svg"></app-navbarelement>
+</ul>
+-->
+<hr>
+<!--Dropdown button-->
+<a href="#" class="d-flex mt-auto align-items-center text-white text-decoration-none dropdown-toggle"
+    data-bs-toggle="dropdown" aria-expanded="false">
+    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+    <div class="mw-25 overflow-hidden">
+        <strong class="d-block text-truncate">foidsyufsduiofdasdasdsadss</strong>
+    </div>
+</a>
+<ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#appLoginModal">App
+            login</button></li>
+    <li><button class="dropdown-item" type="button">App log out</button></li>
+</ul>

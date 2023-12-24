@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavbarElementComponent } from './navbarelement/navbarelement.component'
 import { SidebarComponent } from './sidebar/sidebar.component'
 import { TaskbarComponent } from './taskbar/taskbar.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +12,6 @@ import { MageComponent } from './mage/mage.component';
 
 @NgModule({
   declarations: [
-    NavbarElementComponent,
     SidebarComponent,
     TaskbarComponent,
     IssueModalComponent,
@@ -29,7 +27,6 @@ import { MageComponent } from './mage/mage.component';
     ReactiveFormsModule,
   ],
   exports: [
-    NavbarElementComponent,
     SidebarComponent,
     TaskbarComponent,
     IssueModalComponent,

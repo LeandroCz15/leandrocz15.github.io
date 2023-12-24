@@ -1,0 +1,45 @@
+<div #filterContainer
+    class="d-flex overflow-auto w-100 hide-scrollbar"
+    cdkDropList cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="dropFilterColumn($event)">
+    <ng-container *ngFor="let filter of filters ; let i = index; trackBy: trackByFn">
+        <div
+            *ngIf="filter.showInTab"
+            class="filter-box"
+            cdkDrag
+            cdkDragLockAxis="x">
+            <!--This is start of a column in filters-->
+            <span
+                class="justify-content-center align-items-center input-group-text rounded-0 text-centered filter-name">
+                {{filter.label}}
+            </span>
+            <ng-container [ngSwitch]="filter.type">
+                <!--Text case-->
+                <input
+                *ngSwitchCase="'text'"
+                [type]="filter.type"
+                class="form-control rounded-0 filter-input"
+                (keyup.enter)="processTextInputChange(i)"
+                [(ngModel)]="filter.value">
+                <!--Checkbox case-->
+                <input
+                *ngSwitchCase="'checkbox'"
+                #checkBoxInput
+                [type]="filter.type"
+                class="form-check-input rounded-0 filter-input checkbox-input"
+                [checked]="filter.value"
+                (click)="processCheckBoxChange(i, checkBoxInput.checked)">
+            </ng-container>
+            <mat-form-field>
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input matStartDate placeholder="Start date">
+                  <input matEndDate placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+        </div>
+    </ng-container>
+</div>

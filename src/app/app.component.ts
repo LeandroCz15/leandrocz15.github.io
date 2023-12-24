@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { event } from 'jquery';
 import { AppCredentials } from './classes/app-credentials/app-credentials';
 import { Issue } from './classes/issue/issue';
@@ -9,10 +9,10 @@ import { JiraLoginCredentials } from './classes/jira-login-credentials/jira-logi
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements OnInit {
 
   /* Page index variable */
-  selectedPageIndex : string = "0";
+  selectedPageIndex : string = "100";
 
   /* Jira integration related variables */
   issuesToInput : Issue[] = [];
@@ -67,10 +67,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#212529";
     document.getElementById(newPageIndex)!.style.backgroundColor = "#0d6efd";
     this.selectedPageIndex = newPageIndex;
-  }
-
-  ngAfterViewInit(){
-    document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#0d6efd";
   }
 
   ngOnInit(){

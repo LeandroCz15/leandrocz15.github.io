@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from './product-card/product-card.component';
 import { ProductViewComponent } from './product-view/product-view.component';
 import { ProductModalComponent } from './product-modal/product-modal.component';
-import { Credentials } from '../login-module/credentials';
+import { AuthService } from '../login-module/auth-service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
@@ -22,7 +22,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     ProductModalComponent,
   ],
   providers: [
-    Credentials,
+    AuthService,
   ]
 })
 export class ProductModule { }

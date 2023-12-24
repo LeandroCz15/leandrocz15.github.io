@@ -7,6 +7,8 @@ import { MageComponent } from './components/mage/mage.component';
 import { EmailModule } from './email-module/email.module';
 import { LoginModule } from './login-module/login.module';
 import { ProductModule } from './product-module/product-module.module';
+import { BasicViewModule } from './basic-view/basic-view.module';
+import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { ProductModule } from './product-module/product-module.module';
     EmailModule,
     LoginModule,
     ProductModule,
+    BasicViewModule,
+    LeftTaskbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

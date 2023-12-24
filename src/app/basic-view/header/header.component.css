@@ -1,0 +1,22 @@
+.filter-box {
+    min-width: 20%;
+    flex: 1;
+}
+
+.filter-name {
+    height: 45%;
+    user-select: none;
+}
+
+.filter-input{
+    height: 45%;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.checkbox-input{
+    width: 100%;
+    margin-top: 0;
+}
