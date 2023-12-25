@@ -7,7 +7,7 @@
             [viewComponent]="this" [openRowFormSubject]="openRowFormSubject"></app-rows>
         <app-pagination [paginationChangeSubject]="paginationChangeSubject"
             class="d-flex align-items-center bg-dark h-10"></app-pagination>
-        <app-row-form [openRowFormSubject]="openRowFormSubject"></app-row-form>
+        <app-row-form [openRowFormSubject]="openRowFormSubject" [filters]="currentTabFilters"></app-row-form>
     </ng-container>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">
