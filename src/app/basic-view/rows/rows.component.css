@@ -2,12 +2,7 @@
     background-color: #e9ecef;
 }
 
-.row-key-block {
-    background-color: #e9ecef;
+.grid-row:hover .row-key-span {
+    background-color: #4b91f9;
+    border: 0;
 }
-
-.row-key-block:hover {
-    background-color: #020406;
-}
-
-/* 56a1ec */

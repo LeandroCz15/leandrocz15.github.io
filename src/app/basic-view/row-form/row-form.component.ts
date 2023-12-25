@@ -24,12 +24,13 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.openRowFormSubscription.unsubscribe();
   }
 
+  // Set modal element reference
   ngAfterViewInit(): void {
     this.modalElement = document.getElementById("rowModal") as Element;
   }
 
+  // Show modal
   updateModal(row: any) {
-    console.log(row);
     bootstrap.Modal.getOrCreateInstance(this.modalElement).show();
   }
 

@@ -1,11 +1,11 @@
 <div #rowContainer class="w-100 h-100 overflow-auto" (scroll)="syncScroll()">
     <div class="d-flex flex-column w-100">
         <ng-container *ngIf="reload">
-            <div class="d-flex w-100" (click)="openRowInFormMode(row)"
+            <div class="d-flex w-100 grid-row" (click)="openRowInFormMode(row)"
                 *ngFor="let row of rows; let i = index; trackBy: trackByFn">
                 <!--This is start of a row-->
                 <ng-container *ngFor="let obj of row | keyvalue: sortKeys; let i = index; trackBy: trackByFn">
-                    <div *ngIf="i | shouldShow: this" class="h-100 w-100 p-0 m-0 row-key-block"
+                    <div *ngIf="i | shouldShow: this" class="h-100 w-100"
                         style="min-width: 20%; text-overflow: ellipsis;">
                         <!--This is start of a column in a row-->
                         <span class="align-items-center input-group-text rounded-0 d-block row-key-span text-truncate">

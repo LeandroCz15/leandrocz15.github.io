@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, HttpMethod } from 'src/app/login-module/auth-service';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-left-taskbar',
@@ -23,6 +24,11 @@ export class LeftTaskbarComponent implements OnInit {
     }, (response: Response) => {
       console.log(`Error while retrieving menu items: Error status: ${response.status}`);
     });
+  }
+
+  // Opens the login modal
+  openLoginModal(): void {
+    bootstrap.Modal.getOrCreateInstance("#appLoginModal").show();
   }
 
   // Function to keep track of rows using the index given by the *ngFor
