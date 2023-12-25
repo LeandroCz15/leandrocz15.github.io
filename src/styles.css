@@ -61,9 +61,3 @@
 .footer:hover {
   cursor: ns-resize;
 }
-
-/* 10% height */
-.h-10 {
-  height: 10%;
-  min-height: 10%;
-}

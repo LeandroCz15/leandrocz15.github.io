@@ -7,6 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PaginationComponent } from './pagination/pagination.component';
 import { ShouldShowPipe } from './should-show.pipe';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RowFormComponent } from './row-form/row-form.component';
+
 
 
 
@@ -16,12 +23,18 @@ import { ShouldShowPipe } from './should-show.pipe';
     RowsComponent,
     ViewComponent,
     PaginationComponent,
-    ShouldShowPipe
+    ShouldShowPipe,
+    RowFormComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     DragDropModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    BrowserModule,
+    BrowserAnimationsModule
   ],
   exports: [
     ViewComponent

@@ -1,12 +1,13 @@
 <div class="d-flex flex-column h-100 w-100">
     <ng-container *ngIf="viewReady; else elseBlock">
         <app-header [reloadViewSubject]="reloadViewSubject" [filters]="currentTabFilters"
-            [handleInputChangeSubject]="handleInputChangeSubject"></app-header>
-        <app-rows class="flex-grow-1 h-10" [reloadViewSubject]="reloadViewSubject"
+            [handleInputChangeSubject]="handleInputChangeSubject" [viewComponent]="this"></app-header>
+        <app-rows class="flex-grow-1" [reloadViewSubject]="reloadViewSubject"
             [handleInputChangeSubject]="handleInputChangeSubject" [paginationChangeSubject]="paginationChangeSubject"
-            [viewComponent]="this"></app-rows>
+            [viewComponent]="this" [openRowFormSubject]="openRowFormSubject"></app-rows>
         <app-pagination [paginationChangeSubject]="paginationChangeSubject"
             class="d-flex align-items-center bg-dark h-10"></app-pagination>
+        <app-row-form [openRowFormSubject]="openRowFormSubject"></app-row-form>
     </ng-container>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">

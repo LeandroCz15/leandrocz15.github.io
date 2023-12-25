@@ -1,9 +1,9 @@
 <div class="input-group">
-  <button type="button" class="btn btn-secondary" (click)="fetchPreviousPage()"><img
+  <button type="button" class="btn btn-secondary rounded-0" (click)="fetchPreviousPage()"><img
       src="assets/arrow-left.svg"></button>
-  <button type="button" class="btn btn-secondary" (click)="fetchNextPage()"><img src="assets/arrow-right.svg"></button>
+  <button type="button" class="btn btn-secondary rounded-0" (click)="fetchNextPage()"><img src="assets/arrow-right.svg"></button>
   <div class="input-group-text" id="btnGroupAddon">{{currentFetchSize}}</div>
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+  <button class="btn btn-secondary dropdown-toggle rounded-0" type="button" data-bs-toggle="dropdown"
     aria-expanded="false"></button>
   <ul class="dropdown-menu">
     <li><a class="dropdown-item" (click)="changeFetchSize($event)">25</a></li>

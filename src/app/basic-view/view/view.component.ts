@@ -41,13 +41,19 @@ export class ViewComponent implements OnInit {
   public scrollSubject: Subject<ElementRef> = new Subject<ElementRef>;
 
   // Service to reload the view
-  public reloadViewSubject: Subject<any> = new Subject<any>;
+  public reloadViewSubject: Subject<void> = new Subject<void>;
 
   // Service to handle input change in the filters
   public handleInputChangeSubject: Subject<any> = new Subject<any>;
 
   // Service to fetch data when the user interacts with the pagination component
   public paginationChangeSubject: Subject<any> = new Subject<any>;
+
+  // Service to send data to a modal when clicking in a row
+  public openRowFormSubject: Subject<any> = new Subject<any>;
+
+  // Object of keys indexed to make sort algorithm faster. ONLY TO PASS TO CHILD
+  public sortObject: any;
 
   constructor(private authService: AuthService, private pageChangeService: SelectPageService) { }
 
@@ -65,6 +71,7 @@ export class ViewComponent implements OnInit {
   fetchMainTabInformation() {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
+      this.createReloadObject();
       this.viewReady = true;
     }, (response: Response) => {
       console.log(`Error while fetching data of the view with id: ${this.viewId}. Error status: ${response.status}`);
@@ -72,7 +79,7 @@ export class ViewComponent implements OnInit {
   }
 
   /**
-   * This function sets all the filters needed to be render by the current view
+   * This function sets all the filters needed to be render by the current view. Adding some properties to the objects
    * 
    * @param data Data containing the filters to be rendered
    */
@@ -86,6 +93,17 @@ export class ViewComponent implements OnInit {
       newFilterArray.push(field);
     });
     this.currentTabFilters = [...newFilterArray];
+  }
+
+  /**
+   * Creates an indexed object to order the keys of the rows fetched in this view
+   */
+  createReloadObject(): void {
+    let obj: any = {};
+    for (let i = 0; i < this.currentTabFilters.length; i++) {
+      obj[this.currentTabFilters.at(i).hqlProperty] = i;
+    }
+    this.sortObject = obj;
   }
 
 }

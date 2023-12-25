@@ -6,9 +6,10 @@
 .filter-name {
     height: 45%;
     user-select: none;
+    background-color: #e9ecef;
 }
 
-.filter-input{
+.filter-input {
     height: 45%;
 }
 
@@ -16,7 +17,7 @@
     display: none;
 }
 
-.checkbox-input{
+.checkbox-input {
     width: 100%;
     margin-top: 0;
 }
