@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { AuthService, HttpMethod } from '../auth-service';
+import { AuthService } from '../auth-service';
+import { HttpMethod } from 'src/application-constants';
 declare var $: any;
 
 @Component({
@@ -60,6 +61,8 @@ export class ApplicationLoginModalComponent {
       }, (response: Response) => {
         console.log(`Error while fetching csrf token. Error: ${response}`);
         reject(response);
+      }, (error: any) => {
+        console.error("Error while fetching CSRF TOKEN");
       }, undefined, email, password);
     });
   }

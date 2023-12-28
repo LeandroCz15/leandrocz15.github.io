@@ -4,18 +4,8 @@ import { Subject } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-
-export const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'YYYY/MM/DD',
-  },
-  display: {
-    dateInput: 'YYYY/MM/DD',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
+import { indexArrayByProperty } from 'src/application-utils';
 
 @Component({
   selector: 'app-header',
@@ -23,7 +13,7 @@ export const MY_DATE_FORMATS = {
   styleUrls: ['./header.component.css', './header.component.scss'],
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+    { provide: MAT_DATE_FORMATS, useValue: CAZZEON_DATE_FORMAT }
   ]
 })
 export class HeaderComponent {
@@ -50,7 +40,9 @@ export class HeaderComponent {
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
       moveItemInArray(this.filters, event.previousIndex, event.currentIndex);
-      this.viewComponent.createReloadObject();
+      const aux: number = this.filters.at(event.previousIndex).sequence;
+      this.filters.at(event.previousIndex).sequence = this.filters.at(event.currentIndex).sequence;
+      this.filters.at(event.currentIndex).sequence = aux;
       this.reloadViewSubject.next(null);
     }
   }
@@ -119,6 +111,7 @@ export class HeaderComponent {
     this.handleInputChangeSubject.next(null);
   }
 
+  //Check if the text input of a filter changed
   didTextInputChange(filter: any) {
     return !(filter.value?.toUpperCase() === filter.lastValueUsedForSearch?.toUpperCase());
   }

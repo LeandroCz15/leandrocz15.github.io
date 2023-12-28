@@ -3,8 +3,10 @@ import { Subject } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { RowsComponent } from '../rows/rows.component';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { AuthService, HttpMethod } from 'src/app/login-module/auth-service';
-import { SelectPageService } from '../select-page.service';
+import { AuthService } from 'src/app/login-module/auth-service';
+import { SelectPageService } from '../services/select-page.service';
+import { HttpMethod } from 'src/application-constants';
+import { indexArrayByProperty } from 'src/application-utils';
 
 @Component({
   selector: 'app-view',
@@ -37,6 +39,9 @@ export class ViewComponent implements OnInit {
   // Current filters to show in the main tab
   public currentTabFilters: Array<any> = [];
 
+  //Indexed filters for better performance
+  public currentTabFiltersIndexedByHqlProperty: any = {};
+
   // Service to sync scroll in the childrens
   public scrollSubject: Subject<ElementRef> = new Subject<ElementRef>;
 
@@ -51,9 +56,6 @@ export class ViewComponent implements OnInit {
 
   // Service to send data to a modal when clicking in a row
   public openRowFormSubject: Subject<any> = new Subject<any>;
-
-  // Object of keys indexed to make sort algorithm faster. ONLY TO PASS TO CHILD
-  public sortObject: any;
 
   constructor(private authService: AuthService, private pageChangeService: SelectPageService) { }
 
@@ -71,10 +73,12 @@ export class ViewComponent implements OnInit {
   fetchMainTabInformation() {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
-      this.createReloadObject();
+      this.currentTabFiltersIndexedByHqlProperty = indexArrayByProperty(this.currentTabFilters, "hqlProperty");
       this.viewReady = true;
     }, (response: Response) => {
       console.log(`Error while fetching data of the view with id: ${this.viewId}. Error status: ${response.status}`);
+    }, (error: any) => {
+      console.error("Error while fetching main tab information");
     });
   }
 
@@ -93,17 +97,6 @@ export class ViewComponent implements OnInit {
       newFilterArray.push(field);
     });
     this.currentTabFilters = [...newFilterArray];
-  }
-
-  /**
-   * Creates an indexed object to order the keys of the rows fetched in this view
-   */
-  createReloadObject(): void {
-    let obj: any = {};
-    for (let i = 0; i < this.currentTabFilters.length; i++) {
-      obj[this.currentTabFilters.at(i).hqlProperty] = i;
-    }
-    this.sortObject = obj;
   }
 
 }

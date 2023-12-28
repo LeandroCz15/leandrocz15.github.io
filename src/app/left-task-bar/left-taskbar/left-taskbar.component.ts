@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, HttpMethod } from 'src/app/login-module/auth-service';
+import { AuthService } from 'src/app/login-module/auth-service';
 import * as bootstrap from 'bootstrap';
+import { HttpMethod } from 'src/application-constants';
 
 @Component({
   selector: 'app-left-taskbar',
@@ -23,6 +24,8 @@ export class LeftTaskbarComponent implements OnInit {
       this.viewReady = true;
     }, (response: Response) => {
       console.log(`Error while retrieving menu items: Error status: ${response.status}`);
+    }, (error: any) => {
+      console.error("Timeout when fetching menu items");
     });
   }
 

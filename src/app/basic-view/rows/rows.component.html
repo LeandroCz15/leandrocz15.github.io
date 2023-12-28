@@ -1,4 +1,4 @@
-<div #rowContainer class="w-100 h-100 overflow-auto" (scroll)="syncScroll()">
+<div #rowContainer class="w-100 h-100 mh-100 overflow-auto" (scroll)="syncScroll()">
     <div class="d-flex flex-column w-100">
         <ng-container *ngIf="reload">
             <div class="d-flex w-100 grid-row" (click)="openRowInFormMode(row)"

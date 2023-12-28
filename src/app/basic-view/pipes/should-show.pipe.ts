@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { RowsComponent } from './rows/rows.component';
+import { RowsComponent } from '../rows/rows.component';
 
 @Pipe({
   name: 'shouldShow'
@@ -13,7 +13,7 @@ export class ShouldShowPipe implements PipeTransform {
    * @returns True if the current row should be rendered or not based on it's index
    */
   transform(index: number, rowComponent: RowsComponent): unknown {
-    return rowComponent.viewComponent.headerComponent.filters.at(index).showInTab;
+    return rowComponent.viewComponent.headerComponent.filters.at(index).showInGrid;
   }
 
 }

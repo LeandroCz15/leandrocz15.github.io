@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Subject, Observable } from "rxjs";
+import { HttpMethod } from "src/application-constants";
 
 @Injectable({
   providedIn: "root",
@@ -41,6 +42,7 @@ export class AuthService {
     method: string,
     successResponseFunction: (response: Response) => void,
     errorResponseFunction: (response: Response) => void,
+    timeOutFunction: (error: any) => void,
     requestBody?: any,
     email?: string,
     password?: string
@@ -63,6 +65,8 @@ export class AuthService {
       } else {
         successResponseFunction(response);
       }
+    }).catch(reason => {
+      timeOutFunction(reason);
     });
   }
 
@@ -70,10 +74,3 @@ export class AuthService {
 
 const serverUrl: string = "http://localhost:8080/";
 const origin: string = "https://leandrocz15.github.io/";
-
-export enum HttpMethod {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH"
-}

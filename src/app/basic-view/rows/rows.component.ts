@@ -2,8 +2,8 @@ import { KeyValue } from '@angular/common';
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
-import { AuthService, HttpMethod } from 'src/app/login-module/auth-service';
-import * as bootstrap from 'bootstrap';
+import { AuthService } from 'src/app/login-module/auth-service';
+import { HttpMethod } from 'src/application-constants';
 
 @Component({
   selector: 'app-rows',
@@ -55,13 +55,15 @@ export class RowsComponent implements OnInit, OnDestroy {
   }
 
   openRowInFormMode(row: any): void {
-    this.openRowFormSubject.next(row);
+    this.openRowFormSubject.next({ ...row });
   }
 
   // Only in OnInit. The first fetch should not have a where clause
   doFirstFetch(): void {
     let url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${50}&mainTabId=${this.viewComponent.mainTabId}`;
-    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this));
+    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
+      console.error("Timeout when fetching rows");
+    });
   }
 
   /**
@@ -83,14 +85,16 @@ export class RowsComponent implements OnInit, OnDestroy {
         currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId()
       }
     }
-    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), JSON.stringify(requestBody));
+    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
+      console.error("Timeout when fetching rows");
+    },
+      JSON.stringify(requestBody));
   }
 
   // Executed when fetch is successfull
   async successFetch(response: Response): Promise<void> {
     let lastRowLength: number = this.rows.length;
     this.rows = await response.json();
-    this.updateHeaderMaxWidth();
     // Update first row id in the pagination component after fetching data
     this.updateFirstRowId();
     if (this.rows.length === lastRowLength) {
@@ -105,7 +109,6 @@ export class RowsComponent implements OnInit, OnDestroy {
     console.error(await response.text())
     let lastRowLength: number = this.rows.length;
     this.rows = [];
-    this.updateHeaderMaxWidth();
     this.updateFirstRowId();
     if (this.rows.length === lastRowLength) {
       //TODO: CHECK IF IT IS REALLY NECESSARY
@@ -149,25 +152,15 @@ export class RowsComponent implements OnInit, OnDestroy {
     this.viewComponent.headerComponent.filterContainer.nativeElement.scrollLeft = this.rowContainer.nativeElement.scrollLeft;
   }
 
-  // Update the header component max width to fit properly when the rows have been overflowed
-  updateHeaderMaxWidth(): void {
-    if (this.rowContainer.nativeElement.scrollHeight > this.rowContainer.nativeElement.clientHeight) {
-      this.viewComponent.headerComponent.filterContainer.nativeElement.style.maxWidth = `calc(100% - 9px)`;
-    } else {
-      this.viewComponent.headerComponent.filterContainer.nativeElement.style.maxWidth = '100%';
-    }
-  }
-
-  // Forces angular to re-draw the view
+  // Forces angular to re-draw the view. This is needed when a column swamp places with another in the headers
   reloadView(): void {
-    // Use timeout functions to make Angular re-render the view
     setTimeout(() => this.reload = false);
     setTimeout(() => this.reload = true);
   }
 
   // Pipe to sort keys of the rows
   sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    return this.viewComponent.sortObject[a.key] > this.viewComponent.sortObject[b.key] ? 1 : -1;
+    return this.viewComponent.currentTabFiltersIndexedByHqlProperty[a.key].sequence > this.viewComponent.currentTabFiltersIndexedByHqlProperty[b.key].sequence ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor
