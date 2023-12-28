@@ -1,10 +1,9 @@
-<div #filterContainer class="d-flex overflow-auto w-100 hide-scrollbar" cdkDropList cdkDropListOrientation="horizontal"
+<div class="d-flex sticky-top mb-3" cdkDropList cdkDropListOrientation="horizontal"
     (cdkDropListDropped)="dropFilterColumn($event)">
     <ng-container *ngFor="let filter of filters ; let i = index; trackBy: trackByFn">
         <div [hidden]="!filter.showInGrid" class="filter-box" cdkDrag cdkDragLockAxis="x">
             <!--This is start of a column in filters-->
-            <span
-                class="justify-content-center align-items-center input-group-text rounded-0 text-centered filter-name fw-semibold">
+            <span class="input-group-text rounded-0 fw-semibold d-block text-truncate filter-name">
                 {{filter.label}}
             </span>
             <ng-container [ngSwitch]="filter.type">
@@ -17,7 +16,8 @@
                     class="form-check-input rounded-0 filter-input checkbox-input" [checked]="filter.value"
                     (click)="processCheckBoxChange(i, checkBoxInput.checked)">
                 <!--Date case-->
-                <mat-form-field *ngSwitchCase="'date'" class="w-100 rounded-0 dense-2" color="primary">
+                <mat-form-field *ngSwitchCase="'date'" class="w-100 rounded-0 dense-3" color="primary"
+                    subscriptSizing="dynamic">
                     <mat-label>Enter a date range</mat-label>
                     <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate placeholder="From date" [(ngModel)]="filter.startDate"

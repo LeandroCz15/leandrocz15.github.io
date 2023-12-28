@@ -1,8 +1,12 @@
-.row-key-span {
+.key-row-span {
     background-color: #e9ecef;
 }
 
-.grid-row:hover .row-key-span {
+.whole-row:hover .key-row-span {
     background-color: #66a0f7;
     border: 0;
+}
+
+.key-row {
+    min-width: 20%;
 }

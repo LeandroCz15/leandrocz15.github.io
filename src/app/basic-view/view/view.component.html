@@ -1,5 +1,5 @@
 <div class="d-flex flex-column h-100 w-100">
-    <ng-container *ngIf="viewReady; else elseBlock">
+    <div class="overflow-scroll flex-fill" *ngIf="viewReady; else elseBlock">
         <app-row-form [openRowFormSubject]="openRowFormSubject" [filters]="currentTabFilters"
             [viewComponent]="this"></app-row-form>
         <app-header [reloadViewSubject]="reloadViewSubject" [filters]="currentTabFilters"
@@ -7,9 +7,10 @@
         <app-rows [reloadViewSubject]="reloadViewSubject"
             [handleInputChangeSubject]="handleInputChangeSubject" [paginationChangeSubject]="paginationChangeSubject"
             [viewComponent]="this" [openRowFormSubject]="openRowFormSubject"></app-rows>
-    </ng-container>
-    <app-pagination [paginationChangeSubject]="paginationChangeSubject"
-        class="mt-auto align-items-center bg-dark"></app-pagination>
+    </div>
+    <div class="bg-dark">
+        <app-pagination [paginationChangeSubject]="paginationChangeSubject"></app-pagination>
+    </div>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">
             <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>

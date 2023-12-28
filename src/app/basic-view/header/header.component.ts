@@ -24,14 +24,11 @@ export class HeaderComponent {
   // Filters to render in this component
   @Input() filters!: Array<any>;
 
-  // Element reference of the main div in the template
-  @ViewChild("filterContainer") filterContainer!: ElementRef;
-
   // Service to reload the view
-  @Input() reloadViewSubject!: Subject<any>;
+  @Input() reloadViewSubject!: Subject<void>;
 
   // Service to handle input change in the filters
-  @Input() handleInputChangeSubject!: Subject<any>;
+  @Input() handleInputChangeSubject!: Subject<void>;
 
   /**
    * Function that handles the logic when a column filter is drag and dropped
@@ -43,7 +40,7 @@ export class HeaderComponent {
       const aux: number = this.filters.at(event.previousIndex).sequence;
       this.filters.at(event.previousIndex).sequence = this.filters.at(event.currentIndex).sequence;
       this.filters.at(event.currentIndex).sequence = aux;
-      this.reloadViewSubject.next(null);
+      this.reloadViewSubject.next();
     }
   }
 
@@ -58,20 +55,20 @@ export class HeaderComponent {
     // Change last value used to search
     changedFilter.lastValueUsedForSearch = trimmedValue;
     changedFilter.value = trimmedValue;
-    this.handleInputChangeSubject.next(null);
+    this.handleInputChangeSubject.next();
   }
 
   // Custom function for checkbox change since [(ngModel)] doesn't seem to work properly
   processCheckBoxChange(index: number, newBoxValue: boolean): void {
     let changedFilter = this.filters.at(index);
     changedFilter.value = newBoxValue;
-    this.handleInputChangeSubject.next(null);
+    this.handleInputChangeSubject.next();
   }
 
   // Date change processing
   processDateChange(event: any): void {
     if (!event.target.errorState) {
-      this.handleInputChangeSubject.next(null);
+      this.handleInputChangeSubject.next();
     }
   }
 
@@ -108,7 +105,7 @@ export class HeaderComponent {
       }
     }
     changedFilter.lastValueUsedForSearch = changedFilter.value;
-    this.handleInputChangeSubject.next(null);
+    this.handleInputChangeSubject.next();
   }
 
   //Check if the text input of a filter changed

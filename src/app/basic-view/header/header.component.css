@@ -4,13 +4,12 @@
 }
 
 .filter-name {
-    height: 45%;
     user-select: none;
     background-color: #e9ecef;
 }
 
 .filter-input {
-    height: 45%;
+    height: 60%;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -20,4 +19,9 @@
 .checkbox-input {
     width: 100%;
     margin-top: 0;
+}
+
+/* When drag and drop is a sticky container the z-index needs to be 1200 to avoid visual problems */
+.cdk-drag-preview {
+    z-index: 1020 !important;
 }

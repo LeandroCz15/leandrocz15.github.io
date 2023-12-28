@@ -27,22 +27,22 @@ export class PaginationComponent {
     return this.currentFetchFirstId;
   }
 
-  setCurrentFetchFirstId(currentFetchFirstId: string) {
+  setCurrentFetchFirstId(currentFetchFirstId: string): void {
     this.currentFetchFirstId = currentFetchFirstId
   }
 
   fetchNextPage(): void {
-    this.paginationChangeSubject.next({ action: PaginationEventType.FETCH_NEXT });
+    this.paginationChangeSubject.next(PaginationEventType.FETCH_NEXT);
   }
 
   fetchPreviousPage(): void {
-    this.paginationChangeSubject.next({ action: PaginationEventType.FETCH_BACK });
+    this.paginationChangeSubject.next(PaginationEventType.FETCH_BACK);
   }
 
-  changeFetchSize(event: any) {
+  changeFetchSize(event: any): void {
     if (this.currentFetchSize != event.srcElement.innerHTML) {
       this.currentFetchSize = event.srcElement.innerHTML;
-      this.paginationChangeSubject.next({ action: PaginationEventType.RELOAD });
+      this.paginationChangeSubject.next(PaginationEventType.RELOAD);
     }
   }
 

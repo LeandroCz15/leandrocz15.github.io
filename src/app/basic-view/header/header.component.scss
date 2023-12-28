@@ -1,10 +1,7 @@
 @use '@angular/material' as mat;
 
-::ng-deep .dense-2 {
-  @include mat.all-component-densities(-2);
-}
 
-::ng-deep .mdc-text-field {
+:host ::ng-deep .mdc-text-field {
   border: 1px solid #dee2e6;
   border-radius: 0 !important;
 }

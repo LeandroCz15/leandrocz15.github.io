@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { RowsComponent } from '../rows/rows.component';
@@ -42,17 +42,14 @@ export class ViewComponent implements OnInit {
   //Indexed filters for better performance
   public currentTabFiltersIndexedByHqlProperty: any = {};
 
-  // Service to sync scroll in the childrens
-  public scrollSubject: Subject<ElementRef> = new Subject<ElementRef>;
-
   // Service to reload the view
   public reloadViewSubject: Subject<void> = new Subject<void>;
 
   // Service to handle input change in the filters
-  public handleInputChangeSubject: Subject<any> = new Subject<any>;
+  public handleInputChangeSubject: Subject<void> = new Subject<void>;
 
   // Service to fetch data when the user interacts with the pagination component
-  public paginationChangeSubject: Subject<any> = new Subject<any>;
+  public paginationChangeSubject: Subject<number> = new Subject<number>;
 
   // Service to send data to a modal when clicking in a row
   public openRowFormSubject: Subject<any> = new Subject<any>;

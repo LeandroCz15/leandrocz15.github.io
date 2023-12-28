@@ -4,6 +4,7 @@ import { Subject, Subscription } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { HttpMethod } from 'src/application-constants';
+import { PaginationEventType } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-rows',
@@ -15,19 +16,16 @@ export class RowsComponent implements OnInit, OnDestroy {
   // View component reference
   @Input() viewComponent!: ViewComponent;
 
-  // Row container of the template of this controller
-  @ViewChild("rowContainer") rowContainer!: ElementRef;
-
   // Service to reload the view. HEREDATED FROM PARENT
   @Input() reloadViewSubject!: Subject<void>;
   private reloadViewSubscription!: Subscription;
 
   // Service to handle input change in the filters. HEREDATED FROM PARENT
-  @Input() handleInputChangeSubject!: Subject<any[]>;
+  @Input() handleInputChangeSubject!: Subject<void>;
   private handleInputChangeSubscription!: Subscription;
 
   // Service to fetch data when the user interacts with the pagination component. HEREDATED FROM PARENT
-  @Input() paginationChangeSubject!: Subject<any>;
+  @Input() paginationChangeSubject!: Subject<number>;
   private paginationChangeSubscription!: Subscription;
 
   // Service to send data to a modal when clicking in a row. HEREDATED FROM PARENT
@@ -44,8 +42,8 @@ export class RowsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.doFirstFetch();
     this.reloadViewSubscription = this.reloadViewSubject.asObservable().subscribe(() => this.reloadView());
-    this.handleInputChangeSubscription = this.handleInputChangeSubject.asObservable().subscribe(() => this.fetchRows(null));
-    this.paginationChangeSubscription = this.paginationChangeSubject.asObservable().subscribe(info => this.fetchRows(info));
+    this.handleInputChangeSubscription = this.handleInputChangeSubject.asObservable().subscribe(() => this.fetchRows());
+    this.paginationChangeSubscription = this.paginationChangeSubject.asObservable().subscribe(action => this.fetchRows(action));
   }
 
   ngOnDestroy(): void {
@@ -72,18 +70,16 @@ export class RowsComponent implements OnInit, OnDestroy {
    * @param paginationInfo 
    *  Object containing information about the pagination to fetch data. If this object is null then the where clause wont have a entity id filter
   */
-  fetchRows(paginationAction: any): void {
+  fetchRows(paginationAction?: number): void {
     // Update last row id in the pagination component before fetching more data
     this.updateLastRowId();
-    let fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
-    let url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${fetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
-    let requestBody: any = { filters: this.viewComponent.currentTabFilters };
-    if (paginationAction) {
-      requestBody.paginationInfo = {
-        action: paginationAction.action,
-        previousFetchLastId: this.viewComponent.paginationComponent.getPreviousFetchLastId(),
-        currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId()
-      }
+    const fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
+    const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${fetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
+    const requestBody: any = { filters: this.viewComponent.currentTabFilters };
+    requestBody.paginationInfo = {
+      action: paginationAction || PaginationEventType.RELOAD,
+      previousFetchLastId: this.viewComponent.paginationComponent.getPreviousFetchLastId(),
+      currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId()
     }
     this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
@@ -145,11 +141,6 @@ export class RowsComponent implements OnInit, OnDestroy {
     } else {
       this.viewComponent.paginationComponent.setCurrentFetchFirstId(firstRow.id);
     }
-  }
-
-  // Sync the scroll of the rows container to the scroller of the filters container, since the scroller of the filters container is invisible
-  syncScroll(): void {
-    this.viewComponent.headerComponent.filterContainer.nativeElement.scrollLeft = this.rowContainer.nativeElement.scrollLeft;
   }
 
   // Forces angular to re-draw the view. This is needed when a column swamp places with another in the headers
