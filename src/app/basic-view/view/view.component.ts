@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { RowsComponent } from '../rows/rows.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -13,7 +13,7 @@ import { indexArrayByProperty } from 'src/application-utils';
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css']
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, OnDestroy {
 
   // View id to fetch information
   public viewId: string = "";
@@ -42,26 +42,23 @@ export class ViewComponent implements OnInit {
   //Indexed filters for better performance
   public currentTabFiltersIndexedByHqlProperty: any = {};
 
+  private pageChangeSubscription!: Subscription;
+
   // Service to reload the view
   public reloadViewSubject: Subject<void> = new Subject<void>;
-
-  // Service to handle input change in the filters
-  public handleInputChangeSubject: Subject<void> = new Subject<void>;
-
-  // Service to fetch data when the user interacts with the pagination component
-  public paginationChangeSubject: Subject<number> = new Subject<number>;
-
-  // Service to send data to a modal when clicking in a row
-  public openRowFormSubject: Subject<any> = new Subject<any>;
 
   constructor(private authService: AuthService, private pageChangeService: SelectPageService) { }
 
   ngOnInit(): void {
-    this.pageChangeService.getPageChangeObservable().subscribe(viewId => {
+    this.pageChangeSubscription = this.pageChangeService.getPageChangeObservable().subscribe(viewId => {
       this.viewReady = false;
       this.viewId = viewId;
       this.fetchMainTabInformation();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.pageChangeSubscription.unsubscribe();
   }
 
   /**

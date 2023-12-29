@@ -22,7 +22,7 @@ import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
     LoginModule,
     ProductModule,
     BasicViewModule,
-    LeftTaskbarModule
+    LeftTaskbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

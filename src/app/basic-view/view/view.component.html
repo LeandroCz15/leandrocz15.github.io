@@ -1,15 +1,12 @@
 <div class="d-flex flex-column h-100 w-100">
     <div class="overflow-scroll flex-fill" *ngIf="viewReady; else elseBlock">
-        <app-row-form [openRowFormSubject]="openRowFormSubject" [filters]="currentTabFilters"
-            [viewComponent]="this"></app-row-form>
+        <app-row-form [filters]="currentTabFilters" [viewComponent]="this"></app-row-form>
         <app-header [reloadViewSubject]="reloadViewSubject" [filters]="currentTabFilters"
-            [handleInputChangeSubject]="handleInputChangeSubject" [viewComponent]="this"></app-header>
-        <app-rows [reloadViewSubject]="reloadViewSubject"
-            [handleInputChangeSubject]="handleInputChangeSubject" [paginationChangeSubject]="paginationChangeSubject"
-            [viewComponent]="this" [openRowFormSubject]="openRowFormSubject"></app-rows>
+            [viewComponent]="this"></app-header>
+        <app-rows [reloadViewSubject]="reloadViewSubject" [viewComponent]="this"></app-rows>
     </div>
     <div class="bg-dark">
-        <app-pagination [paginationChangeSubject]="paginationChangeSubject"></app-pagination>
+        <app-pagination></app-pagination>
     </div>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">

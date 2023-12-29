@@ -1,14 +1,18 @@
 <div class="input-group h-100">
   <button type="button" class="btn btn-secondary rounded-0" (click)="fetchPreviousPage()"><img
       src="assets/arrow-left.svg"></button>
-  <button type="button" class="btn btn-secondary rounded-0" (click)="fetchNextPage()"><img src="assets/arrow-right.svg"></button>
+  <button type="button" class="btn btn-secondary rounded-0" (click)="fetchNextPage()"><img
+      src="assets/arrow-right.svg"></button>
   <div class="input-group-text" id="btnGroupAddon">{{currentFetchSize}}</div>
-  <button class="btn btn-secondary dropdown-toggle rounded-0" type="button" data-bs-toggle="dropdown"
-    aria-expanded="false"></button>
-  <ul class="dropdown-menu">
-    <li><a class="dropdown-item" (click)="changeFetchSize($event)">25</a></li>
-    <li><a class="dropdown-item" (click)="changeFetchSize($event)">50</a></li>
-    <li><a class="dropdown-item" (click)="changeFetchSize($event)">75</a></li>
-  </ul>
-  <!--aca btn group-->
+  <!--Dropdown-->
+  <div ngbDropdown class="dropdown">
+    <button ngbDropdownToggle class="btn btn-secondary rounded-0" type="button" id="dropdownMenuButton1"
+      aria-expanded="false"></button>
+    <ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+      <li><a class="dropdown-item" (click)="changeFetchSize(50)">50</a></li>
+      <li><a class="dropdown-item" (click)="changeFetchSize(75)">75</a></li>
+      <li><a class="dropdown-item" (click)="changeFetchSize(100)">100</a></li>
+    </ul>
+  </div>
+  <button type="button" class="btn btn-secondary rounded-0" (click)="openNewRowModal()">+</button>
 </div>

@@ -1,14 +1,15 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ReplaySubject, Subject, Subscription } from 'rxjs';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
-import * as bootstrap from 'bootstrap';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { ViewComponent } from '../view/view.component';
-import { RowFormFetchService } from '../services/row-form-fetch.service';
+import { OpenFormService } from '../services/open-form.service';
+import { FetchRowsService } from '../services/fetch-rows.service';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-row-form',
@@ -21,6 +22,9 @@ import { RowFormFetchService } from '../services/row-form-fetch.service';
 })
 export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  // Base row structure
+  readonly baseRow: any = {};
+
   // Modal of the view
   private modalElement!: Element;
 
@@ -30,12 +34,11 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   // Filters/Headers heredated from view component parent
   @Input() public filters: Array<any> = [];
 
-  // Service to send data to a modal when clicking in a row. HEREDATED FROM PARENT
-  @Input() openRowFormSubject!: Subject<any>;
-  private openRowFormSubscription!: Subscription;
+  // Subscription to row form service
+  private openFormSubscription!: Subscription;
 
   // Current row to be rendered
-  public currentRow: any = {};
+  private currentRow: any = {};
 
   // Form profile
   public profileForm!: FormGroup<{}>;
@@ -43,15 +46,42 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   // Boolean to indicate if the form was submitted
   public submitted: boolean = false;
 
-  constructor(private authService: AuthService, private rowFormFetch: RowFormFetchService, private formBuilder: FormBuilder, private getIdForFormPipe: GenerateIdForFormPipe) { }
+  // True if the row is being inserted. False otherwise
+  public isNew: boolean = true;
+
+    /** list of banks */
+    protected banks: string[] = ["test"];
+  
+    /** indicate search operation is in progress */
+    public searching = false;
+  
+    /** list of banks filtered after simulating server side search */
+    public  filteredServerSideBanks = ["Test"];
+  
+    /** Subject that emits when the component has been destroyed. */
+    protected _onDestroy = new Subject<void>();
+
+  constructor(
+    private authService: AuthService,
+    private openForm: OpenFormService,
+    private formBuilder: NonNullableFormBuilder,
+    private getIdForFormPipe: GenerateIdForFormPipe,
+    private fetchRows: FetchRowsService
+  ) { }
+
+  test(){
+    console.log("HOLA")
+  }
 
   ngOnInit(): void {
-    this.openRowFormSubscription = this.openRowFormSubject.asObservable().subscribe(row => this.updateModal(row));
+    this.openFormSubscription = this.openForm.getRowObservable().subscribe(row => this.updateModal(row));
     this.profileForm = this.formBuilder.group(this.buildGroup());
+    this.buildBaseRowStructure();
+
   }
 
   ngOnDestroy(): void {
-    this.openRowFormSubscription.unsubscribe();
+    this.openFormSubscription.unsubscribe();
   }
 
   // Set modal element reference
@@ -64,11 +94,16 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * @param row Row to update the current form
    */
   updateModal(row: any): void {
-    this.currentRow = row;
-    Object.keys(this.profileForm.controls).forEach(key => {
-      const formattedKey = this.normalizeOrFormatKey(key, true);
-      this.profileForm.get(key)!.setValue(this.currentRow[formattedKey]);
-    });
+    if (row) {
+      this.currentRow = row;
+      this.isNew = false;
+      this.updateFormWithRowValues();
+    } else {
+      this.currentRow = Object.assign({}, this.baseRow);
+      this.isNew = true;
+      this.disableCompoundAttributes();
+      this.profileForm.reset();
+    }
     bootstrap.Modal.getOrCreateInstance(this.modalElement).show();
   }
 
@@ -94,15 +129,15 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   getDefaultValueForGroup(filter: any): any {
     switch (filter.type) {
       case DataType.TEXT:
-        return filter.defaultValue || undefined;
+        return filter.defaultValue || null;
       case DataType.CHECKBOX:
         return filter.defaultValue as boolean || false;
       case DataType.NUMERIC:
-        return +filter.defaultValue || undefined;
+        return +filter.defaultValue || null;
       case DataType.DATE:
-        return filter.defaultValue || undefined;
+        return filter.defaultValue || null;
       default:
-        return undefined;
+        return null;
     }
   }
 
@@ -169,13 +204,6 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     return properties;
   }
 
-  /**
-   * Function needed to update checkbox value since binding the form is not working 
-   */
-  updateFormCheckBox(controlStringValue: string, value: boolean): void {
-    this.profileForm.get(controlStringValue)!.patchValue(value);
-  }
-
   // New validator to check that a text input must not be blank
   noWhitespaceValidator(control: FormControl): any {
     return (control.value || '').trim().length ? null : { 'blank': true };
@@ -190,10 +218,11 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.submitted = true;
     const url = `api/store/${this.viewComponent.mainTabEntityName}`;
-    this.updateRowWithCurrentFormValues();
+    const objectToSend = this.buildObjectToSend();
     this.authService.fetchInformation(url, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
-      this.updateRowWithBackendResponse(jsonResponse);
+      this.updateRowAndFormWithBackendResponse(jsonResponse);
+      this.fetchRows.sendFetchChange();
       this.submitted = false;
     }, async (response: Response) => {
       this.submitted = false;
@@ -202,7 +231,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       this.submitted = false;
       console.error(`Timeout in when storing an object of type: ${this.viewComponent.mainTabEntityName}`);
     },
-      JSON.stringify(this.currentRow));
+      JSON.stringify({ entity: objectToSend, isNew: this.isNew }));
   }
 
   /**
@@ -210,7 +239,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * This is needed if the insert/update makes third changes to the current row. Then it sends a call to the row component
    * to also update the current row in the grid
    */
-  updateRowWithBackendResponse(updatedRow: any): void {
+  updateRowAndFormWithBackendResponse(updatedRow: any): void {
     Object.keys(this.currentRow).forEach(key => {
       // Update the form properties that has been found
       const formattedKey = this.normalizeOrFormatKey(key, false);
@@ -219,7 +248,6 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       // Update current row properties
       this.currentRow[key] = valueToSet;
     });
-    this.rowFormFetch.sendRowFetchChange(Object.assign({}, this.currentRow));
   }
 
   /**
@@ -236,21 +264,64 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * This function updates the current row of the component with all the values in the form.
-   * This is needed so when the current row is stringified every value sent to backend is correct 
+   * Construct the object to send. It is a copy of the current row. We dont send the current row directly since
+   * we need to preserve the state of the current row in case of failure
    */
-  updateRowWithCurrentFormValues(): void {
+  buildObjectToSend(): any {
     const formRawValue: any = this.profileForm.getRawValue();
+    const returnObject: any = Object.assign({}, this.currentRow);
     Object.keys(this.profileForm.getRawValue()).forEach(key => {
       // Normalize object
       const normalizedKey = this.normalizeOrFormatKey(key, true);
-      this.currentRow[normalizedKey] = formRawValue[key];
+      returnObject[normalizedKey] = formRawValue[key];
+    });
+    return returnObject;
+  }
+
+  /**
+   * This function is needed after the update/insert in the fail case
+   */
+  updateFormWithRowValues(): void {
+    Object.keys(this.profileForm.controls).forEach(key => {
+      const formattedKey = this.normalizeOrFormatKey(key, true);
+      this.profileForm.get(key)!.setValue(this.currentRow[formattedKey]);
     });
   }
 
   // Normalize the key or format. If normalize then is the standard hql property. Else is the format: form_ + property
   normalizeOrFormatKey(key: string, doNormalize: boolean): string {
     return doNormalize ? key.replace("form_", "").replaceAll("_", ".") : this.getIdForFormPipe.transform(key);
+  }
+
+  disableCompoundAttributes(): void {
+    if (!this.isNew) {
+      return;
+    }
+    for (const field in this.profileForm.controls) {
+      // If the record is new and the field includes two or more '_' it indicates that this is a compound property so disable it
+      if (this.checkAmountOfRepetitions(field, "_") >= 2) {
+        this.form.get(field)!.disable();
+      }
+    }
+  }
+
+  /**
+   * Check the amount of repetitions of a character in a string
+   */
+  checkAmountOfRepetitions(searchString: string, searchChar: string): number {
+    let amount = 0;
+    for (let i = 0; i < searchString.length; i++) {
+      if (searchString[i] === searchChar) {
+        amount++
+      }
+    }
+    return amount;
+  }
+
+  buildBaseRowStructure(): void {
+    this.filters.forEach(filter => {
+      this.baseRow[filter.hqlProperty] = null;
+    });
   }
 
   // Getter for easy access to form fields

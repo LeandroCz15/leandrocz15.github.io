@@ -5,6 +5,8 @@ import { ViewComponent } from '../view/view.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { HttpMethod } from 'src/application-constants';
 import { PaginationEventType } from '../pagination/pagination.component';
+import { OpenFormService } from '../services/open-form.service';
+import { FetchRowsService } from '../services/fetch-rows.service';
 
 @Component({
   selector: 'app-rows',
@@ -20,16 +22,8 @@ export class RowsComponent implements OnInit, OnDestroy {
   @Input() reloadViewSubject!: Subject<void>;
   private reloadViewSubscription!: Subscription;
 
-  // Service to handle input change in the filters. HEREDATED FROM PARENT
-  @Input() handleInputChangeSubject!: Subject<void>;
-  private handleInputChangeSubscription!: Subscription;
-
-  // Service to fetch data when the user interacts with the pagination component. HEREDATED FROM PARENT
-  @Input() paginationChangeSubject!: Subject<number>;
-  private paginationChangeSubscription!: Subscription;
-
-  // Service to send data to a modal when clicking in a row. HEREDATED FROM PARENT
-  @Input() openRowFormSubject!: Subject<any>;
+  // Subscription for fetch rows service
+  private fetchRowsSubscription!: Subscription;
 
   // Boolean used to re-render the view after changing the order in the rows columns
   public reload: boolean = true;
@@ -37,23 +31,21 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Rows to show in the template
   public rows: Array<any> = new Array<any>;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private openForm: OpenFormService, private fetchRows: FetchRowsService) { }
 
   ngOnInit(): void {
     this.doFirstFetch();
     this.reloadViewSubscription = this.reloadViewSubject.asObservable().subscribe(() => this.reloadView());
-    this.handleInputChangeSubscription = this.handleInputChangeSubject.asObservable().subscribe(() => this.fetchRows());
-    this.paginationChangeSubscription = this.paginationChangeSubject.asObservable().subscribe(action => this.fetchRows(action));
+    this.fetchRowsSubscription = this.fetchRows.getFetchObservable().subscribe(action => this.doFetch(action));
   }
 
   ngOnDestroy(): void {
     this.reloadViewSubscription.unsubscribe();
-    this.handleInputChangeSubscription.unsubscribe();
-    this.paginationChangeSubscription.unsubscribe();
+    this.fetchRowsSubscription.unsubscribe();
   }
 
   openRowInFormMode(row: any): void {
-    this.openRowFormSubject.next({ ...row });
+    this.openForm.sendRowChange(Object.assign({}, row));
   }
 
   // Only in OnInit. The first fetch should not have a where clause
@@ -70,7 +62,7 @@ export class RowsComponent implements OnInit, OnDestroy {
    * @param paginationInfo 
    *  Object containing information about the pagination to fetch data. If this object is null then the where clause wont have a entity id filter
   */
-  fetchRows(paginationAction?: number): void {
+  doFetch(paginationAction?: number): void {
     // Update last row id in the pagination component before fetching more data
     this.updateLastRowId();
     const fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
@@ -93,11 +85,6 @@ export class RowsComponent implements OnInit, OnDestroy {
     this.rows = await response.json();
     // Update first row id in the pagination component after fetching data
     this.updateFirstRowId();
-    if (this.rows.length === lastRowLength) {
-      //TODO: CHECK IF IT IS REALLY NECESSARY
-      // If the row length is the same as before, maybe angular cant detect changes so it wont redraw object that maybe have been changed
-      this.reloadView();
-    }
   }
 
   // Executed when fetch failed
@@ -106,11 +93,6 @@ export class RowsComponent implements OnInit, OnDestroy {
     let lastRowLength: number = this.rows.length;
     this.rows = [];
     this.updateFirstRowId();
-    if (this.rows.length === lastRowLength) {
-      //TODO: CHECK IF IT IS REALLY NECESSARY
-      // If the row length is the same as before, maybe angular cant detect changes so it wont redraw object that maybe have been changed
-      this.reloadView();
-    }
   }
 
   // Update last row id of last fetch in the PaginationComponent

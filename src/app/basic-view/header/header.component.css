@@ -21,7 +21,40 @@
     margin-top: 0;
 }
 
-/* When drag and drop is a sticky container the z-index needs to be 1200 to avoid visual problems */
+/* Honestamente ni se para que sirve */
 .cdk-drag-preview {
-    z-index: 1020 !important;
-}
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      0 3px 14px 2px rgba(0, 0, 0, 0.12);
+      /* When drag and drop is a sticky container the z-index needs to be 1200 to avoid visual problems */
+      z-index: 1020 !important;
+  }
+  
+  /* 
+    Cuando se comienza a mover un elemento, hasta no soltarlo, para el HTML el elemento sigue en la posicion original.
+    De tal forma que el elemento se veria en la posicion original y tambien siendo arrastrado, este efecto es feo.
+    Este estilo sirve para hacer invisible el elemento en la posicion original cuando esta siendo arrastrado.
+  */
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+  
+  /* Honestamente ni se para que sirve */
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  
+  /* Honestamente ni se para que sirve */
+  .example-box:last-child {
+    border: none;
+  }
+  
+  /* 
+    Este efecto es sumamente importante, permite pre-visualizar como quedarian acomodados los elementos en caso de que se
+    decida soltar el click al arrastrar un elemento.
+  */
+  .cdk-drop-list-dragging :not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }

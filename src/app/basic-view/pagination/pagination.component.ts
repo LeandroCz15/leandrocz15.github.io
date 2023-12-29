@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Subject } from 'rxjs';
+import { OpenFormService } from '../services/open-form.service';
+import { FetchRowsService } from '../services/fetch-rows.service';
 
 @Component({
   selector: 'app-pagination',
@@ -8,12 +10,11 @@ import { Subject } from 'rxjs';
 })
 export class PaginationComponent {
 
-  // Service to fetch data when the user interacts with the pagination component. HEREDATED FROM PARENT
-  @Input() paginationChangeSubject!: Subject<any>;
-
   private previousFetchLastId: string = "";
   private currentFetchFirstId: string = "";
   public currentFetchSize: number = 50;
+
+  constructor(private openForm: OpenFormService, private fetchRows: FetchRowsService) { }
 
   getPreviousFetchLastId(): string {
     return this.previousFetchLastId;
@@ -32,18 +33,22 @@ export class PaginationComponent {
   }
 
   fetchNextPage(): void {
-    this.paginationChangeSubject.next(PaginationEventType.FETCH_NEXT);
+    this.fetchRows.sendFetchChange(PaginationEventType.FETCH_NEXT);
   }
 
   fetchPreviousPage(): void {
-    this.paginationChangeSubject.next(PaginationEventType.FETCH_BACK);
+    this.fetchRows.sendFetchChange(PaginationEventType.FETCH_BACK);
   }
 
-  changeFetchSize(event: any): void {
-    if (this.currentFetchSize != event.srcElement.innerHTML) {
-      this.currentFetchSize = event.srcElement.innerHTML;
-      this.paginationChangeSubject.next(PaginationEventType.RELOAD);
+  changeFetchSize(newfetchSize: number): void {
+    if (this.currentFetchSize !== newfetchSize) {
+      this.currentFetchSize = newfetchSize;
+      this.fetchRows.sendFetchChange(PaginationEventType.RELOAD);
     }
+  }
+
+  openNewRowModal():void {
+    this.openForm.sendRowChange(undefined);
   }
 
 }

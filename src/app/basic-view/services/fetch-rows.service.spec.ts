@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RowFormFetchService } from './row-form-fetch.service';
+import { FetchRowsService } from './fetch-rows.service';
 
-describe('RowFormFetchService', () => {
-  let service: RowFormFetchService;
+describe('FetchRowsService', () => {
+  let service: FetchRowsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RowFormFetchService);
+    service = TestBed.inject(FetchRowsService);
   });
 
   it('should be created', () => {

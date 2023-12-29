@@ -6,6 +6,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
+import { FetchRowsService } from '../services/fetch-rows.service';
 
 @Component({
   selector: 'app-header',
@@ -27,8 +28,7 @@ export class HeaderComponent {
   // Service to reload the view
   @Input() reloadViewSubject!: Subject<void>;
 
-  // Service to handle input change in the filters
-  @Input() handleInputChangeSubject!: Subject<void>;
+  constructor(private fetchRows: FetchRowsService) {}
 
   /**
    * Function that handles the logic when a column filter is drag and dropped
@@ -55,20 +55,20 @@ export class HeaderComponent {
     // Change last value used to search
     changedFilter.lastValueUsedForSearch = trimmedValue;
     changedFilter.value = trimmedValue;
-    this.handleInputChangeSubject.next();
+    this.fetchRows.sendFetchChange();
   }
 
-  // Custom function for checkbox change since [(ngModel)] doesn't seem to work properly
-  processCheckBoxChange(index: number, newBoxValue: boolean): void {
-    let changedFilter = this.filters.at(index);
-    changedFilter.value = newBoxValue;
-    this.handleInputChangeSubject.next();
+  // Process boolean input change
+  processCheckBoxChange(index: number, newCheckValue: boolean): void {
+    // Property binding not working with check's so update the value manually
+    this.filters.at(index).value = newCheckValue;
+    this.fetchRows.sendFetchChange();
   }
 
-  // Date change processing
+  // Process date input change
   processDateChange(event: any): void {
     if (!event.target.errorState) {
-      this.handleInputChangeSubject.next();
+      this.fetchRows.sendFetchChange();
     }
   }
 
@@ -105,7 +105,7 @@ export class HeaderComponent {
       }
     }
     changedFilter.lastValueUsedForSearch = changedFilter.value;
-    this.handleInputChangeSubject.next();
+    this.fetchRows.sendFetchChange();
   }
 
   //Check if the text input of a filter changed
