@@ -242,7 +242,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * For example backend sends date in string format. This function is made for those exceptions that needs to be converted
    */
   getValueToSetFromRow(key: string, value: any): any {
-    switch (this.viewComponent.currentTabFiltersIndexedByHqlProperty[key].type) {
+    switch (this.viewComponent.currentTabFieldsIndexedByHqlProperty[key].type) {
       case DataType.DATE:
         return new Date(value);
       default:

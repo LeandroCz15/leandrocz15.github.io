@@ -5,8 +5,8 @@ import { ViewComponent } from '../view/view.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
-import { indexArrayByProperty, indexArrayByPropertyAndPosition } from 'src/application-utils';
 import { FetchRowsService } from '../services/fetch-rows.service';
+import { indexArrayByProperty } from 'src/application-utils';
 
 @Component({
   selector: 'app-header',
@@ -37,7 +37,7 @@ export class HeaderComponent {
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
       moveItemInArray(this.filters, event.previousIndex, event.currentIndex);
-      this.viewComponent.currentTabFiltersIndexedByHqlProperty = indexArrayByPropertyAndPosition(this.filters, "hqlProperty");
+      this.viewComponent.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.filters, "hqlProperty");
       this.reloadViewSubject.next();
     }
   }

@@ -1,7 +1,7 @@
 <div class="d-flex sticky-top mb-3" cdkDropList cdkDropListOrientation="horizontal"
     (cdkDropListDropped)="dropFilterColumn($event)">
     <ng-container *ngFor="let filter of filters ; let i = index; trackBy: trackByFn">
-        <div [hidden]="!filter.showInGrid" class="filter-box" cdkDrag cdkDragLockAxis="x">
+        <div [hidden]="!filter.showInGrid" class="filter-box" cdkDrag [cdkDragData]="filter" cdkDragLockAxis="x">
             <!--This is start of a column in filters-->
             <span class="input-group-text rounded-0 fw-semibold d-block text-truncate filter-name">
                 {{filter.name}}

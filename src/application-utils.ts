@@ -1,13 +1,6 @@
 export const indexArrayByProperty = function (array: any[], property: string): any {
     return array.reduce((obj, item, index) => {
-        obj[item[property]] = item;
-        return obj;
-    }, {});
-}
-
-export const indexArrayByPropertyAndPosition = function (array: any[], property: string): any {
-    return array.reduce((obj, item, index) => {
-        obj[item[property]] = index;
+        obj[item[property]] = { item: item, index: index };
         return obj;
     }, {});
 }

@@ -1,7 +1,7 @@
 <div class="d-flex flex-column h-100 w-100">
     <div class="overflow-scroll flex-fill" *ngIf="viewReady; else elseBlock">
-        <app-row-form [filters]="currentTabFilters" [viewComponent]="this"></app-row-form>
-        <app-header [reloadViewSubject]="reloadViewSubject" [filters]="currentTabFilters"
+        <app-row-form [filters]="gridFields" [viewComponent]="this"></app-row-form>
+        <app-header [reloadViewSubject]="reloadViewSubject" [filters]="gridFields"
             [viewComponent]="this"></app-header>
         <app-rows [reloadViewSubject]="reloadViewSubject" [viewComponent]="this"></app-rows>
     </div>

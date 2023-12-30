@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, filter } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { RowsComponent } from '../rows/rows.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
-import { indexArrayByPropertyAndPosition } from 'src/application-utils';
+import { indexArrayByProperty } from 'src/application-utils';
 
 @Component({
   selector: 'app-view',
@@ -36,12 +36,13 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Pagination children component
   @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
-  // Current filters to show in the main tab
-  public currentTabFilters: Array<any> = [];
+  // Current fields to show in the main tab
+  public gridFields: any[] = [];
 
-  //Indexed filters for better performance
-  public currentTabFiltersIndexedByHqlProperty: any = {};
+  // Indexed fields for better performance
+  public currentTabFieldsIndexedByHqlProperty: any = {};
 
+  // Subscription for page change service
   private pageChangeSubscription!: Subscription;
 
   // Service to reload the view
@@ -67,7 +68,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   fetchMainTabInformation() {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
-      this.currentTabFiltersIndexedByHqlProperty = indexArrayByPropertyAndPosition(this.currentTabFilters, "hqlProperty");
+      this.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
       this.viewReady = true;
     }, (response: Response) => {
       console.log(`Error while fetching data of the view with id: ${this.viewId}. Error status: ${response.status}`);
@@ -77,20 +78,20 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * This function sets all the filters needed to be render by the current view. Adding some properties to the objects
+   * This function sets all the fields needed to be render by the current view. Adding some properties to the objects
    * 
-   * @param data Data containing the filters to be rendered
+   * @param data Data containing the fields to be rendered
    */
   processMainTabInformation(mainTabData: any) {
     this.mainTabId = mainTabData.id;
     this.mainTabEntityName = mainTabData.entityName;
-    let newFilterArray: any[] = [];
+    const newGridTabFields: any[] = [];
     mainTabData.fields.forEach((field: any) => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
-      newFilterArray.push(field);
+      newGridTabFields.push(field);
     });
-    this.currentTabFilters = [...newFilterArray];
+    this.gridFields = newGridTabFields;
   }
 
 }

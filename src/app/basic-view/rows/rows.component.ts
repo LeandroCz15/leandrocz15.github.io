@@ -28,10 +28,16 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Boolean used to re-render the view after changing the order in the rows columns
   public reload: boolean = true;
 
-  // Rows to show in the template
-  public rows: Array<any> = new Array<any>;
+  // Every row loaded in memory
+  public rows: any[] = [];
 
-  constructor(private authService: AuthService, private openForm: OpenFormService, private fetchRows: FetchRowsService) { }
+  // Rows to show in the template
+  public rowsToShow: any[] = [];
+
+  constructor(private authService: AuthService,
+    private openForm: OpenFormService,
+    private fetchRows: FetchRowsService,
+  ) { }
 
   ngOnInit(): void {
     this.doFirstFetch();
@@ -67,7 +73,7 @@ export class RowsComponent implements OnInit, OnDestroy {
     this.updateLastRowId();
     const fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
     const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${fetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
-    const requestBody: any = { filters: this.viewComponent.currentTabFilters.filter(filter => filter.showInGrid) };
+    const requestBody: any = { filters: this.viewComponent.gridFields.filter(field => field.showInGrid) };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,
       previousFetchLastId: this.viewComponent.paginationComponent.getPreviousFetchLastId(),
@@ -81,8 +87,8 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Executed when fetch is successfull
   async successFetch(response: Response): Promise<void> {
-    let lastRowLength: number = this.rows.length;
-    this.rows = await response.json();
+    const newRows = await response.json();
+    this.rows = newRows;
     // Update first row id in the pagination component after fetching data
     this.updateFirstRowId();
   }
@@ -90,8 +96,7 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Executed when fetch failed
   async errorFetch(response: Response): Promise<void> {
     console.error(await response.text())
-    let lastRowLength: number = this.rows.length;
-    this.rows = [];
+    this.rows.slice(0);
     this.updateFirstRowId();
   }
 
@@ -133,7 +138,7 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Pipe to sort keys of the rows
   sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    return this.viewComponent.currentTabFiltersIndexedByHqlProperty[a.key] > this.viewComponent.currentTabFiltersIndexedByHqlProperty[b.key] ? 1 : -1;
+    return this.viewComponent.currentTabFieldsIndexedByHqlProperty[a.key]?.index > this.viewComponent.currentTabFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor
