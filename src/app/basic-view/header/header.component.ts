@@ -28,7 +28,7 @@ export class HeaderComponent {
   // Service to reload the view
   @Input() reloadViewSubject!: Subject<void>;
 
-  constructor(private fetchRows: FetchRowsService) {}
+  constructor(private fetchRows: FetchRowsService) { }
 
   /**
    * Function that handles the logic when a column filter is drag and dropped
@@ -36,7 +36,10 @@ export class HeaderComponent {
    */
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
-      moveItemInArray(this.filters, event.previousIndex, event.currentIndex);
+      const realPreviousIndex = this.filters.findIndex(filter => filter === event.item.data);
+      const indexDiff = event.previousIndex - realPreviousIndex;
+      const realCurrentIndex = event.currentIndex - indexDiff;
+      moveItemInArray(this.filters, realPreviousIndex, realCurrentIndex);
       this.viewComponent.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.filters, "hqlProperty");
       this.reloadViewSubject.next();
     }
