@@ -38,7 +38,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   private openFormSubscription!: Subscription;
 
   // Current row to be rendered
-  private currentRow: any = {};
+  public currentRow: any = {};
 
   // Form profile
   public profileForm!: FormGroup<{}>;
@@ -49,17 +49,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   // True if the row is being inserted. False otherwise
   public isNew: boolean = true;
 
-    /** list of banks */
-    protected banks: string[] = ["test"];
-  
-    /** indicate search operation is in progress */
-    public searching = false;
-  
-    /** list of banks filtered after simulating server side search */
-    public  filteredServerSideBanks = ["Test"];
-  
-    /** Subject that emits when the component has been destroyed. */
-    protected _onDestroy = new Subject<void>();
+  public updatingValues: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -68,10 +58,6 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     private getIdForFormPipe: GenerateIdForFormPipe,
     private fetchRows: FetchRowsService
   ) { }
-
-  test(){
-    console.log("HOLA")
-  }
 
   ngOnInit(): void {
     this.openFormSubscription = this.openForm.getRowObservable().subscribe(row => this.updateModal(row));
@@ -97,6 +83,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     if (row) {
       this.currentRow = row;
       this.isNew = false;
+      this.enableAllAttributes();
       this.updateFormWithRowValues();
     } else {
       this.currentRow = Object.assign({}, this.baseRow);
@@ -114,7 +101,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   buildGroup(): any {
     let group: any = {};
     this.filters.forEach(filter => {
-      if (filter.showInGrid) {
+      if (filter.showInForm) {
         group[this.normalizeOrFormatKey(filter.hqlProperty, false)] = [this.getDefaultValueForGroup(filter), this.buildPropertiesForGroup(filter)];
       }
     });
@@ -282,6 +269,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * This function is needed after the update/insert in the fail case
    */
   updateFormWithRowValues(): void {
+    this.updatingValues = true;
     Object.keys(this.profileForm.controls).forEach(key => {
       const formattedKey = this.normalizeOrFormatKey(key, true);
       this.profileForm.get(key)!.setValue(this.currentRow[formattedKey]);
@@ -294,14 +282,17 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   disableCompoundAttributes(): void {
-    if (!this.isNew) {
-      return;
-    }
     for (const field in this.profileForm.controls) {
       // If the record is new and the field includes two or more '_' it indicates that this is a compound property so disable it
       if (this.checkAmountOfRepetitions(field, "_") >= 2) {
         this.form.get(field)!.disable();
       }
+    }
+  }
+
+  enableAllAttributes(): void {
+    for (const field in this.profileForm.controls) {
+      this.form.get(field)!.enable();
     }
   }
 

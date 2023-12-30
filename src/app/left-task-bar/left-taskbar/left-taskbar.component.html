@@ -7,7 +7,7 @@
     <app-navbarelement
         *ngFor="let item of menuItems; let i = index; trackBy: trackByFn"
         viewIdReference="{{item.viewId}}"
-        title="{{item.title}}"
+        title="{{item.name}}"
         imagePath="{{item.imageSrc}}"
         buttonIndex="{{i}}"
     ></app-navbarelement>

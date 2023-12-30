@@ -4,7 +4,7 @@
         <div [hidden]="!filter.showInGrid" class="filter-box" cdkDrag cdkDragLockAxis="x">
             <!--This is start of a column in filters-->
             <span class="input-group-text rounded-0 fw-semibold d-block text-truncate filter-name">
-                {{filter.label}}
+                {{filter.name}}
             </span>
             <ng-container [ngSwitch]="filter.type">
                 <!--Text case-->

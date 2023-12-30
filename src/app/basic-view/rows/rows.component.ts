@@ -67,7 +67,7 @@ export class RowsComponent implements OnInit, OnDestroy {
     this.updateLastRowId();
     const fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
     const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${fetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
-    const requestBody: any = { filters: this.viewComponent.currentTabFilters };
+    const requestBody: any = { filters: this.viewComponent.currentTabFilters.filter(filter => filter.showInGrid) };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,
       previousFetchLastId: this.viewComponent.paginationComponent.getPreviousFetchLastId(),
@@ -133,7 +133,7 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Pipe to sort keys of the rows
   sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    return this.viewComponent.currentTabFiltersIndexedByHqlProperty[a.key].sequence > this.viewComponent.currentTabFiltersIndexedByHqlProperty[b.key].sequence ? 1 : -1;
+    return this.viewComponent.currentTabFiltersIndexedByHqlProperty[a.key] > this.viewComponent.currentTabFiltersIndexedByHqlProperty[b.key] ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor

@@ -1,70 +1,55 @@
 <div class="modal fade" id="rowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <ng-container *ngIf="!submitted else elseBlock">
-                <div class="modal-body">
-                    <form id="rowForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-                        <mat-form-field>
-                            <mat-select placeholder="Bank">
-                                <!-- place ngx-mat-select-search inside mat-option to allow opening without initial selection -->
-                                <mat-option>
-                                    <ngx-mat-select-search (click)="test()" [searching]="searching"></ngx-mat-select-search>
-                                </mat-option>
-                                <mat-option *ngFor="let bank of filteredServerSideBanks" [value]="bank">
-                                    {{bank}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <hr>
-                        <ng-container *ngFor="let filter of filters ; let i = index ; trackBy: trackByFn">
-                            <ng-container *ngIf="filter.showInGrid">
-                                <!--Workaround to store a value-->
-                                <ng-container *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
-                                    <ng-container [ngSwitch]="filter.type">
-                                        <label [for]="idForInput" class="form-label">{{filter.label}}</label>
-                                        <!--Text case-->
-                                        <input *ngSwitchCase="'text'" type="text" [id]=idForInput
-                                            [formControlName]="idForInput"
-                                            [ngClass]="{'is-invalid': form.get(idForInput)!.errors}"
-                                            class="form-control">
-                                        <!--Checkbox case-->
-                                        <input #checkboxInput *ngSwitchCase="'checkbox'" type="checkbox"
-                                            [id]="idForInput" [formControlName]="idForInput" class="btn ms-2">
-                                        <!--Date case-->
-                                        <div *ngSwitchCase="'date'" class="d-flex flex-column">
-                                            <mat-form-field *ngSwitchCase="'date'">
-                                                <mat-label>Choose a date</mat-label>
-                                                <input matInput [matDatepicker]="picker" [id]="idForInput"
-                                                    [formControlName]="idForInput">
-                                                <mat-hint>YYYY/MM/DD</mat-hint>
-                                                <mat-datepicker-toggle matIconSuffix
-                                                    [for]="picker"></mat-datepicker-toggle>
-                                                <mat-datepicker #picker></mat-datepicker>
-                                            </mat-form-field>
-                                        </div>
-                                        <!--Numeric case-->
-                                        <input *ngSwitchCase="'numeric'" type="number" [id]=idForInput
-                                            [formControlName]="idForInput"
-                                            [ngClass]="{'is-invalid': form.get(idForInput)!.errors}"
-                                            class="form-control">
-                                        <hr>
-                                    </ng-container>
+            <div [hidden]="submitted" class="modal-body">
+                <form id="rowForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                    <ng-container *ngFor="let filter of filters ; let i = index ; trackBy: trackByFn">
+                        <ng-container *ngIf="filter.showInForm">
+                            <!--Workaround to store a value-->
+                            <ng-container *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
+                                <ng-container [ngSwitch]="filter.type">
+                                    <label [for]="idForInput" class="form-label">{{filter.name}}</label>
+                                    <!--Selector case-->
+                                    <app-selector *ngSwitchCase="'selector'" [formInput]="profileForm" [filter]="filter"
+                                        [formName]="idForInput" [rowForm]="this"></app-selector>
+                                    <!--Text case-->
+                                    <input *ngSwitchCase="'text'" type="text" [id]=idForInput
+                                        [formControlName]="idForInput"
+                                        [ngClass]="{'is-invalid': form.get(idForInput)!.errors}" class="form-control">
+                                    <!--Checkbox case-->
+                                    <input #checkboxInput *ngSwitchCase="'checkbox'" type="checkbox" [id]="idForInput"
+                                        [formControlName]="idForInput" class="btn ms-2">
+                                    <!--Date case-->
+                                    <div *ngSwitchCase="'date'" class="d-flex flex-column">
+                                        <mat-form-field *ngSwitchCase="'date'">
+                                            <mat-label>Choose a date</mat-label>
+                                            <input matInput [matDatepicker]="picker" [id]="idForInput"
+                                                [formControlName]="idForInput">
+                                            <mat-hint>YYYY/MM/DD</mat-hint>
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <!--Numeric case-->
+                                    <input *ngSwitchCase="'numeric'" type="number" [id]=idForInput
+                                        [formControlName]="idForInput"
+                                        [ngClass]="{'is-invalid': form.get(idForInput)!.errors}" class="form-control">
+                                    <hr>
                                 </ng-container>
                             </ng-container>
                         </ng-container>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" form="rowForm"
-                        data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="rowForm">Save changes</button>
-                </div>
-            </ng-container>
-            <ng-template #elseBlock>
+                    </ng-container>
+                </form>
+            </div>
+            <div [hidden]="submitted" class="modal-footer">
+                <button type="button" class="btn btn-secondary" form="rowForm" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="rowForm">Save changes</button>
+            </div>
+            <div *ngIf="submitted">
                 <div class="d-flex h-100 justify-content-center align-items-center p-5">
                     <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
                 </div>
-            </ng-template>
+            </div>
         </div>
     </div>
 </div>

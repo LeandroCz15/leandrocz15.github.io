@@ -16,8 +16,8 @@ import { RowFormComponent } from './row-form/row-form.component';
 import { GenerateIdForFormPipe } from './pipes/generate-id-for-form.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import {MatSelectModule} from '@angular/material/select';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { SelectorComponent } from './selector/selector.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +28,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     ShouldShowPipe,
     RowFormComponent,
     GenerateIdForFormPipe,
+    SelectorComponent,
   ],
   imports: [
     CommonModule,
@@ -41,8 +42,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     NgbModule,
-    MatSelectModule,
-    NgxMatSelectSearchModule,
+    MatAutocompleteModule
   ],
   exports: [
     ViewComponent,

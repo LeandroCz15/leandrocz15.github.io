@@ -6,7 +6,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
-import { indexArrayByProperty } from 'src/application-utils';
+import { indexArrayByPropertyAndPosition } from 'src/application-utils';
 
 @Component({
   selector: 'app-view',
@@ -67,7 +67,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   fetchMainTabInformation() {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
-      this.currentTabFiltersIndexedByHqlProperty = indexArrayByProperty(this.currentTabFilters, "hqlProperty");
+      this.currentTabFiltersIndexedByHqlProperty = indexArrayByPropertyAndPosition(this.currentTabFilters, "hqlProperty");
       this.viewReady = true;
     }, (response: Response) => {
       console.log(`Error while fetching data of the view with id: ${this.viewId}. Error status: ${response.status}`);
