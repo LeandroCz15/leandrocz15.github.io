@@ -118,7 +118,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       case DataType.TEXT:
         return filter.defaultValue || null;
       case DataType.CHECKBOX:
-        return filter.defaultValue as boolean || false;
+        return JSON.parse(filter.defaultValue) || false;
       case DataType.NUMERIC:
         return +filter.defaultValue || null;
       case DataType.DATE:

@@ -2,12 +2,12 @@
     <div class="d-flex whole-row" (click)="openRowInFormMode(row)"
         *ngFor="let row of rows; let i = index; trackBy: trackByFn">
         <!--This is start of a row-->
-        <ng-container *ngFor="let obj of row | keyvalue: sortKeys; let i = index; trackBy: trackByFn">
+        <ng-container *ngFor="let obj of row | keyvalue : sortKeys; let i = index; trackBy: trackByFn">
             <div *ngIf="obj | shouldShow: this" class="w-100 key-row">
                 <!--This is start of a column in a row-->
                 <span class="input-group-text rounded-0 d-block text-truncate key-row-span">
                     <!--d-block text-truncate seems to have performance issues in styling-->
-                    {{ obj.value }}
+                    {{ obj.value ?? '--' }}
                 </span>
             </div>
         </ng-container>

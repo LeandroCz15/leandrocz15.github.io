@@ -23,7 +23,7 @@ export class SelectorComponent implements OnInit {
   public resultSet: any[] = [];
 
   private lastOptionClicked: string = "";
-  
+
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -34,7 +34,7 @@ export class SelectorComponent implements OnInit {
         return;
       }
       // Workaround to avoid fetch when clicking in a value 
-      if (value.name === this.lastOptionClicked) {
+      if (value?.name === this.lastOptionClicked) {
         return;
       }
       const url = `api/data/selector?entityFrom=${this.rowForm.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`

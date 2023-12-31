@@ -70,8 +70,8 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.processMainTabInformation(await response.json());
       this.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
       this.viewReady = true;
-    }, (response: Response) => {
-      console.log(`Error while fetching data of the view with id: ${this.viewId}. Error status: ${response.status}`);
+    }, async (response: Response) => {
+      console.log(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
     }, (error: any) => {
       console.error("Error while fetching main tab information");
     });
