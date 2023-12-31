@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { RowFormComponent } from '../row-form/row-form.component';
 import { HttpMethod } from 'src/application-constants';
@@ -10,7 +10,7 @@ import { HttpMethod } from 'src/application-constants';
   templateUrl: './selector.component.html',
   styleUrls: ['./selector.component.css']
 })
-export class SelectorComponent implements OnInit {
+export class SelectorComponent implements OnInit, OnDestroy {
 
   @Input() formInput!: FormGroup<{}>;
 
@@ -20,6 +20,14 @@ export class SelectorComponent implements OnInit {
 
   @Input() rowForm!: RowFormComponent;
 
+  @Input() programmaticUpdate!: Subject<boolean>;
+
+  private programmaticUpdateSubscription!: Subscription;
+
+  private valueChangeObservable!: Observable<any>;
+
+  private valueChangeSubscription!: Subscription;
+
   public resultSet: any[] = [];
 
   private lastOptionClicked: string = "";
@@ -27,25 +35,34 @@ export class SelectorComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1500), distinctUntilChanged()).subscribe(value => {
-      // Workaround to avoid first execution when opening the modal
-      if (this.rowForm.updatingValues) {
-        this.rowForm.updatingValues = false;
-        return;
+    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1500), distinctUntilChanged());
+    this.programmaticUpdateSubscription = this.programmaticUpdate.asObservable().subscribe(value => {
+      if (!value) {
+        // ENABLE
+        this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => {
+          // Workaround to avoid fetch when clicking in a value 
+          if (value?.name === this.lastOptionClicked) {
+            return;
+          }
+          const url = `api/data/selector?entityFrom=${this.rowForm.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
+          this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
+            this.resultSet = await response.json();
+          }, async (response: Response) => {
+            console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
+          }, (error: any) => {
+            console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Timeout`);
+          });
+        });
+      } else {
+        // DISABLE
+        this.valueChangeSubscription?.unsubscribe();
       }
-      // Workaround to avoid fetch when clicking in a value 
-      if (value?.name === this.lastOptionClicked) {
-        return;
-      }
-      const url = `api/data/selector?entityFrom=${this.rowForm.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
-      this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
-        this.resultSet = await response.json();
-      }, async (response: Response) => {
-        console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
-      }, (error: any) => {
-        console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Timeout`);
-      });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.programmaticUpdateSubscription.unsubscribe();
+    this.valueChangeSubscription?.unsubscribe();
   }
 
   showProperty(value: any) {

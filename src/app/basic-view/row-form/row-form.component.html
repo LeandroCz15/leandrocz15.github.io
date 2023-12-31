@@ -11,7 +11,7 @@
                                     <label [for]="idForInput" class="form-label">{{filter.name}}</label>
                                     <!--Selector case-->
                                     <app-selector *ngSwitchCase="'selector'" [formInput]="profileForm" [filter]="filter"
-                                        [formName]="idForInput" [rowForm]="this"></app-selector>
+                                        [formName]="idForInput" [rowForm]="this" [programmaticUpdate]="programmaticUpdate"></app-selector>
                                     <!--Text case-->
                                     <input *ngSwitchCase="'text'" type="text" [id]=idForInput
                                         [formControlName]="idForInput"

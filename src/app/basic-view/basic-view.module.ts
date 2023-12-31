@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { SelectorComponent } from './selector/selector.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { SelectorComponent } from './selector/selector.component';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     NgbModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   exports: [
     ViewComponent,

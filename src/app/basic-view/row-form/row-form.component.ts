@@ -8,7 +8,6 @@ import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-const
 import { AuthService } from 'src/app/login-module/auth-service';
 import { ViewComponent } from '../view/view.component';
 import { OpenFormService } from '../services/open-form.service';
-import { FetchRowsService } from '../services/fetch-rows.service';
 import * as bootstrap from 'bootstrap';
 
 @Component({
@@ -49,14 +48,13 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   // True if the row is being inserted. False otherwise
   public isNew: boolean = true;
 
-  public updatingValues: boolean = false;
+  public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
 
   constructor(
     private authService: AuthService,
     private openForm: OpenFormService,
     private formBuilder: NonNullableFormBuilder,
     private getIdForFormPipe: GenerateIdForFormPipe,
-    private fetchRows: FetchRowsService
   ) { }
 
   ngOnInit(): void {
@@ -81,7 +79,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   updateModal(row: any): void {
     if (row) {
-      this.currentRow = row;
+      this.currentRow = row; //A lo mejor no hace falta siempre pasar una copia
       this.isNew = false;
       this.enableAllAttributes();
       this.updateFormWithRowValues();
@@ -143,6 +141,8 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.buildNumericValidators(filter);
       case DataType.DATE:
         return this.buildDateValidators(filter);
+      case DataType.SELECTOR:
+        return filter.isMandatory ? [Validators.required, this.isObjectValidator] : [this.isObjectValidator];
       default:
         return [];
     }
@@ -191,9 +191,17 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     return properties;
   }
 
+  /**
+   * Validator to check if the control value is an object or not
+   * @param control Form control
+   */
+  isObjectValidator(control: FormControl): any {
+    return typeof control.value === "object" && control.value !== null ? null : { "notObject": true };
+  }
+
   // New validator to check that a text input must not be blank
   noWhitespaceValidator(control: FormControl): any {
-    return (control.value || '').trim().length ? null : { 'blank': true };
+    return (control.value || '').trim().length ? null : { "blank": true };
   }
 
   /**
@@ -209,7 +217,6 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.authService.fetchInformation(url, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
-      this.fetchRows.sendFetchChange();
       this.submitted = false;
     }, async (response: Response) => {
       this.submitted = false;
@@ -227,6 +234,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * to also update the current row in the grid
    */
   updateRowAndFormWithBackendResponse(updatedRow: any): void {
+    this.programmaticUpdate.next(true);
     Object.keys(this.currentRow).forEach(key => {
       // Update the form properties that has been found
       const formattedKey = this.normalizeOrFormatKey(key, false);
@@ -235,6 +243,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       // Update current row properties
       this.currentRow[key] = valueToSet;
     });
+    this.programmaticUpdate.next(false);
   }
 
   /**
@@ -269,11 +278,12 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * This function is needed after the update/insert in the fail case
    */
   updateFormWithRowValues(): void {
-    this.updatingValues = true;
+    this.programmaticUpdate.next(true);
     Object.keys(this.profileForm.controls).forEach(key => {
       const formattedKey = this.normalizeOrFormatKey(key, true);
-      this.profileForm.get(key)!.setValue(this.currentRow[formattedKey]);
+      this.profileForm.get(key)!.setValue(this.currentRow[formattedKey], { emiteEvent: false });
     });
+    this.programmaticUpdate.next(false);
   }
 
   // Normalize the key or format. If normalize then is the standard hql property. Else is the format: form_ + property

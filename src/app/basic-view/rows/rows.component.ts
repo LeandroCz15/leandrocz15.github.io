@@ -51,7 +51,7 @@ export class RowsComponent implements OnInit, OnDestroy {
   }
 
   openRowInFormMode(row: any): void {
-    this.openForm.sendRowChange(Object.assign({}, row));
+    this.openForm.sendRowChange(row);
   }
 
   // Only in OnInit. The first fetch should not have a where clause

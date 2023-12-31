@@ -22,4 +22,5 @@ export const enum DataType {
     CHECKBOX = "checkbox",
     NUMERIC = "number",
     DATE = "date",
+    SELECTOR = "selector",
 }
