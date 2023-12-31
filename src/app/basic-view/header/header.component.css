@@ -46,11 +46,6 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* Honestamente ni se para que sirve */
-.example-box:last-child {
-  border: none;
-}
-
 /* 
     Este efecto es sumamente importante, permite pre-visualizar como quedarian acomodados los elementos en caso de que se
     decida soltar el click al arrastrar un elemento.

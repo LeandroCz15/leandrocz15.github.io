@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/login-module/auth-service';
 import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-view',
@@ -92,6 +93,17 @@ export class ViewComponent implements OnInit, OnDestroy {
       newGridTabFields.push(field);
     });
     this.gridFields = newGridTabFields;
+  }
+
+  dropFilterColumn(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex !== event.currentIndex) {
+      const realPreviousIndex = this.gridFields.findIndex(filter => filter === event.item.data);
+      const indexDiff = event.previousIndex - realPreviousIndex;
+      const realCurrentIndex = event.currentIndex - indexDiff;
+      moveItemInArray(this.gridFields, realPreviousIndex, realCurrentIndex);
+      this.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
+      this.reloadViewSubject.next();
+    }
   }
 
 }

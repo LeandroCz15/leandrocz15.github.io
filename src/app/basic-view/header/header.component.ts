@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -15,7 +15,8 @@ import { indexArrayByProperty } from 'src/application-utils';
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: CAZZEON_DATE_FORMAT }
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
 
@@ -25,25 +26,7 @@ export class HeaderComponent {
   // Filters to render in this component
   @Input() filters!: Array<any>;
 
-  // Service to reload the view
-  @Input() reloadViewSubject!: Subject<void>;
-
   constructor(private fetchRows: FetchRowsService) { }
-
-  /**
-   * Function that handles the logic when a column filter is drag and dropped
-   * @param event Event information about the column dropped
-   */
-  dropFilterColumn(event: CdkDragDrop<any[]>): void {
-    if (event.previousIndex !== event.currentIndex) {
-      const realPreviousIndex = this.filters.findIndex(filter => filter === event.item.data);
-      const indexDiff = event.previousIndex - realPreviousIndex;
-      const realCurrentIndex = event.currentIndex - indexDiff;
-      moveItemInArray(this.filters, realPreviousIndex, realCurrentIndex);
-      this.viewComponent.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.filters, "hqlProperty");
-      this.reloadViewSubject.next();
-    }
-  }
 
   // Process text input change
   processTextInputChange(index: number): void {
@@ -109,12 +92,10 @@ export class HeaderComponent {
     this.fetchRows.sendFetchChange();
   }
 
-  //Check if the text input of a filter changed
   didTextInputChange(filter: any) {
     return !(filter.value?.toUpperCase() === filter.lastValueUsedForSearch?.toUpperCase());
   }
 
-  // Function to keep track of rows using the index given by the *ngFor
   trackByFn(index: number, item: any): number {
     return index;
   }
