@@ -96,7 +96,7 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Executed when fetch failed
   async errorFetch(response: Response): Promise<void> {
     console.error(await response.text())
-    this.rows.slice(0);
+    this.rows.splice(0);
     this.updateFirstRowId();
   }
 
@@ -138,7 +138,11 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Pipe to sort keys of the rows
   sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    return this.viewComponent.currentTabFieldsIndexedByHqlProperty[a.key]?.index > this.viewComponent.currentTabFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
+    const firstElement = this.viewComponent.currentGridFieldsIndexedByHqlProperty[a.key];
+    if (!firstElement) {
+      return 1;
+    }
+    return firstElement.index > this.viewComponent.currentGridFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor

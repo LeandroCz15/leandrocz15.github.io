@@ -7,7 +7,7 @@ import { RowsComponent } from '../rows/rows.component';
 export class ShouldShowPipe implements PipeTransform {
 
   transform(value: any, rowComponent: RowsComponent): unknown {
-    return rowComponent.viewComponent.currentTabFieldsIndexedByHqlProperty[value.key].item.showInGrid;
+    return rowComponent.viewComponent.currentGridFieldsIndexedByHqlProperty[value.key];
   }
 
 }

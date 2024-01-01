@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from 'src/app/login-module/auth-service';
@@ -18,9 +18,11 @@ export class SelectorComponent implements OnInit, OnDestroy {
 
   @Input() formName!: string;
 
-  @Input() rowForm!: RowFormComponent;
+  @Input() rowFormComponent!: RowFormComponent;
 
   @Input() programmaticUpdate!: Subject<boolean>;
+
+  @ViewChild("input") inputElement!: ElementRef;
 
   private programmaticUpdateSubscription!: Subscription;
 
@@ -30,27 +32,28 @@ export class SelectorComponent implements OnInit, OnDestroy {
 
   public resultSet: any[] = [];
 
-  private lastOptionClicked: string = "";
+  private lastOptionIdClicked: string = "";
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1500), distinctUntilChanged());
+    this.rowFormComponent.selectors.push(this);
+    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1050), distinctUntilChanged());
     this.programmaticUpdateSubscription = this.programmaticUpdate.asObservable().subscribe(value => {
       if (!value) {
         // ENABLE
         this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => {
           // Workaround to avoid fetch when clicking in a value 
-          if (value?.name === this.lastOptionClicked) {
+          if (value?.id === this.lastOptionIdClicked) {
             return;
           }
-          const url = `api/data/selector?entityFrom=${this.rowForm.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
+          const url = `api/data/selector?entityFrom=${this.rowFormComponent.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
           this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
             this.resultSet = await response.json();
           }, async (response: Response) => {
-            console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
+            console.error(`Error while fetching data for the selector: ${this.rowFormComponent.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
           }, (error: any) => {
-            console.error(`Error while fetching data for the selector: ${this.rowForm.viewComponent.mainTabEntityName}. Timeout`);
+            console.error(`Error while fetching data for the selector: ${this.rowFormComponent.viewComponent.mainTabEntityName}. Timeout`);
           });
         });
       } else {
@@ -70,7 +73,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
   }
 
   clickInOption(value: string): void {
-    this.lastOptionClicked = value;
+    this.lastOptionIdClicked = value;
   }
 
 }

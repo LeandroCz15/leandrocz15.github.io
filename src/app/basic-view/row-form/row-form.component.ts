@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/login-module/auth-service';
 import { ViewComponent } from '../view/view.component';
 import { OpenFormService } from '../services/open-form.service';
 import * as bootstrap from 'bootstrap';
+import { SelectorComponent } from '../selector/selector.component';
 
 @Component({
   selector: 'app-row-form',
@@ -23,6 +24,9 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Base row structure
   readonly baseRow: any = {};
+
+  // Every selector in this form
+  public selectors: SelectorComponent[] = [];
 
   // Modal of the view
   private modalElement!: Element;
@@ -61,7 +65,6 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.openFormSubscription = this.openForm.getRowObservable().subscribe(row => this.updateModal(row));
     this.profileForm = this.formBuilder.group(this.buildGroup());
     this.buildBaseRowStructure();
-
   }
 
   ngOnDestroy(): void {
@@ -78,8 +81,9 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * @param row Row to update the current form
    */
   updateModal(row: any): void {
+    this.programmaticUpdate.next(true);
     if (row) {
-      this.currentRow = row; //A lo mejor no hace falta siempre pasar una copia
+      this.currentRow = row;
       this.isNew = false;
       this.enableAllAttributes();
       this.updateFormWithRowValues();
@@ -89,6 +93,11 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       this.disableCompoundAttributes();
       this.profileForm.reset();
     }
+    // Clean the results in the selectors for a better UI.
+    this.selectors.forEach(selector => {
+      selector.resultSet.splice(0);
+    });
+    this.programmaticUpdate.next(false);
     bootstrap.Modal.getOrCreateInstance(this.modalElement).show();
   }
 
@@ -99,9 +108,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   buildGroup(): any {
     let group: any = {};
     this.filters.forEach(filter => {
-      if (filter.showInForm) {
-        group[this.normalizeOrFormatKey(filter.hqlProperty, false)] = [this.getDefaultValueForGroup(filter), this.buildPropertiesForGroup(filter)];
-      }
+      group[this.normalizeOrFormatKey(filter.hqlProperty, false)] = [this.getDefaultValueForGroup(filter), this.buildPropertiesForGroup(filter)];
     });
     return group;
   }
@@ -251,7 +258,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * For example backend sends date in string format. This function is made for those exceptions that needs to be converted
    */
   getValueToSetFromRow(key: string, value: any): any {
-    switch (this.viewComponent.currentTabFieldsIndexedByHqlProperty[key].type) {
+    switch (this.viewComponent.currentFormFieldsIndexedByHqlProperty[key].type) {
       case DataType.DATE:
         return new Date(value);
       default:
@@ -278,12 +285,10 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * This function is needed after the update/insert in the fail case
    */
   updateFormWithRowValues(): void {
-    this.programmaticUpdate.next(true);
     Object.keys(this.profileForm.controls).forEach(key => {
       const formattedKey = this.normalizeOrFormatKey(key, true);
       this.profileForm.get(key)!.setValue(this.currentRow[formattedKey], { emiteEvent: false });
     });
-    this.programmaticUpdate.next(false);
   }
 
   // Normalize the key or format. If normalize then is the standard hql property. Else is the format: form_ + property

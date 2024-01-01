@@ -37,11 +37,17 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Pagination children component
   @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
-  // Current fields to show in the main tab
+  // Fields to show in the grid of the current tab
   public gridFields: any[] = [];
 
-  // Indexed fields for better performance
-  public currentTabFieldsIndexedByHqlProperty: any = {};
+  // Fields to show in the form of the current tab
+  public formFields: any[] = [];
+
+  // Indexed fields to show in the grid for better performance
+  public currentGridFieldsIndexedByHqlProperty: any = {};
+
+  // Indexed fields to show in the form for better performance
+  public currentFormFieldsIndexedByHqlProperty: any = {};
 
   // Subscription for page change service
   private pageChangeSubscription!: Subscription;
@@ -69,7 +75,9 @@ export class ViewComponent implements OnInit, OnDestroy {
   fetchMainTabInformation() {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
-      this.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
+      // TODO: BOTH ARRAYS STARTS FROM THE SAME. TRY TO INDEX BOTH TO AVOID TRAVELING THE LIST SO MANY TIMES
+      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
+      this.currentFormFieldsIndexedByHqlProperty = indexArrayByProperty(this.formFields, "hqlProperty");
       this.viewReady = true;
     }, async (response: Response) => {
       console.log(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
@@ -86,22 +94,26 @@ export class ViewComponent implements OnInit, OnDestroy {
   processMainTabInformation(mainTabData: any) {
     this.mainTabId = mainTabData.id;
     this.mainTabEntityName = mainTabData.entityName;
-    const newGridTabFields: any[] = [];
+    const newGridFields: any[] = [];
+    const newFormFields: any[] = []
     mainTabData.fields.forEach((field: any) => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
-      newGridTabFields.push(field);
+      if (field.showInGrid) {
+        newGridFields.push(field);
+      }
+      if (field.showInForm) {
+        newFormFields.push(field);
+      }
     });
-    this.gridFields = newGridTabFields;
+    this.gridFields = newGridFields;
+    this.formFields = newFormFields;
   }
 
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
-      const realPreviousIndex = this.gridFields.findIndex(filter => filter === event.item.data);
-      const indexDiff = event.previousIndex - realPreviousIndex;
-      const realCurrentIndex = event.currentIndex - indexDiff;
-      moveItemInArray(this.gridFields, realPreviousIndex, realCurrentIndex);
-      this.currentTabFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
+      moveItemInArray(this.gridFields, event.previousIndex, event.currentIndex);
+      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
       this.reloadViewSubject.next();
     }
   }

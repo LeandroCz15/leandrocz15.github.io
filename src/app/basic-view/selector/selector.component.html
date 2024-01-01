@@ -1,14 +1,15 @@
 <div class="d-flex flex-column">
     <mat-form-field [formGroup]="formInput">
         <mat-label>Select an entry</mat-label>
-        <input type="text" placeholder="Pick one" aria-label="Number"
+        <input #input type="text" placeholder="Pick one" aria-label="Number"
             matInput
             [matAutocomplete]="auto"
-            [formControlName]="formName">
+            [formControlName]="formName"
+            [ngClass]="{'is-invalid': formInput.get(formName)!.errors}">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="showProperty">
             <mat-option *ngFor="let option of resultSet"
                 [value]="option"
-                (click)="clickInOption(option.name)">
+                (click)="clickInOption(option.id)">
                 {{option.name}}
             </mat-option>
         </mat-autocomplete>
