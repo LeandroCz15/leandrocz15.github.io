@@ -37,35 +37,21 @@ export class SelectorComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.rowFormComponent.selectors.push(this);
-    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1050), distinctUntilChanged());
+    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1050), distinctUntilChanged())
+    this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value));
     this.programmaticUpdateSubscription = this.programmaticUpdate.asObservable().subscribe(value => {
       if (!value) {
-        // ENABLE
-        this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => {
-          // Workaround to avoid fetch when clicking in a value 
-          if (value?.id === this.lastOptionIdClicked) {
-            return;
-          }
-          const url = `api/data/selector?entityFrom=${this.rowFormComponent.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
-          this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
-            this.resultSet = await response.json();
-          }, async (response: Response) => {
-            console.error(`Error while fetching data for the selector: ${this.rowFormComponent.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
-          }, (error: any) => {
-            console.error(`Error while fetching data for the selector: ${this.rowFormComponent.viewComponent.mainTabEntityName}. Timeout`);
-          });
-        });
+        this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value));
       } else {
         // DISABLE
-        this.valueChangeSubscription?.unsubscribe();
+        this.valueChangeSubscription.unsubscribe();
       }
     });
   }
 
   ngOnDestroy(): void {
     this.programmaticUpdateSubscription.unsubscribe();
-    this.valueChangeSubscription?.unsubscribe();
+    this.valueChangeSubscription.unsubscribe();
   }
 
   showProperty(value: any) {
@@ -74,6 +60,21 @@ export class SelectorComponent implements OnInit, OnDestroy {
 
   clickInOption(value: string): void {
     this.lastOptionIdClicked = value;
+  }
+
+  handleSelectorChange(value: any): void {
+    // Workaround to avoid fetch when clicking in a value 
+    if (value?.id === this.lastOptionIdClicked) {
+      return;
+    }
+    const url = `api/data/selector?entityFrom=${this.rowFormComponent.data.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
+    this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
+      this.resultSet = await response.json();
+    }, async (response: Response) => {
+      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
+    }, (error: any) => {
+      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.viewComponent.mainTabEntityName}. Timeout`);
+    });
   }
 
 }

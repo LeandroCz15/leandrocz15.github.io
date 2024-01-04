@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { ReplaySubject, Subject, Subscription } from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -7,9 +7,14 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { ViewComponent } from '../view/view.component';
-import { OpenFormService } from '../services/open-form.service';
-import * as bootstrap from 'bootstrap';
 import { SelectorComponent } from '../selector/selector.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+export interface DialogData {
+  fields: any;
+  viewComponent: ViewComponent,
+  currentRow: any,
+}
 
 @Component({
   selector: 'app-row-form',
@@ -20,28 +25,10 @@ import { SelectorComponent } from '../selector/selector.component';
     { provide: MAT_DATE_FORMATS, useValue: CAZZEON_DATE_FORMAT }
   ]
 })
-export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
+export class RowFormComponent implements OnInit {
 
   // Base row structure
   readonly baseRow: any = {};
-
-  // Every selector in this form
-  public selectors: SelectorComponent[] = [];
-
-  // Modal of the view
-  private modalElement!: Element;
-
-  // View component reference
-  @Input() viewComponent!: ViewComponent;
-
-  // Filters/Headers heredated from view component parent
-  @Input() public filters: Array<any> = [];
-
-  // Subscription to row form service
-  private openFormSubscription!: Subscription;
-
-  // Current row to be rendered
-  public currentRow: any = {};
 
   // Form profile
   public profileForm!: FormGroup<{}>;
@@ -52,28 +39,26 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   // True if the row is being inserted. False otherwise
   public isNew: boolean = true;
 
+  // Boolean to render the modal 
+  public formReady: boolean = false;
+
+  // Subject for update the form
   public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
 
   constructor(
     private authService: AuthService,
-    private openForm: OpenFormService,
     private formBuilder: NonNullableFormBuilder,
     private getIdForFormPipe: GenerateIdForFormPipe,
+    public dialogRef: MatDialogRef<RowFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) { }
 
   ngOnInit(): void {
-    this.openFormSubscription = this.openForm.getRowObservable().subscribe(row => this.updateModal(row));
+    this.dialogRef.updateSize("80%", "80%")
     this.profileForm = this.formBuilder.group(this.buildGroup());
     this.buildBaseRowStructure();
-  }
-
-  ngOnDestroy(): void {
-    this.openFormSubscription.unsubscribe();
-  }
-
-  // Set modal element reference
-  ngAfterViewInit(): void {
-    this.modalElement = document.getElementById("rowModal") as Element;
+    this.updateModal(this.data.currentRow);
+    this.formReady = true;
   }
 
   /**
@@ -83,22 +68,16 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   updateModal(row: any): void {
     this.programmaticUpdate.next(true);
     if (row) {
-      this.currentRow = row;
       this.isNew = false;
       this.enableAllAttributes();
       this.updateFormWithRowValues();
     } else {
-      this.currentRow = Object.assign({}, this.baseRow);
+      this.data.currentRow = Object.assign({}, this.baseRow);
       this.isNew = true;
       this.disableCompoundAttributes();
       this.profileForm.reset();
     }
-    // Clean the results in the selectors for a better UI.
-    this.selectors.forEach(selector => {
-      selector.resultSet.splice(0);
-    });
     this.programmaticUpdate.next(false);
-    bootstrap.Modal.getOrCreateInstance(this.modalElement).show();
   }
 
   /**
@@ -107,8 +86,8 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   buildGroup(): any {
     let group: any = {};
-    this.filters.forEach(filter => {
-      group[this.normalizeOrFormatKey(filter.hqlProperty, false)] = [this.getDefaultValueForGroup(filter), this.buildPropertiesForGroup(filter)];
+    this.data.fields.forEach((field: any) => {
+      group[this.normalizeOrFormatKey(field.hqlProperty, false)] = [this.getDefaultValueForGroup(field), this.buildPropertiesForGroup(field)];
     });
     return group;
   }
@@ -219,7 +198,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     this.submitted = true;
-    const url = `api/store/${this.viewComponent.mainTabEntityName}`;
+    const url = `api/store/${this.data.viewComponent.mainTabEntityName}`;
     const objectToSend = this.buildObjectToSend();
     this.authService.fetchInformation(url, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
@@ -227,10 +206,10 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
       this.submitted = false;
     }, async (response: Response) => {
       this.submitted = false;
-      console.error(`Error while storing entity ${this.viewComponent.mainTabEntityName}. Cause: ${await response.text()}`);
+      console.error(`Error while storing entity ${this.data.viewComponent.mainTabEntityName}. Cause: ${await response.text()}`);
     }, (error: any) => {
       this.submitted = false;
-      console.error(`Timeout in when storing an object of type: ${this.viewComponent.mainTabEntityName}`);
+      console.error(`Timeout in when storing an object of type: ${this.data.viewComponent.mainTabEntityName}`);
     },
       JSON.stringify({ entity: objectToSend, isNew: this.isNew }));
   }
@@ -242,13 +221,13 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   updateRowAndFormWithBackendResponse(updatedRow: any): void {
     this.programmaticUpdate.next(true);
-    Object.keys(this.currentRow).forEach(key => {
+    Object.keys(this.data.currentRow).forEach(key => {
       // Update the form properties that has been found
       const formattedKey = this.normalizeOrFormatKey(key, false);
       const valueToSet = this.getValueToSetFromRow(key, updatedRow[key]);
       this.profileForm.get(formattedKey)?.setValue(valueToSet);
       // Update current row properties
-      this.currentRow[key] = valueToSet;
+      this.data.currentRow[key] = valueToSet;
     });
     this.programmaticUpdate.next(false);
   }
@@ -258,7 +237,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    * For example backend sends date in string format. This function is made for those exceptions that needs to be converted
    */
   getValueToSetFromRow(key: string, value: any): any {
-    switch (this.viewComponent.currentFormFieldsIndexedByHqlProperty[key].type) {
+    switch (this.data.viewComponent.currentFormFieldsIndexedByHqlProperty[key].type) {
       case DataType.DATE:
         return new Date(value);
       default:
@@ -272,7 +251,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   buildObjectToSend(): any {
     const formRawValue: any = this.profileForm.getRawValue();
-    const returnObject: any = Object.assign({}, this.currentRow);
+    const returnObject: any = Object.assign({}, this.data.currentRow);
     Object.keys(this.profileForm.getRawValue()).forEach(key => {
       // Normalize object
       const normalizedKey = this.normalizeOrFormatKey(key, true);
@@ -287,7 +266,7 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   updateFormWithRowValues(): void {
     Object.keys(this.profileForm.controls).forEach(key => {
       const formattedKey = this.normalizeOrFormatKey(key, true);
-      this.profileForm.get(key)!.setValue(this.currentRow[formattedKey], { emiteEvent: false });
+      this.profileForm.get(key)!.setValue(this.data.currentRow[formattedKey]);
     });
   }
 
@@ -325,8 +304,8 @@ export class RowFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   buildBaseRowStructure(): void {
-    this.filters.forEach(filter => {
-      this.baseRow[filter.hqlProperty] = null;
+    this.data.fields.forEach((field: any) => {
+      this.baseRow[field.hqlProperty] = null;
     });
   }
 

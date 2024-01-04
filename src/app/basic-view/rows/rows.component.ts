@@ -5,8 +5,9 @@ import { ViewComponent } from '../view/view.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { HttpMethod } from 'src/application-constants';
 import { PaginationEventType } from '../pagination/pagination.component';
-import { OpenFormService } from '../services/open-form.service';
 import { FetchRowsService } from '../services/fetch-rows.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 
 @Component({
   selector: 'app-rows',
@@ -35,8 +36,8 @@ export class RowsComponent implements OnInit, OnDestroy {
   public rowsToShow: any[] = [];
 
   constructor(private authService: AuthService,
-    private openForm: OpenFormService,
     private fetchRows: FetchRowsService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -51,7 +52,14 @@ export class RowsComponent implements OnInit, OnDestroy {
   }
 
   openRowInFormMode(row: any): void {
-    this.openForm.sendRowChange(row);
+    const dialogData: DialogData = {
+      fields: this.viewComponent.formFields,
+      viewComponent: this.viewComponent,
+      currentRow: row
+    }
+    const dialogRef = this.dialog.open(RowFormComponent, {
+      data: dialogData,
+    });
   }
 
   // Only in OnInit. The first fetch should not have a where clause

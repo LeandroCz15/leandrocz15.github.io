@@ -1,6 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Subject } from 'rxjs';
-import { OpenFormService } from '../services/open-form.service';
 import { FetchRowsService } from '../services/fetch-rows.service';
 
 @Component({
@@ -14,7 +12,7 @@ export class PaginationComponent {
   private currentFetchFirstId: string = "";
   public currentFetchSize: number = 50;
 
-  constructor(private openForm: OpenFormService, private fetchRows: FetchRowsService) { }
+  constructor(private fetchRows: FetchRowsService) { }
 
   getPreviousFetchLastId(): string {
     return this.previousFetchLastId;
@@ -48,7 +46,7 @@ export class PaginationComponent {
   }
 
   openNewRowModal():void {
-    this.openForm.sendRowChange(undefined);
+    //this.openForm.sendRowChange(undefined);
   }
 
 }
