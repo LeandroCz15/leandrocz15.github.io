@@ -5,7 +5,7 @@
         <app-rows [reloadViewSubject]="reloadViewSubject" [viewComponent]="this"></app-rows>
     </div>
     <div class="bg-dark">
-        <app-pagination></app-pagination>
+        <app-pagination [viewComponent]="this"></app-pagination>
     </div>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">

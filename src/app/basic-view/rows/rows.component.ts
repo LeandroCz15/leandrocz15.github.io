@@ -53,7 +53,6 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   openRowInFormMode(row: any): void {
     const dialogData: DialogData = {
-      fields: this.viewComponent.formFields,
       viewComponent: this.viewComponent,
       currentRow: row
     }

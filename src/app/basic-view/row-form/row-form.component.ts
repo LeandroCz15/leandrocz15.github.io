@@ -11,7 +11,6 @@ import { SelectorComponent } from '../selector/selector.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface DialogData {
-  fields: any;
   viewComponent: ViewComponent,
   currentRow: any,
 }
@@ -69,12 +68,10 @@ export class RowFormComponent implements OnInit {
     this.programmaticUpdate.next(true);
     if (row) {
       this.isNew = false;
-      this.enableAllAttributes();
       this.updateFormWithRowValues();
     } else {
       this.data.currentRow = Object.assign({}, this.baseRow);
       this.isNew = true;
-      this.disableCompoundAttributes();
       this.profileForm.reset();
     }
     this.programmaticUpdate.next(false);
@@ -85,8 +82,8 @@ export class RowFormComponent implements OnInit {
    * @returns 
    */
   buildGroup(): any {
-    let group: any = {};
-    this.data.fields.forEach((field: any) => {
+    const group: any = {};
+    this.data.viewComponent.formFields.forEach((field: any) => {
       group[this.normalizeOrFormatKey(field.hqlProperty, false)] = [this.getDefaultValueForGroup(field), this.buildPropertiesForGroup(field)];
     });
     return group;
@@ -197,18 +194,18 @@ export class RowFormComponent implements OnInit {
     if (!this.profileForm.valid) {
       return;
     }
-    this.submitted = true;
+    this.formReady = false;
     const url = `api/store/${this.data.viewComponent.mainTabEntityName}`;
     const objectToSend = this.buildObjectToSend();
     this.authService.fetchInformation(url, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
-      this.submitted = false;
+      this.formReady = true;
     }, async (response: Response) => {
-      this.submitted = false;
+      this.formReady = true;
       console.error(`Error while storing entity ${this.data.viewComponent.mainTabEntityName}. Cause: ${await response.text()}`);
     }, (error: any) => {
-      this.submitted = false;
+      this.formReady = true;
       console.error(`Timeout in when storing an object of type: ${this.data.viewComponent.mainTabEntityName}`);
     },
       JSON.stringify({ entity: objectToSend, isNew: this.isNew }));
@@ -224,25 +221,12 @@ export class RowFormComponent implements OnInit {
     Object.keys(this.data.currentRow).forEach(key => {
       // Update the form properties that has been found
       const formattedKey = this.normalizeOrFormatKey(key, false);
-      const valueToSet = this.getValueToSetFromRow(key, updatedRow[key]);
+      const valueToSet = updatedRow[key];
       this.profileForm.get(formattedKey)?.setValue(valueToSet);
       // Update current row properties
       this.data.currentRow[key] = valueToSet;
     });
     this.programmaticUpdate.next(false);
-  }
-
-  /**
-   * This function is meant to return a specific value from a fresh row fetched from the backend.
-   * For example backend sends date in string format. This function is made for those exceptions that needs to be converted
-   */
-  getValueToSetFromRow(key: string, value: any): any {
-    switch (this.data.viewComponent.currentFormFieldsIndexedByHqlProperty[key].type) {
-      case DataType.DATE:
-        return new Date(value);
-      default:
-        return value;
-    }
   }
 
   /**
@@ -275,36 +259,8 @@ export class RowFormComponent implements OnInit {
     return doNormalize ? key.replace("form_", "").replaceAll("_", ".") : this.getIdForFormPipe.transform(key);
   }
 
-  disableCompoundAttributes(): void {
-    for (const field in this.profileForm.controls) {
-      // If the record is new and the field includes two or more '_' it indicates that this is a compound property so disable it
-      if (this.checkAmountOfRepetitions(field, "_") >= 2) {
-        this.form.get(field)!.disable();
-      }
-    }
-  }
-
-  enableAllAttributes(): void {
-    for (const field in this.profileForm.controls) {
-      this.form.get(field)!.enable();
-    }
-  }
-
-  /**
-   * Check the amount of repetitions of a character in a string
-   */
-  checkAmountOfRepetitions(searchString: string, searchChar: string): number {
-    let amount = 0;
-    for (let i = 0; i < searchString.length; i++) {
-      if (searchString[i] === searchChar) {
-        amount++
-      }
-    }
-    return amount;
-  }
-
   buildBaseRowStructure(): void {
-    this.data.fields.forEach((field: any) => {
+    this.data.viewComponent.formFields.forEach((field: any) => {
       this.baseRow[field.hqlProperty] = null;
     });
   }

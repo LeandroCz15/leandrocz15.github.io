@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { FetchRowsService } from '../services/fetch-rows.service';
+import { DialogData, RowFormComponent } from '../row-form/row-form.component';
+import { ViewComponent } from '../view/view.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pagination',
@@ -12,7 +15,9 @@ export class PaginationComponent {
   private currentFetchFirstId: string = "";
   public currentFetchSize: number = 50;
 
-  constructor(private fetchRows: FetchRowsService) { }
+  @Input() viewComponent!: ViewComponent;
+
+  constructor(private fetchRows: FetchRowsService, public dialog: MatDialog) { }
 
   getPreviousFetchLastId(): string {
     return this.previousFetchLastId;
@@ -45,7 +50,14 @@ export class PaginationComponent {
     }
   }
 
-  openNewRowModal():void {
+  openNewRowModal(): void {
+    const dialogData: DialogData = {
+      viewComponent: this.viewComponent,
+      currentRow: undefined
+    }
+    const dialogRef = this.dialog.open(RowFormComponent, {
+      data: dialogData,
+    });
     //this.openForm.sendRowChange(undefined);
   }
 
