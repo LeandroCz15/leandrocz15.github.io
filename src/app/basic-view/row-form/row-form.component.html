@@ -1,4 +1,4 @@
-<div mat-dialog-content [hidden]="!formReady" style="height: 100%;">
+<div mat-dialog-content [hidden]="!formReady" class="h-100">
     <form id="rowForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <ng-container *ngFor="let filter of data.viewComponent.formFields; let i = index ; trackBy: trackByFn">
             <!--Workaround to store a value-->
@@ -35,12 +35,10 @@
         </ng-container>
     </form>
 </div>
-<div *ngIf="!formReady" mat-dialog-content>
-    <div class="d-flex h-100 justify-content-center align-items-center p-5">
-        <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
-    </div>
+<div *ngIf="!formReady" mat-dialog-content class="d-flex h-100 justify-content-center align-items-center p-5">
+    <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
 </div>
-<div mat-dialog-content>
+<div *ngIf="formReady" mat-dialog-content>
     <div mat-dialog-actions align="end">
         <button class="btn btn-secondary me-2" mat-dialog-close>Cancel</button>
         <button class="btn btn-primary" (click)="onSubmit()">Save</button>

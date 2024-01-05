@@ -16,10 +16,12 @@
                     (blur)="processTextInputChange(i)"
                     [(ngModel)]="filter.value">
                 <!--Checkbox case-->
-                <input *ngSwitchCase="'checkbox'" #checkBoxInput
+                <input *ngSwitchCase="'checkbox'"
                     type="checkbox"
                     class="form-check-input rounded-0 filter-input checkbox-input"
-                    (click)="processCheckBoxChange(i, checkBoxInput.checked)">
+                    [indeterminate]="filters.at(i).value === undefined"
+                    [checked]="filters.at(i).value"
+                    (click)="processCheckBoxChange(i)">
                 <!--Date case-->
                 <mat-form-field *ngSwitchCase="'date'" class="w-100 rounded-0 dense-3" color="primary"
                     subscriptSizing="dynamic">

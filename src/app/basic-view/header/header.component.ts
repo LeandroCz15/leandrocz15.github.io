@@ -43,9 +43,25 @@ export class HeaderComponent {
   }
 
   // Process boolean input change
-  processCheckBoxChange(index: number, newCheckValue: boolean): void {
+  processCheckBoxChange(index: number): void {
     // Property binding not working with check's so update the value manually
-    this.filters.at(index).value = newCheckValue;
+    const checkboxField = this.filters.at(index);
+    let valueToChange;
+    switch (checkboxField.value) {
+      case undefined:
+        valueToChange = true;
+        break;
+      case true:
+        valueToChange = false;
+        break;
+      case false:
+        valueToChange = undefined;
+        break;
+      default:
+        valueToChange = undefined;
+        break;
+    }
+    checkboxField.value = valueToChange;
     this.fetchRows.sendFetchChange();
   }
 
