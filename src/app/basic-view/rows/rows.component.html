@@ -7,7 +7,7 @@
                 <!--This is start of a column in a row-->
                 <span class="input-group-text rounded-0 d-block text-truncate key-row-span">
                     <!--d-block text-truncate seems to have performance issues in styling-->
-                    {{ obj.value ?? '--' }}
+                    {{ obj.value | displayEmptyValue }}
                 </span>
             </div>
         </ng-container>

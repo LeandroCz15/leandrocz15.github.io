@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { ViewComponent } from '../view/view.component';
-import { SelectorComponent } from '../selector/selector.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
 
 export interface DialogData {
   viewComponent: ViewComponent,
@@ -24,7 +24,7 @@ export interface DialogData {
     { provide: MAT_DATE_FORMATS, useValue: CAZZEON_DATE_FORMAT }
   ]
 })
-export class RowFormComponent implements OnInit {
+export class RowFormComponent {
 
   // Base row structure
   readonly baseRow: any = {};
@@ -50,10 +50,7 @@ export class RowFormComponent implements OnInit {
     private getIdForFormPipe: GenerateIdForFormPipe,
     public dialogRef: MatDialogRef<RowFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-  ) { }
-
-  ngOnInit(): void {
-    this.dialogRef.updateSize("80%", "80%")
+  ) {
     this.profileForm = this.formBuilder.group(this.buildGroup());
     this.buildBaseRowStructure();
     this.updateModal(this.data.currentRow);
@@ -125,7 +122,7 @@ export class RowFormComponent implements OnInit {
       case DataType.DATE:
         return this.buildDateValidators(filter);
       case DataType.SELECTOR:
-        return filter.isMandatory ? [Validators.required, this.isObjectValidator] : [this.isObjectValidator];
+        return filter.isMandatory ? [Validators.required, isObjectValidator] : [isObjectValidator];
       default:
         return [];
     }
@@ -141,7 +138,7 @@ export class RowFormComponent implements OnInit {
     const properties: Array<any> = [];
     if (filter.isMandatory) {
       properties.push(Validators.required);
-      properties.push(this.noWhitespaceValidator);
+      properties.push(noWhitespaceValidator);
     }
     return properties;
   }
@@ -175,40 +172,44 @@ export class RowFormComponent implements OnInit {
   }
 
   /**
-   * Validator to check if the control value is an object or not
-   * @param control Form control
-   */
-  isObjectValidator(control: FormControl): any {
-    return typeof control.value === "object" && control.value !== null ? null : { "notObject": true };
-  }
-
-  // New validator to check that a text input must not be blank
-  noWhitespaceValidator(control: FormControl): any {
-    return (control.value || '').trim().length ? null : { "blank": true };
-  }
-
-  /**
-   * Submit the form
+   * This function saves or update a single entity. The entity saved/updated will be the current entity displayed in the modal
    */
   onSubmit(): void {
     if (!this.profileForm.valid) {
       return;
     }
     this.formReady = false;
-    const url = `api/store/${this.data.viewComponent.mainTabEntityName}`;
-    const objectToSend = this.buildObjectToSend();
-    this.authService.fetchInformation(url, HttpMethod.POST, async (response: Response) => {
+    this.authService.fetchInformation(`api/store/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
       this.formReady = true;
     }, async (response: Response) => {
       this.formReady = true;
-      console.error(`Error while storing entity ${this.data.viewComponent.mainTabEntityName}. Cause: ${await response.text()}`);
+      console.error(`Error while storing entity: ${this.data.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
     }, (error: any) => {
       this.formReady = true;
-      console.error(`Timeout in when storing an object of type: ${this.data.viewComponent.mainTabEntityName}`);
+      console.error(`Timeout while storing entity: ${this.data.viewComponent.mainTabEntityName}`);
     },
-      JSON.stringify({ entity: objectToSend, isNew: this.isNew }));
+      JSON.stringify({ entity: this.buildObjectToSend(), isNew: this.isNew }));
+  }
+
+  /**
+   * This function deletes a single entity. The entity deleted will be the current entity displayed in the modal
+   */
+  deleteEntity() {
+    this.authService.fetchInformation(`api/delete/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.DELETE,
+      (response: Response) => {
+        this.dialogRef.close();
+        const indexToDelete = this.data.viewComponent.rowsComponent.rows.findIndex(row => row === this.data.currentRow);
+        this.data.viewComponent.rowsComponent.rows.splice(indexToDelete, 1);
+      },
+      async (response: Response) => {
+        console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.viewComponent.mainTabEntityName}. Error ${await response.text()}`);
+      },
+      (error: any) => {
+        console.error(`Timeout while deleting the record with id: ${this.data.currentRow.id} of the entity: ${this.data.viewComponent.mainTabEntityName}`);
+      },
+      JSON.stringify({ data: [this.data.currentRow.id] }));
   }
 
   /**
@@ -259,18 +260,19 @@ export class RowFormComponent implements OnInit {
     return doNormalize ? key.replace("form_", "").replaceAll("_", ".") : this.getIdForFormPipe.transform(key);
   }
 
+  /**
+   * Build the base row structure for those rows that will be created from scratch.
+   */
   buildBaseRowStructure(): void {
     this.data.viewComponent.formFields.forEach((field: any) => {
       this.baseRow[field.hqlProperty] = null;
     });
   }
 
-  // Getter for easy access to form fields
   get form() {
     return this.profileForm;
   }
 
-  // Function to keep track of rows using the index given by the *ngFor
   trackByFn(index: number, item: any): number {
     return index;
   }

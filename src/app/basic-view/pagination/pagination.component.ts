@@ -57,8 +57,9 @@ export class PaginationComponent {
     }
     const dialogRef = this.dialog.open(RowFormComponent, {
       data: dialogData,
+      height: "80%",
+      width: "80%"
     });
-    //this.openForm.sendRowChange(undefined);
   }
 
 }

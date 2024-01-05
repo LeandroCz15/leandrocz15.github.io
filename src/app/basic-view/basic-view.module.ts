@@ -19,6 +19,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { SelectorComponent } from './selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     RowFormComponent,
     GenerateIdForFormPipe,
     SelectorComponent,
+    DisplayEmptyValuePipe,
   ],
   imports: [
     CommonModule,

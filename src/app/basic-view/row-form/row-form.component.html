@@ -1,12 +1,12 @@
 <div mat-dialog-content [hidden]="!formReady" class="h-100">
-    <form id="rowForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <form id="rowForm" [formGroup]="form" (ngSubmit)="onSubmit()">
         <ng-container *ngFor="let filter of data.viewComponent.formFields; let i = index ; trackBy: trackByFn">
             <!--Workaround to store a value-->
             <ng-container *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
                 <ng-container [ngSwitch]="filter.type">
                     <label [for]="idForInput" class="form-label">{{filter.name}}</label>
                     <!--Selector case-->
-                    <app-selector *ngSwitchCase="'selector'" [formInput]="profileForm" [formName]="idForInput"
+                    <app-selector *ngSwitchCase="'selector'" [formInput]="form" [formName]="idForInput"
                         [rowFormComponent]="this" [programmaticUpdate]="programmaticUpdate" [filter]="filter">
                     </app-selector>
                     <!--Text case-->
@@ -40,6 +40,7 @@
 </div>
 <div *ngIf="formReady" mat-dialog-content>
     <div mat-dialog-actions align="end">
+        <button class="btn btn-secondary me-auto" (click)="deleteEntity()"><i class="bi bi-trash"></i></button>
         <button class="btn btn-secondary me-2" mat-dialog-close>Cancel</button>
         <button class="btn btn-primary" (click)="onSubmit()">Save</button>
     </div>

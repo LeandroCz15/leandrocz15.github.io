@@ -32,12 +32,10 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Every row loaded in memory
   public rows: any[] = [];
 
-  // Rows to show in the template
-  public rowsToShow: any[] = [];
-
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private fetchRows: FetchRowsService,
-    public dialog: MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +56,8 @@ export class RowsComponent implements OnInit, OnDestroy {
     }
     const dialogRef = this.dialog.open(RowFormComponent, {
       data: dialogData,
+      height: "80%",
+      width: "80%"
     });
   }
 
