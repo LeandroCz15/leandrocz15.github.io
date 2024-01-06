@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { LeftTaskbarComponent } from './left-task-bar/left-taskbar/left-taskbar.component';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
   sidebarButtons: HTMLCollectionOf<HTMLElement> | null = null;
   sidebarToggler: HTMLElement | null = null;
 
-  @ViewChild("sideBar", { static: false }) sideBar!: ElementRef;
+  @ViewChild(LeftTaskbarComponent) taskBarComponent!: LeftTaskbarComponent;
 
   updatePage(newPageIndex: string) {
     document.getElementById(this.selectedPageIndex)!.style.backgroundColor = "#212529";
@@ -31,14 +32,14 @@ export class AppComponent implements OnInit {
   toggleSidebar() {
     if (!this.sidebarToggled) {
       //this.sidebarToggler!.setAttribute("src", "assets/right-arrow.svg");
-      this.sideBar.nativeElement.style.width = "55px";
+      this.taskBarComponent.sideBarElement.nativeElement.style.width = "55px";
       for (let i = 0; i < this.sidebarButtons!.length; i++) {
         this.sidebarButtons!.item(i)!.style.display = "none";
       }
     } else {
       //remove style so the sidebar will stay with the default configuration, otherwise it will get overlap
       //this.sidebarToggler!.setAttribute("src", "assets/left-arrow.svg");
-      this.sideBar.nativeElement.removeAttribute("style");
+      this.taskBarComponent.sideBarElement.nativeElement.removeAttribute("style");
       for (let i = 0; i < this.sidebarButtons!.length; i++) {
         //remove style so the buttons will stay with the default configuration, otherwise it will get overlap
         this.sidebarButtons!.item(i)!.removeAttribute("style");

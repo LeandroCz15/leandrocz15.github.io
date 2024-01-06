@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/login-module/auth-service';
 import * as bootstrap from 'bootstrap';
 import { HttpMethod } from 'src/application-constants';
@@ -15,6 +15,8 @@ export class LeftTaskbarComponent implements OnInit {
 
   // Boolean used to render the view once is ready
   public viewReady: boolean = false;
+
+  @ViewChild("sideBarElement") sideBarElement!: ElementRef;
 
   constructor(private authService: AuthService) { }
 

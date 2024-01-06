@@ -1,10 +1,3 @@
-
-  .side-bar-btn-list {
-    overflow-x: hidden;
-    overflow-y: auto;
-    display: block;
-  }
-
   .top-navbar-btn {
     border-radius: 5px;
     border: none;
@@ -36,25 +29,10 @@
     background: #555;
   }
 
-  /* Replace of toggleSidebar() with pure CSS */
-
-  #side-bar {
-    width: 155px;
-    transition: width 0.5s;
-    /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca */
-  }
-
   @media screen and (max-width: 500px) {
-
-    #side-bar {
-      width: 55px;
-      transition: width 0.5s;
-    }
 
     #side-bar-toggler {
       display: none;
     }
 
   }
-
-  /* End replace of toggleSidebar() with pure CSS */

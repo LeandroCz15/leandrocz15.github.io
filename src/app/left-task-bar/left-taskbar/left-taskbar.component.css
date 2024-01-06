@@ -1,0 +1,24 @@
+#side-bar {
+  width: 155px;
+  transition: width 0.5s;
+  /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca */
+}
+
+@media screen and (max-width: 500px) {
+
+  #side-bar {
+    width: 55px;
+  }
+
+}
+
+.menu-item-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.company-image {
+  height: 50px;
+  width: 100%;
+  object-fit: scale-down;
+}

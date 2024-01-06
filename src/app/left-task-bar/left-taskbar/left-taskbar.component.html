@@ -1,26 +1,24 @@
-<a href="/" class="d-flex align-items-center justify-content-center">
-    <img src="assets/ceibo.png" style="height: 50px; width: 100px; min-width: 100%; object-fit: scale-down">
-</a>
-<hr>
-<!--Menu items-->
-<div class="overflow-auto" *ngIf="viewReady; else elseBlock">
-    <app-navbarelement
-        *ngFor="let item of menuItems; let i = index; trackBy: trackByFn"
-        viewIdReference="{{item.viewId}}"
-        title="{{item.name}}"
-        imagePath="{{item.imageSrc}}"
-        buttonIndex="{{i}}"
-    ></app-navbarelement>
+<div #sideBarElement id="side-bar" class="d-flex flex-column p-2 bg-dark text-white h-100 mw-100">
+    <a href="/" class="align-items-center justify-content-center">
+        <img src="assets/ceibo.png" class="company-image">
+    </a>
+    <hr>
+    <!--Menu items-->
+    <div *ngIf="viewReady; else elseBlock" class="menu-item-container">
+        <app-navbarelement *ngFor="let item of menuItems; let i = index; trackBy: trackByFn"
+            viewIdReference="{{item.viewId}}" title="{{item.name}}" imagePath="{{item.imageSrc}}"
+            buttonIndex="{{i}}"></app-navbarelement>
+    </div>
+    <ng-template #elseBlock>
+        <div class="d-flex h-100 justify-content-center align-items-center">
+            <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
+        </div>
+    </ng-template>
+    <hr>
+    <a href="#" (click)="openLoginModal()" class="d-flex mt-auto align-items-center text-white text-decoration-none">
+        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+        <div class="mw-25 overflow-hidden">
+            <strong class="d-block text-truncate">foidsadss</strong>
+        </div>
+    </a>
 </div>
-<ng-template #elseBlock>
-    <div class="d-flex h-100 justify-content-center align-items-center">
-        <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>
-    </div>
-</ng-template>
-<hr>
-<a href="#" (click)="openLoginModal()" class="d-flex mt-auto align-items-center text-white text-decoration-none">
-    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-    <div class="mw-25 overflow-hidden">
-        <strong class="d-block text-truncate">foidsyufsduiofdasdasdsadss</strong>
-    </div>
-</a>
