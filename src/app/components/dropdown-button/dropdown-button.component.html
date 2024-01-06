@@ -1,8 +1,0 @@
-<div class="btn-group dropend">
-    <button type="button" (click)="getTransitions()" class="btn btn-primary dropdown-toggle" style="max-width: 200px ; white-space: nowarp ; overflow: hidden ; text-overflow: ellipsis;" data-bs-toggle="dropdown" aria-expanded="false">
-      {{issue.statusName}}
-    </button>
-    <ul class="dropdown-menu" style="min-width: 300px;">
-      <li><a class="dropdown-item" *ngFor="let transition of transitions ; let i = index"> {{transition.name}} </a></li>
-    </ul>
-</div>

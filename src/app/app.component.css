@@ -38,7 +38,7 @@
 
   /* Replace of toggleSidebar() with pure CSS */
 
-  .side-bar {
+  #side-bar {
     width: 155px;
     transition: width 0.5s;
     /* Los dropdowns necesitan que el contenedor donde se encuentran, tengan el overflow desactivado, ojo con poner overflow aca */

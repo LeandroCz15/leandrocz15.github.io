@@ -1,12 +1,5 @@
 <!--Modals-->
-<app-issue-modal [issue]="currentIssue" (addOrRemoveIssue)="changeIssueInput($event)"></app-issue-modal>
-<app-jira-login-modal (validLogin)="jiraLogin($event)"></app-jira-login-modal>
-<app-application-login-modal (validAppLogin)="appLogin($event)"></app-application-login-modal>
-<app-product-modal [fetchApplicationCredentials]="appCredentials"></app-product-modal>
-<app-email-modal></app-email-modal>
-
-<!--Mage-->
-<!-- <app-mage></app-mage> -->
+<app-application-login-modal></app-application-login-modal>
 
 <!--Container of all the page-->
 <div class="container-fluid vw-100 vh-100 p-0 m-0 page-container">
@@ -14,10 +7,11 @@
   <!--Row of all the page, same as his parent container-->
   <div class="row h-100 w-100 p-0 m-0">
 
-    <!--Column of the side bar-->
+    <!--Column of the left taskbar-->
     <div class="col-auto h-100 p-0 m-0">
       <!--Left taskbar-->
-      <app-left-taskbar class="d-flex flex-column p-2 bg-dark text-white h-100 side-bar"></app-left-taskbar>
+      <app-left-taskbar #sideBar id="side-bar" class="d-flex flex-column p-2 bg-dark text-white h-100">
+      </app-left-taskbar>
     </div>
 
     <!--Column of the rest of page-->
@@ -68,9 +62,6 @@
             </ul>
 
             <div class="d-flex">
-
-              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal"
-                *ngIf="appCredentials !== null && appCredentials.admin">Add product</button>
 
             </div>
 

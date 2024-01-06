@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AppCredentials } from 'src/app/classes/app-credentials/app-credentials';
 import { Product } from '../classes/product';
 
 @Component({
@@ -9,7 +8,6 @@ import { Product } from '../classes/product';
 })
 export class ProductModalComponent {
 
-  @Input() fetchApplicationCredentials!: AppCredentials | null;
   newProduct: Product = new Product("", "", "", 0, "", "", "");
 
   resetProduct(fileInput: HTMLInputElement){
@@ -18,28 +16,6 @@ export class ProductModalComponent {
     this.newProduct.price = 0;
     this.newProduct.imageUrl = "";
     fileInput.value = "";
-  }
-
-  saveProduct(){
-    let data = {
-      name: this.newProduct.name,
-      sku: this.newProduct.sku,
-      description: this.newProduct.description,
-      price: this.newProduct.price,
-      imgBase64: this.newProduct.imageUrl
-    }
-    fetch('https://leandrobalancer-1914303512.sa-east-1.elb.amazonaws.com/Product', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + btoa(this.fetchApplicationCredentials!.email + ':' + this.fetchApplicationCredentials!.password),
-        'Accept': 'application/json',
-        'Origin': 'https://leandrocz15.github.io/'
-      },
-      body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(data => {
-      });
   }
 
   async onFileSelected(event: any) {
