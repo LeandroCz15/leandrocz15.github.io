@@ -84,43 +84,9 @@
       <div class="row h-100 w-100 p-0 m-0" style="max-height: 90%;">
 
         <!--Column same as his parent row-->
-        <div class="col h-100 w-100 p-0 m-0 main-content-col">
+        <div class="col h-100 w-100 p-0 m-0">
 
           <app-view></app-view>
-
-          <!--<ng-container [ngSwitch]="selectedPageIndex">
-
-             <app-main-page-index></app-main-page-index>
-
-            <ng-container *ngSwitchCase="1">
-
-              <ng-container *ngIf="jiraCredentials !== null">
-
-                <app-taskbar [issuesParam]="issues" [issuesToInputParam]="issuesToInput"
-                  [fetchJiraCredentials]="jiraCredentials"
-                  (changeCurrentIssueEvent)=changeSelectedIssue($event)></app-taskbar>
-
-              </ng-container>
-
-              <ng-container *ngIf="jiraCredentials === null">
-
-                <div class="d-flex flex-column align-items-center justify-content-center h-100">
-
-                  <h1 class="text-break">You must log in via Jira login to use this app</h1>
-
-                  <img src="assets/plug-svgrepo-com.svg" width="20%" height="20%">
-
-                </div>
-
-              </ng-container>
-
-            </ng-container>
-
-            <app-product-view *ngSwitchCase="2"></app-product-view>
-
-            <app-email-view *ngSwitchCase="3"></app-email-view>
-
-          </ng-container> -->
 
         </div>
 

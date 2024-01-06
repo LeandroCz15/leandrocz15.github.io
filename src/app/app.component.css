@@ -1,11 +1,4 @@
-  .main-content-col {
-    word-break: break-all;
-  }
 
-  strong {
-    margin-left: 5px;
-  }
-  
   .side-bar-btn-list {
     overflow-x: hidden;
     overflow-y: auto;
