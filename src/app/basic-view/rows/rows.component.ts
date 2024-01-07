@@ -54,7 +54,7 @@ export class RowsComponent implements OnInit, OnDestroy {
       viewComponent: this.viewComponent,
       currentRow: row
     }
-    const dialogRef = this.dialog.open(RowFormComponent, {
+    this.dialog.open(RowFormComponent, {
       data: dialogData,
       height: "80%",
       width: "80%"
@@ -63,7 +63,7 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Only in OnInit. The first fetch should not have a where clause
   doFirstFetch(): void {
-    let url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${50}&mainTabId=${this.viewComponent.mainTabId}`;
+    const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${this.viewComponent.paginationComponent.currentFetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
     this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     });
@@ -76,15 +76,14 @@ export class RowsComponent implements OnInit, OnDestroy {
    *  Object containing information about the pagination to fetch data. If this object is null then the where clause wont have a entity id filter
   */
   doFetch(paginationAction?: number): void {
-    // Update last row id in the pagination component before fetching more data
-    this.updateLastRowId();
     const fetchSize: number = this.viewComponent.paginationComponent?.currentFetchSize;
     const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${fetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
     const requestBody: any = { filters: this.viewComponent.gridFields.filter(field => field.showInGrid) };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,
-      previousFetchLastId: this.viewComponent.paginationComponent.getPreviousFetchLastId(),
-      currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId()
+      previousFetchFirstId: this.viewComponent.paginationComponent.getPreviousFetchFirstId(),
+      currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId(),
+      currentFetchLastId: this.viewComponent.paginationComponent.getCurrentFetchLastId(),
     }
     this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
@@ -96,44 +95,37 @@ export class RowsComponent implements OnInit, OnDestroy {
   async successFetch(response: Response): Promise<void> {
     const newRows = await response.json();
     this.rows = newRows;
-    // Update first row id in the pagination component after fetching data
-    this.updateFirstRowId();
+    this.updateLastFetchValues();
+    this.updateCurrentFetchValues();
   }
 
   // Executed when fetch failed
   async errorFetch(response: Response): Promise<void> {
     console.error(await response.text())
     this.rows.splice(0);
-    this.updateFirstRowId();
+    this.updateLastFetchValues();
+    this.updateCurrentFetchValues();
   }
 
   // Update last row id of last fetch in the PaginationComponent
-  updateLastRowId(): void {
-    if (this.rows.length <= 0) {
-      this.viewComponent.paginationComponent.setPreviousFetchLastId("");
-      return;
-    }
-    let lastRow = this.rows.at(this.rows.length - 1);
-    if (!lastRow.id) {
-      console.error("The current fetch did not retrieve the last row with the id property. Pagination component will not work properly");
-      this.viewComponent.paginationComponent.setPreviousFetchLastId("");
-    } else {
-      this.viewComponent.paginationComponent.setPreviousFetchLastId(lastRow.id);
-    }
+  updateLastFetchValues(): void {
+    this.viewComponent.paginationComponent.setPreviousFetchFirstId(this.viewComponent.paginationComponent.getCurrentFetchFirstId());
   }
 
-  // Update first row id of current fetch in the PaginationComponent
-  updateFirstRowId(): void {
+  // Update current fetch values of the pagination component
+  updateCurrentFetchValues(): void {
     if (this.rows.length <= 0) {
       this.viewComponent.paginationComponent.setCurrentFetchFirstId("");
+      this.viewComponent.paginationComponent.setCurrentFetchLastId("");
       return;
     }
-    let firstRow = this.rows.at(0);
-    if (!firstRow.id) {
-      console.error("The current fetch did not retrieve the first row with the id property. Pagination component will not work properly");
-      this.viewComponent.paginationComponent.setCurrentFetchFirstId("");
+    const firstRow = this.rows.at(0);
+    const lastRow = this.rows.at(this.rows.length - 1);
+    if (!firstRow.id || !lastRow.id) {
+      console.error("The current fetch did not retrieve rows with an id. Pagination component will not work properly!");
     } else {
       this.viewComponent.paginationComponent.setCurrentFetchFirstId(firstRow.id);
+      this.viewComponent.paginationComponent.setCurrentFetchLastId(lastRow.id);
     }
   }
 

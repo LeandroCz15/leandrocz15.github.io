@@ -6,6 +6,7 @@ import { LoginModule } from './login-module/login.module';
 import { ProductModule } from './product-module/product-module.module';
 import { BasicViewModule } from './basic-view/basic-view.module';
 import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
+import { TopNavbarModule } from './top-navbar/top-navbar.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
     ProductModule,
     BasicViewModule,
     LeftTaskbarModule,
+    TopNavbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

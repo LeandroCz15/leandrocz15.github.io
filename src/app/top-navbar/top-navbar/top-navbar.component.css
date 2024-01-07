@@ -1,0 +1,14 @@
+.top-navbar-btn {
+    border-radius: 5px;
+    border: none;
+    width: 35px;
+    height: 35px;
+}
+
+@media screen and (max-width: 500px) {
+
+    #side-bar-toggler {
+        display: none;
+    }
+
+}

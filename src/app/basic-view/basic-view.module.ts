@@ -16,7 +16,7 @@ import { RowFormComponent } from './row-form/row-form.component';
 import { GenerateIdForFormPipe } from './pipes/generate-id-for-form.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SelectorComponent } from './selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';

@@ -30,9 +30,9 @@ export class HeaderComponent {
 
   // Process text input change
   processTextInputChange(index: number): void {
-    let changedFilter = this.filters.at(index);
+    const changedFilter = this.filters.at(index);
     // Only triggers when detect changes in the input
-    let trimmedValue: string = changedFilter.value?.trim();
+    const trimmedValue: string = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter) || trimmedValue === "" && changedFilter.value?.length !== 0) {
       return;
     }
