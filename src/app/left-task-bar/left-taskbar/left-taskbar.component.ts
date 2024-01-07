@@ -6,7 +6,6 @@ import { ToggleSidebarService } from 'src/app/top-navbar/services/toggle-sidebar
 import { Subscription } from 'rxjs';
 
 const SIDEBAR_TOGGLED_WIDTH = "55px";
-const SIDEBAR_UNTOGGLED_WIDTH = "155px";
 
 @Component({
   selector: 'app-left-taskbar',
@@ -46,11 +45,10 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
 
   toggleSidebar(toggle: boolean): void {
     if (toggle) {
-      //this.sidebarToggler!.setAttribute("src", "assets/right-arrow.svg");
       this.sidebarElement.nativeElement.style.width = SIDEBAR_TOGGLED_WIDTH;
     } else {
       //this.sidebarToggler!.setAttribute("src", "assets/left-arrow.svg");
-      this.sidebarElement.nativeElement.style.width = SIDEBAR_UNTOGGLED_WIDTH;
+      this.sidebarElement.nativeElement.style = null;
     }
   }
 

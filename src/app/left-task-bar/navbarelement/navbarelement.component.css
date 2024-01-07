@@ -22,6 +22,10 @@
   display: inline;
 }
 
+.bootstrap-icon {
+  vertical-align: middle;
+}
+
 @media screen and (max-width: 500px) {
 
   .btn-text {

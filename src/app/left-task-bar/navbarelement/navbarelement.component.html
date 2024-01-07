@@ -1,7 +1,10 @@
 <button (click)="changePageCall()" type="button" class="navbar-button mb-1 text-white w-100"
     [ngStyle]="{'background-color': selected ? '#0d6efd' : '#212529'}">
     <div style="float: left;">
-        <img [src]="imagePath" width="25px">
+        <img *ngIf="imagePath | iconSrcResolver ; else elseBlock" [src]="imagePath" width="25px">
+        <ng-template #elseBlock>
+            <i [class]="'bi bootstrap-icon h4 ' + imagePath"></i>
+        </ng-template>
         <div class="btn-text">
             {{title}}
         </div>
