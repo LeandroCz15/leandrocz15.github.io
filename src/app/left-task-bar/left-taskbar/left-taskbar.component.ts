@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { AuthService } from 'src/app/login-module/auth-service';
 import * as bootstrap from 'bootstrap';
 import { HttpMethod } from 'src/application-constants';
 import { ToggleSidebarService } from 'src/app/top-navbar/services/toggle-sidebar.service';
 import { Subscription } from 'rxjs';
+import { NavbarElementComponent } from '../navbarelement/navbarelement.component';
 
 const SIDEBAR_TOGGLED_WIDTH = "55px";
 
@@ -25,6 +26,8 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
 
   @ViewChild("sideBarElement") sidebarElement!: ElementRef;
 
+  @ViewChildren(NavbarElementComponent) sidebarButtons!: QueryList<NavbarElementComponent>;
+
   constructor(private authService: AuthService, private toggleSidebarService: ToggleSidebarService) { }
 
   ngOnInit(): void {
@@ -45,9 +48,14 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
 
   toggleSidebar(toggle: boolean): void {
     if (toggle) {
+      this.sidebarButtons.forEach(button => {
+        button.titleDisplayer.nativeElement.style.display = "none";
+      });
       this.sidebarElement.nativeElement.style.width = SIDEBAR_TOGGLED_WIDTH;
     } else {
-      //this.sidebarToggler!.setAttribute("src", "assets/left-arrow.svg");
+      this.sidebarButtons.forEach(button => {
+        button.titleDisplayer.nativeElement.style.display = "";
+      });
       this.sidebarElement.nativeElement.style = null;
     }
   }

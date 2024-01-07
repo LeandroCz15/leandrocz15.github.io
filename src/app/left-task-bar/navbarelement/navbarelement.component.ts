@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { SelectPageService } from 'src/app/basic-view/services/select-page.service';
 
 @Component({
@@ -7,13 +7,16 @@ import { SelectPageService } from 'src/app/basic-view/services/select-page.servi
   styleUrls: ['./navbarelement.component.css']
 })
 export class NavbarElementComponent implements OnInit {
+
+  // Boolean to set selected style to buttons;
+  public selected: boolean = false;
+
   @Input() title!: string;
   @Input() imagePath!: string;
   @Input() viewIdReference!: string;
   @Input() buttonIndex!: string;
 
-  // Boolean to set selected style to buttons;
-  public selected: boolean = false;
+  @ViewChild("titleDisplayer") titleDisplayer!: ElementRef;
 
   // Variable to store the last item selected to avoid fetching data when spamming click
   private static lastSelectedButton: NavbarElementComponent | undefined = undefined;
