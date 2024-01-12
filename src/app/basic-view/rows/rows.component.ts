@@ -1,5 +1,5 @@
 import { KeyValue } from '@angular/common';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
 import { AuthService } from 'src/app/login-module/auth-service';
@@ -25,6 +25,12 @@ export class RowsComponent implements OnInit, OnDestroy {
 
   // Subscription for fetch rows service
   private fetchRowsSubscription!: Subscription;
+
+  // Last row selected. This variable is for applying styles to  the last selected row
+  private static lastSelectedRow: RowsComponent | undefined = undefined;
+
+  // Boolean to indicate if the current row is being selected or not
+  public selected: boolean = false;
 
   // Boolean used to re-render the view after changing the order in the rows columns
   public reload: boolean = true;
@@ -59,6 +65,13 @@ export class RowsComponent implements OnInit, OnDestroy {
       height: "80%",
       width: "80%"
     });
+    // Deselect the previous row
+    if (RowsComponent.lastSelectedRow) {
+      RowsComponent.lastSelectedRow.selected = false;
+    }
+    // Update the current selected row if needed
+    this.selected = true;
+    RowsComponent.lastSelectedRow = this;
   }
 
   // Only in OnInit. The first fetch should not have a where clause

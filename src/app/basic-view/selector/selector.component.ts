@@ -37,7 +37,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(1050), distinctUntilChanged())
+    this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(950), distinctUntilChanged())
     this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value));
     this.programmaticUpdateSubscription = this.programmaticUpdate.asObservable().subscribe(value => {
       if (!value) {
