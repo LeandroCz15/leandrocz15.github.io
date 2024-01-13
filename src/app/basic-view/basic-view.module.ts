@@ -20,6 +20,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SelectorComponent } from './selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
+import { RowComponent } from './row/row.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
     GenerateIdForFormPipe,
     SelectorComponent,
     DisplayEmptyValuePipe,
+    RowComponent,
   ],
   imports: [
     CommonModule,

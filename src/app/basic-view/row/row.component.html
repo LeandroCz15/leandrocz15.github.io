@@ -1,0 +1,12 @@
+<div class="d-flex whole-row" (click)="openRowInFormMode(row)">
+    <ng-container *ngFor="let obj of row | keyvalue : sortKeys; let i = index; trackBy: trackByFn">
+        <div *ngIf="obj | shouldShow: viewComponent" class="w-100 key-row">
+            <!--This is start of a column in a row-->
+            <span class="input-group-text rounded-0 d-block text-truncate key-row-span"
+                [ngStyle]="getStyles()">
+                <!--d-block text-truncate seems to have performance issues in styling-->
+                {{ obj.value | displayEmptyValue }}
+            </span>
+        </div>
+    </ng-container>
+</div>

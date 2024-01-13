@@ -1,4 +1,3 @@
-import { KeyValue } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
@@ -6,8 +5,6 @@ import { AuthService } from 'src/app/login-module/auth-service';
 import { HttpMethod } from 'src/application-constants';
 import { PaginationEventType } from '../pagination/pagination.component';
 import { FetchRowsService } from '../services/fetch-rows.service';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 
 @Component({
   selector: 'app-rows',
@@ -26,12 +23,6 @@ export class RowsComponent implements OnInit, OnDestroy {
   // Subscription for fetch rows service
   private fetchRowsSubscription!: Subscription;
 
-  // Last row selected. This variable is for applying styles to  the last selected row
-  private static lastSelectedRow: RowsComponent | undefined = undefined;
-
-  // Boolean to indicate if the current row is being selected or not
-  public selected: boolean = false;
-
   // Boolean used to re-render the view after changing the order in the rows columns
   public reload: boolean = true;
 
@@ -41,7 +32,6 @@ export class RowsComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private fetchRows: FetchRowsService,
-    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -53,25 +43,6 @@ export class RowsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.reloadViewSubscription.unsubscribe();
     this.fetchRowsSubscription.unsubscribe();
-  }
-
-  openRowInFormMode(row: any): void {
-    const dialogData: DialogData = {
-      viewComponent: this.viewComponent,
-      currentRow: row
-    }
-    this.dialog.open(RowFormComponent, {
-      data: dialogData,
-      height: "80%",
-      width: "80%"
-    });
-    // Deselect the previous row
-    if (RowsComponent.lastSelectedRow) {
-      RowsComponent.lastSelectedRow.selected = false;
-    }
-    // Update the current selected row if needed
-    this.selected = true;
-    RowsComponent.lastSelectedRow = this;
   }
 
   // Only in OnInit. The first fetch should not have a where clause
@@ -146,15 +117,6 @@ export class RowsComponent implements OnInit, OnDestroy {
   reloadView(): void {
     setTimeout(() => this.reload = false);
     setTimeout(() => this.reload = true);
-  }
-
-  // Pipe to sort keys of the rows
-  sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    const firstElement = this.viewComponent.currentGridFieldsIndexedByHqlProperty[a.key];
-    if (!firstElement) {
-      return 1;
-    }
-    return firstElement.index > this.viewComponent.currentGridFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor

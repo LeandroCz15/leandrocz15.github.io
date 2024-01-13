@@ -1,16 +1,6 @@
 <div *ngIf="reload">
-    <div class="d-flex whole-row" (click)="openRowInFormMode(row)"
-        *ngFor="let row of rows; let i = index; trackBy: trackByFn">
+    <div *ngFor="let currentRow of rows; let i = index; trackBy: trackByFn">
         <!--This is start of a row-->
-        <ng-container *ngFor="let obj of row | keyvalue : sortKeys; let i = index; trackBy: trackByFn">
-            <div *ngIf="obj | shouldShow: this" class="w-100 key-row">
-                <!--This is start of a column in a row-->
-                <span class="input-group-text rounded-0 d-block text-truncate key-row-span"
-                    [ngStyle]="{'background-color': selected ? '#66a0f7' : '#e9ecef'}">
-                    <!--d-block text-truncate seems to have performance issues in styling-->
-                    {{ obj.value | displayEmptyValue }}
-                </span>
-            </div>
-        </ng-container>
+        <app-row [row]="currentRow" [viewComponent]="viewComponent"></app-row>
     </div>
 </div>
