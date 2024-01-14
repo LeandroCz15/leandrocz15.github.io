@@ -200,8 +200,8 @@ export class RowFormComponent {
     this.authService.fetchInformation(`api/delete/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.DELETE,
       (response: Response) => {
         this.dialogRef.close();
-        const indexToDelete = this.data.viewComponent.rowsComponent.rows.findIndex(row => row === this.data.currentRow);
-        this.data.viewComponent.rowsComponent.rows.splice(indexToDelete, 1);
+        const indexToDelete = this.data.viewComponent.gridComponent.rows.findIndex(row => row === this.data.currentRow);
+        this.data.viewComponent.gridComponent.rows.splice(indexToDelete, 1);
       },
       async (response: Response) => {
         console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.viewComponent.mainTabEntityName}. Error ${await response.text()}`);

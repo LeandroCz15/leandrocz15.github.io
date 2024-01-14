@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RowsComponent } from './rows.component';
+import { GridComponent } from './grid.component';
 
-describe('RowsComponent', () => {
-  let component: RowsComponent;
-  let fixture: ComponentFixture<RowsComponent>;
+describe('GridComponent', () => {
+  let component: GridComponent;
+  let fixture: ComponentFixture<GridComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [RowsComponent]
+      declarations: [GridComponent]
     });
-    fixture = TestBed.createComponent(RowsComponent);
+    fixture = TestBed.createComponent(GridComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

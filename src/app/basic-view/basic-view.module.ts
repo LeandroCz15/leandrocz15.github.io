@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
-import { RowsComponent } from './rows/rows.component';
+import { GridComponent } from './grid/grid.component';
 import { ViewComponent } from './view/view.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -25,7 +25,7 @@ import { RowComponent } from './row/row.component';
 @NgModule({
   declarations: [
     HeaderComponent,
-    RowsComponent,
+    GridComponent,
     ViewComponent,
     PaginationComponent,
     ShouldShowPipe,

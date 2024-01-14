@@ -7,11 +7,11 @@ import { PaginationEventType } from '../pagination/pagination.component';
 import { FetchRowsService } from '../services/fetch-rows.service';
 
 @Component({
-  selector: 'app-rows',
-  templateUrl: './rows.component.html',
-  styleUrls: ['./rows.component.css']
+  selector: 'app-grid',
+  templateUrl: './grid.component.html',
+  styleUrls: ['./grid.component.css']
 })
-export class RowsComponent implements OnInit, OnDestroy {
+export class GridComponent implements OnInit, OnDestroy {
 
   // View component reference
   @Input() viewComponent!: ViewComponent;

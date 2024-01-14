@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription, filter } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
-import { RowsComponent } from '../rows/rows.component';
+import { GridComponent } from '../grid/grid.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { AuthService } from 'src/app/login-module/auth-service';
 import { SelectPageService } from '../services/select-page.service';
@@ -32,7 +32,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
 
   // Rows children component
-  @ViewChild(RowsComponent) rowsComponent!: RowsComponent;
+  @ViewChild(GridComponent) gridComponent!: GridComponent;
 
   // Pagination children component
   @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;

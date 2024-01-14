@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { RowsComponent } from '../rows/rows.component';
 import { ViewComponent } from '../view/view.component';
 
 @Pipe({

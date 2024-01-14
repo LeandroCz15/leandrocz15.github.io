@@ -2,7 +2,7 @@
     <div class="overflow-scroll flex-fill" cdkDropList cdkDropListOrientation="horizontal"
         (cdkDropListDropped)="dropFilterColumn($event)" *ngIf="viewReady; else elseBlock">
         <app-header [filters]="gridFields" [viewComponent]="this"></app-header>
-        <app-rows [reloadViewSubject]="reloadViewSubject" [viewComponent]="this"></app-rows>
+        <app-grid [reloadViewSubject]="reloadViewSubject" [viewComponent]="this"></app-grid>
     </div>
     <div class="bg-dark">
         <app-pagination [viewComponent]="this"></app-pagination>
