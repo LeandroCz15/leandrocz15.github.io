@@ -1,4 +1,4 @@
-export const SERVER_URL = "http://52.67.173.208:8080/";
+export const SERVER_URL = "http://localhost:8080/";
 
 export const CAZZEON_DATE_FORMAT = {
     parse: {
