@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Subject, Observable } from "rxjs";
-import { HttpMethod } from "src/application-constants";
+import { HttpMethod, SERVER_URL } from "src/application-constants";
 
 @Injectable({
   providedIn: "root",
@@ -51,7 +51,7 @@ export class AuthService {
       throw new Error("The request should not have body if it's a GET type");
     }
     let storagedUserJson: any = this.getUser() ? JSON.parse(this.getUser()) : undefined;
-    fetch(`${serverUrl}${urlSufix}`, {
+    fetch(`${SERVER_URL}${urlSufix}`, {
       method: method,
       headers: {
         "Authorization": "Basic " + btoa(`${email || storagedUserJson?.email}:${password || storagedUserJson?.password}`),
@@ -71,6 +71,3 @@ export class AuthService {
   }
 
 }
-
-const serverUrl: string = "http://localhost:8080/";
-const origin: string = "https://leandrocz15.github.io/";
