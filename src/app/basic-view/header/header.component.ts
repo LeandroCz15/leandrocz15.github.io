@@ -1,12 +1,9 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { ViewComponent } from '../view/view.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
 import { FetchRowsService } from '../services/fetch-rows.service';
-import { indexArrayByProperty } from 'src/application-utils';
 
 @Component({
   selector: 'app-header',
@@ -24,13 +21,13 @@ export class HeaderComponent {
   @Input() viewComponent!: ViewComponent;
 
   // Filters to render in this component
-  @Input() filters!: Array<any>;
+  @Input() fields!: Array<any>;
 
   constructor(private fetchRows: FetchRowsService) { }
 
   // Process text input change
   processTextInputChange(index: number): void {
-    const changedFilter = this.filters.at(index);
+    const changedFilter = this.fields.at(index);
     // Only triggers when detect changes in the input
     const trimmedValue: string = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter) || trimmedValue === "" && changedFilter.value?.length !== 0) {
@@ -45,7 +42,7 @@ export class HeaderComponent {
   // Process boolean input change
   processCheckBoxChange(index: number): void {
     // Property binding not working with check's so update the value manually
-    const checkboxField = this.filters.at(index);
+    const checkboxField = this.fields.at(index);
     let valueToChange;
     switch (checkboxField.value) {
       case undefined:
@@ -74,7 +71,7 @@ export class HeaderComponent {
 
   // Process numeric input change
   processNumericInputChange(index: number): void {
-    let changedFilter = this.filters.at(index);
+    let changedFilter = this.fields.at(index);
     changedFilter.value = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter)) {
       changedFilter.invalidExpression = false;

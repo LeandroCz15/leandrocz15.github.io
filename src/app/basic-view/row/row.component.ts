@@ -14,21 +14,21 @@ export class RowComponent {
   // Boolean to indicate if this row is being selected
   public selected: boolean = false;
 
+  // Reference to the last row component selected to apply styles correctly
+  private static lastRowSelected: RowComponent | undefined = undefined;
+
   // Row object
   @Input() row: any;
 
   // View component
   @Input() viewComponent!: ViewComponent;
 
-  // Reference to the last row component selected to apply styles correctly
-  private static lastRowSelected: RowComponent | undefined = undefined;
-
   constructor(private dialog: MatDialog) { }
 
   openRowInFormMode(row: any): void {
     const dialogData: DialogData = {
       viewComponent: this.viewComponent,
-      currentRow: row
+      currentRow: row,
     }
     this.dialog.open(RowFormComponent, {
       data: dialogData,

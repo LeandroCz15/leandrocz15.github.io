@@ -1,14 +1,14 @@
-.filter-box {
+.field-box {
   min-width: 20%;
   flex: 1;
 }
 
-.filter-name {
+.field-name {
   user-select: none;
   background-color: #e9ecef;
 }
 
-.filter-input {
+.field-input {
   height: 60%;
 }
 

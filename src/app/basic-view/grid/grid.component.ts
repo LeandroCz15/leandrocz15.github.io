@@ -13,21 +13,21 @@ import { FetchRowsService } from '../services/fetch-rows.service';
 })
 export class GridComponent implements OnInit, OnDestroy {
 
+  // Boolean used to re-render the view after changing the order in the rows columns
+  public reload: boolean = true;
+
+  // Every row loaded in memory
+  public rows: any[] = [];
+
+  // Subscription for fetch rows service
+  private fetchRowsSubscription!: Subscription;
+
   // View component reference
   @Input() viewComponent!: ViewComponent;
 
   // Service to reload the view. HEREDATED FROM PARENT
   @Input() reloadViewSubject!: Subject<void>;
   private reloadViewSubscription!: Subscription;
-
-  // Subscription for fetch rows service
-  private fetchRowsSubscription!: Subscription;
-
-  // Boolean used to re-render the view after changing the order in the rows columns
-  public reload: boolean = true;
-
-  // Every row loaded in memory
-  public rows: any[] = [];
 
   constructor(
     private authService: AuthService,

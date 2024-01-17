@@ -12,7 +12,7 @@ import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils'
 
 export interface DialogData {
   viewComponent: ViewComponent,
-  currentRow: any,
+  currentRow: any
 }
 
 @Component({
@@ -273,6 +273,7 @@ export class RowFormComponent {
     return this.profileForm;
   }
 
+  // Function to keep track of rows using the index given by the *ngFor
   trackByFn(index: number, item: any): number {
     return index;
   }

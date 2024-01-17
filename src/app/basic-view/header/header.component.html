@@ -1,35 +1,35 @@
 <div class="d-flex sticky-top mb-3">
-    <ng-container *ngFor="let filter of filters ; let i = index; trackBy: trackByFn">
-        <div class="filter-box"
+    <ng-container *ngFor="let field of fields ; let i = index; trackBy: trackByFn">
+        <div class="field-box"
             cdkDrag
-            [cdkDragData]="filter"
+            [cdkDragData]="field"
             cdkDragLockAxis="x">
-            <!--This is start of a column in filters-->
-            <span class="input-group-text rounded-0 fw-semibold d-block text-truncate filter-name">
-                {{filter.name}}
+            <!--This is start of a column in fields-->
+            <span class="input-group-text rounded-0 fw-semibold d-block text-truncate field-name">
+                {{field.name}}
             </span>
-            <ng-container [ngSwitch]="filter.type">
+            <ng-container [ngSwitch]="field.type">
                 <!--Text case-->
                 <input *ngSwitchCase="'text'"
-                    type="text" class="form-control rounded-0 filter-input"
+                    type="text" class="form-control rounded-0 field-input"
                     (keyup.enter)="processTextInputChange(i)"
                     (blur)="processTextInputChange(i)"
-                    [(ngModel)]="filter.value">
+                    [(ngModel)]="field.value">
                 <!--Checkbox case-->
                 <input *ngSwitchCase="'checkbox'"
                     type="checkbox"
-                    class="form-check-input rounded-0 filter-input checkbox-input"
-                    [indeterminate]="filters.at(i).value === undefined"
-                    [checked]="filters.at(i).value"
+                    class="form-check-input rounded-0 field-input checkbox-input"
+                    [indeterminate]="fields.at(i).value === undefined"
+                    [checked]="fields.at(i).value"
                     (click)="processCheckBoxChange(i)">
                 <!--Date case-->
                 <mat-form-field *ngSwitchCase="'date'" class="w-100 rounded-0 dense-3" color="primary"
                     subscriptSizing="dynamic">
                     <mat-label>Enter a date range</mat-label>
                     <mat-date-range-input [rangePicker]="picker" [separator]="'/'">
-                        <input matStartDate placeholder="From date" [(ngModel)]="filter.startDate"
+                        <input matStartDate placeholder="From date" [(ngModel)]="field.startDate"
                             (dateChange)="processDateChange($event)">
-                        <input matEndDate placeholder="To date" [(ngModel)]="filter.endDate"
+                        <input matEndDate placeholder="To date" [(ngModel)]="field.endDate"
                             (dateChange)="processDateChange($event)">
                     </mat-date-range-input>
                     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -37,10 +37,10 @@
                 </mat-form-field>
                 <!--Numeric case-->
                 <input *ngSwitchCase="'numeric'"
-                    type="text" class="form-control rounded-0 filter-input"
+                    type="text" class="form-control rounded-0 field-input"
                     (keyup.enter)="processNumericInputChange(i)"
                     (blur)="processNumericInputChange(i)"
-                    [(ngModel)]="filter.value" [ngClass]="filter.invalidExpression ? 'is-invalid' : ''">
+                    [(ngModel)]="field.value" [ngClass]="field.invalidExpression ? 'is-invalid' : ''">
             </ng-container>
         </div>
     </ng-container>

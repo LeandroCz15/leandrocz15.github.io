@@ -16,26 +16,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class ViewComponent implements OnInit, OnDestroy {
 
-  // View id to fetch information
+  // View id of this view component
   public viewId: string = "";
 
-  // Main tab id of the current view
+  // Main tab id of this view component
   public mainTabId: string = "";
 
-  // Entity of the main tab to fetch information
+  // Entity name of the main tab
   public mainTabEntityName: string = "";
+
+  // Buttons and process of the main tab
+  public buttonsAndProcess: any[] = [];
 
   // Boolean used to render the child components once the main fetch is done
   public viewReady: boolean = false;
-
-  // Header children component
-  @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
-
-  // Rows children component
-  @ViewChild(GridComponent) gridComponent!: GridComponent;
-
-  // Pagination children component
-  @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
   // Fields to show in the grid of the current tab
   public gridFields: any[] = [];
@@ -49,13 +43,25 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Indexed fields to show in the form for better performance
   public currentFormFieldsIndexedByHqlProperty: any = {};
 
-  // Subscription for page change service
-  private pageChangeSubscription!: Subscription;
-
   // Service to reload the view
   public reloadViewSubject: Subject<void> = new Subject<void>;
 
-  constructor(private authService: AuthService, private pageChangeService: SelectPageService) { }
+  // Subscription for page change service
+  private pageChangeSubscription!: Subscription;
+
+  // Header children component
+  @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
+
+  // Grid children component
+  @ViewChild(GridComponent) gridComponent!: GridComponent;
+
+  // Pagination children component
+  @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
+
+  constructor(
+    private authService: AuthService,
+    private pageChangeService: SelectPageService
+  ) { }
 
   ngOnInit(): void {
     this.pageChangeSubscription = this.pageChangeService.getPageChangeObservable().subscribe(viewId => {
@@ -87,16 +93,16 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * This function sets all the fields needed to be render by the current view. Adding some properties to the objects
+   * This function process all the view data retrieved and sets the correspondent variables
    * 
-   * @param data Data containing the fields to be rendered
+   * @param data View fetch data
    */
-  processMainTabInformation(mainTabData: any) {
-    this.mainTabId = mainTabData.id;
-    this.mainTabEntityName = mainTabData.entityName;
+  processMainTabInformation(viewData: any) {
+    this.mainTabId = viewData.id;
+    this.mainTabEntityName = viewData.entityName;
     const newGridFields: any[] = [];
     const newFormFields: any[] = []
-    mainTabData.fields.forEach((field: any) => {
+    viewData.fields.forEach((field: any) => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
       if (field.showInGrid) {
@@ -110,6 +116,11 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.formFields = newFormFields;
   }
 
+  /**
+   * Function to handle the logic when dragging and dropping a header of the current view
+   * 
+   * @param event Drag and drop event
+   */
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
       moveItemInArray(this.gridFields, event.previousIndex, event.currentIndex);
