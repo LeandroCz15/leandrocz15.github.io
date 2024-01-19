@@ -129,11 +129,21 @@ export class ViewComponent implements OnInit, OnDestroy {
     const deleteFunction = this.authService.deleteRows.bind(this.authService);
     const executeProcessFunction = this.authService.executeProcess.bind(this.authService);
     const viewComponent = this;
+    const actionMenuItems = items.map(function (obj) {
+      return {
+        label: obj.name,
+        imageSource: obj.iconSource,
+        clickFn(row: any, item: any) {
+          executeProcessFunction(row, item);
+        }
+      }
+    });
     const menuItems: ContextMenuItem[] = [
       {
         label: "Actions", imageSource: "bi-cpu", hoverFn(row, item) {
-          console.log("ASD")
-        }
+          console.log(item);
+        },
+        items: actionMenuItems
       },
       {
         label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
@@ -141,13 +151,6 @@ export class ViewComponent implements OnInit, OnDestroy {
         }
       }
     ];
-    items.forEach(item => {
-      menuItems.push({
-        label: item.name, imageSource: item.iconSource, clickFn(row, item) {
-          executeProcessFunction(row, item);
-        }
-      });
-    });
     this.contextMenuItems = menuItems;
   }
 
