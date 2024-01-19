@@ -122,7 +122,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Construct the items of the context menu.
+   * Construct the items of the context menu. This is made in the view component because the buttons and process are view related
    * @param items Items from response. This items needs to be converted into ContextMenuItem interface
    */
   constructMenuItems(items: any[]): void {
@@ -138,7 +138,7 @@ export class ViewComponent implements OnInit, OnDestroy {
         }
       }
     });
-    const menuItems: ContextMenuItem[] = [
+    this.contextMenuItems = [
       {
         label: "Actions", imageSource: "bi-cpu", hoverFn(row, item) {
           console.log(item);
@@ -151,7 +151,6 @@ export class ViewComponent implements OnInit, OnDestroy {
         }
       }
     ];
-    this.contextMenuItems = menuItems;
   }
 
   /**

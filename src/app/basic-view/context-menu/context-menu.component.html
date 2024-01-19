@@ -1,5 +1,4 @@
-<div #menu class="d-flex flex-column context-menu"
-    [ngClass]="getClasses()" 
+<div #contextMenuElement class="d-flex flex-column context-menu position-absolute"
     [style.max-width.px]="DEFAULT_MENU_WIDTH"
     [style.max-height.px]="DEFAULT_MENU_HEIGHT">
     <div *ngFor="let item of data?.items; let i = index; trackBy: trackByFn">
