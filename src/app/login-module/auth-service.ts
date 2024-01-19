@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Subject, Observable } from "rxjs";
 import { HttpMethod, SERVER_URL } from "src/application-constants";
+import { ViewComponent } from "../basic-view/view/view.component";
 
 @Injectable({
   providedIn: "root",
@@ -68,6 +69,39 @@ export class AuthService {
     }).catch(reason => {
       timeOutFunction(reason);
     });
+  }
+
+  /**
+   * Send a request to the backend to delete mutiple rows
+   * 
+   * @param view View from which the entity is being deleted
+   * @param rowsToDelete Rows to delete
+   */
+  deleteRows(view: ViewComponent, rowsToDelete: any[]): void {
+    const dataArrayToDelete = rowsToDelete.map(function (obj) {
+      return obj.id;
+    });
+    this.fetchInformation(`api/delete/${view.mainTabEntityName}`, HttpMethod.DELETE,
+      (response: Response) => {
+        view.gridComponent.rows = view.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
+      },
+      async (response: Response) => {
+        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabEntityName}. Error ${await response.text()}`);
+      },
+      (error: any) => {
+        console.error(`Timeout while deleting rows of of the entity: ${view.mainTabEntityName}`);
+      },
+      JSON.stringify({ data: dataArrayToDelete }));
+  }
+
+  /**
+   * Send a request to the backend to execute a cazzeon process
+   * 
+   * @param row Row to execute the process
+   * @param item Item clicked
+   */
+  executeProcess(row: any, item: any): void {
+    console.log("ASD")
   }
 
 }

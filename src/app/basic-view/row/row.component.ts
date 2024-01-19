@@ -3,6 +3,8 @@ import { Component, Input } from '@angular/core';
 import { ViewComponent } from '../view/view.component';
 import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 import { MatDialog } from '@angular/material/dialog';
+import { OpenContextMenuService } from '../services/open-context-menu.service';
+import { ContextMenuData } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-row',
@@ -23,9 +25,13 @@ export class RowComponent {
   // View component
   @Input() viewComponent!: ViewComponent;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(
+    private dialog: MatDialog,
+    private contextMenuService: OpenContextMenuService
+  ) { }
 
   openRowInFormMode(row: any): void {
+    this.updateLastSelectedRow();
     const dialogData: DialogData = {
       viewComponent: this.viewComponent,
       currentRow: row,
@@ -35,6 +41,26 @@ export class RowComponent {
       height: "80%",
       width: "80%"
     });
+  }
+
+  openContextMenu(event: MouseEvent, row: any): void {
+    event.preventDefault();
+    this.updateLastSelectedRow();
+    const data: ContextMenuData = {
+      top: event.clientY,
+      left: event.clientX,
+      topOffset: 0,
+      leftOffset: 12,
+      rowClicked: row,
+      items: this.viewComponent.contextMenuItems // Items already initialized in the view
+    }
+    this.contextMenuService.openContextMenu(data);
+  }
+
+  /**
+   * Function to properly manage styles and variables when left or right clicking in a row
+   */
+  updateLastSelectedRow(): void {
     if (RowComponent.lastRowSelected) {
       RowComponent.lastRowSelected.selected = false;
     }

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LeftTaskbarComponent } from './left-taskbar/left-taskbar.component';
 import { NavbarElementComponent } from './navbarelement/navbarelement.component';
-import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
+import { BasicViewModule } from '../basic-view/basic-view.module';
 
 
 
@@ -10,10 +10,10 @@ import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
   declarations: [
     LeftTaskbarComponent,
     NavbarElementComponent,
-    IconSrcResolverPipe
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    BasicViewModule
   ],
   exports: [
     LeftTaskbarComponent,

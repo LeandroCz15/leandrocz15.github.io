@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription, filter } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
@@ -8,6 +8,7 @@ import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ContextMenuItem } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-view',
@@ -25,9 +26,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Entity name of the main tab
   public mainTabEntityName: string = "";
 
-  // Buttons and process of the main tab
-  public buttonsAndProcess: any[] = [];
-
   // Boolean used to render the child components once the main fetch is done
   public viewReady: boolean = false;
 
@@ -43,11 +41,17 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Indexed fields to show in the form for better performance
   public currentFormFieldsIndexedByHqlProperty: any = {};
 
+  // Array of items of the context menu to show in this view. Buid in this component to reuse and not build on every right click
+  public contextMenuItems: ContextMenuItem[] = [];
+
   // Service to reload the view
   public reloadViewSubject: Subject<void> = new Subject<void>;
 
   // Subscription for page change service
   private pageChangeSubscription!: Subscription;
+
+  // Buttons and process of the main tab
+  private buttonsAndProcess: any[] = [];
 
   // Header children component
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
@@ -100,6 +104,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   processMainTabInformation(viewData: any) {
     this.mainTabId = viewData.id;
     this.mainTabEntityName = viewData.entityName;
+    this.constructMenuItems(viewData.buttonAndProcess);
     const newGridFields: any[] = [];
     const newFormFields: any[] = []
     viewData.fields.forEach((field: any) => {
@@ -114,6 +119,36 @@ export class ViewComponent implements OnInit, OnDestroy {
     });
     this.gridFields = newGridFields;
     this.formFields = newFormFields;
+  }
+
+  /**
+   * Construct the items of the context menu.
+   * @param items Items from response. This items needs to be converted into ContextMenuItem interface
+   */
+  constructMenuItems(items: any[]): void {
+    const deleteFunction = this.authService.deleteRows.bind(this.authService);
+    const executeProcessFunction = this.authService.executeProcess.bind(this.authService);
+    const viewComponent = this;
+    const menuItems: ContextMenuItem[] = [
+      {
+        label: "Actions", imageSource: "bi-cpu", hoverFn(row, item) {
+          console.log("ASD")
+        }
+      },
+      {
+        label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
+          deleteFunction(viewComponent, [row]);
+        }
+      }
+    ];
+    items.forEach(item => {
+      menuItems.push({
+        label: item.name, imageSource: item.iconSource, clickFn(row, item) {
+          executeProcessFunction(row, item);
+        }
+      });
+    });
+    this.contextMenuItems = menuItems;
   }
 
   /**

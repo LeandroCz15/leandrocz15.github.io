@@ -21,6 +21,8 @@ import { SelectorComponent } from './selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
 import { RowComponent } from './row/row.component';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { RowComponent } from './row/row.component';
     SelectorComponent,
     DisplayEmptyValuePipe,
     RowComponent,
+    ContextMenuComponent,
+    IconSrcResolverPipe
   ],
   imports: [
     CommonModule,
@@ -48,10 +52,11 @@ import { RowComponent } from './row/row.component';
     ReactiveFormsModule,
     NgbModule,
     MatAutocompleteModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   exports: [
     ViewComponent,
+    IconSrcResolverPipe
   ],
   providers: [
     GenerateIdForFormPipe,

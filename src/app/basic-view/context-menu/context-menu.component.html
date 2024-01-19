@@ -1,0 +1,19 @@
+<div #menu class="d-flex flex-column context-menu"
+    [ngClass]="getClasses()" 
+    [style.max-width.px]="DEFAULT_MENU_WIDTH"
+    [style.max-height.px]="DEFAULT_MENU_HEIGHT">
+    <div *ngFor="let item of data?.items; let i = index; trackBy: trackByFn">
+        <button class="btn btn-secondary w-100 rounded-0 text-nowrap" (click)="item.clickFn?.(data.rowClicked, item)"
+            (mouseenter)="item.hoverFn?.(data.rowClicked, item)">
+            <div class="float-start">
+                <img *ngIf="item.imageSource | iconSrcResolver ; else elseBlock" [src]="item.imageSource" width="25px">
+                <ng-template #elseBlock>
+                    <i [class]="'bi bootstrap-icon h5 ' + item.imageSource"></i>
+                </ng-template>
+                <span>
+                    {{item.label}}
+                </span>
+            </div>
+        </button>
+    </div>
+</div>
