@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription, filter } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
@@ -8,7 +8,7 @@ import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ContextMenuItem } from '../context-menu/context-menu.component';
+import { ContextMenuComponent, ContextMenuItem } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-view',
@@ -140,10 +140,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     });
     this.contextMenuItems = [
       {
-        label: "Actions", imageSource: "bi-cpu", hoverFn(row, item) {
-          console.log(item);
-        },
-        items: actionMenuItems
+        label: "Actions", imageSource: "bi-cpu", items: actionMenuItems
       },
       {
         label: "Delete", imageSource: "bi-trash", clickFn(row, item) {

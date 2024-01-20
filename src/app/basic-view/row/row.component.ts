@@ -48,13 +48,11 @@ export class RowComponent {
     this.updateLastSelectedRow();
     const data: ContextMenuData = {
       top: event.clientY,
-      left: event.clientX,
-      topOffset: 0,
-      leftOffset: 12,
+      left: event.clientX + 12, //12 px offset
       rowClicked: row,
       items: this.viewComponent.contextMenuItems // Items already initialized in the view
     }
-    this.contextMenuService.openContextMenu(data);
+    this.contextMenuService.createContextMenu(data);
   }
 
   /**
