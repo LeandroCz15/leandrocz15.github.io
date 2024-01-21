@@ -52,7 +52,7 @@ export class RowComponent {
       rowClicked: row,
       items: this.viewComponent.contextMenuItems // Items already initialized in the view
     }
-    this.contextMenuService.createContextMenu(data);
+    this.contextMenuService.openContextMenu(data);
   }
 
   /**
