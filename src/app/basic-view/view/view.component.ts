@@ -129,13 +129,14 @@ export class ViewComponent implements OnInit, OnDestroy {
     const deleteFunction = this.authService.deleteRows.bind(this.authService);
     const executeProcessFunction = this.authService.executeProcess.bind(this.authService);
     const viewComponent = this;
-    const actionMenuItems = items.map(function (obj) {
+    const actionMenuItems: ContextMenuItem[] = items.map(function (obj) {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
         clickFn(row: any, item: any) {
           executeProcessFunction(row, item);
-        }
+        },
+        //items: [{label: "HOLA", imageSource: "asd"}]
       }
     });
     this.contextMenuItems = [

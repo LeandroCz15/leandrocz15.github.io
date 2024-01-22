@@ -29,9 +29,8 @@ export class OpenContextMenuService {
   /**
    * Create the context menu. This function doesn't delete other menus opened
    * @param data Data to pass to the context menu
-   * @param isRoot Indicates if the current context menu being opened is root or not. If its
-   * root then it will close any other context menu in the application before opening. If its not root
-   * it wont close anything. This parameter is made to avoid closing subsequents context menus
+   * @param parentContextMenu Parent context menu. If it's undefined then this is a root context menu.
+   * Root context menu's will close every other context menu in the application before opening
    */
   public createContextMenu(data: ContextMenuData, parentContextMenu?: ComponentRef<ContextMenuComponent>): ComponentRef<ContextMenuComponent> {
     const contextMenuReference = this.componentFactoryResolver
