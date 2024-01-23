@@ -23,7 +23,9 @@ export const enum HttpMethod {
 export const enum DataType {
     TEXT = "text",
     CHECKBOX = "checkbox",
-    NUMERIC = "number",
+    NATURAL = "natural",
+    INTEGER = "integer",
+    DECIMAL = "decimal",
     DATE = "date",
     SELECTOR = "selector",
 }

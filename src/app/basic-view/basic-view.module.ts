@@ -23,6 +23,7 @@ import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
 import { RowComponent } from './row/row.component';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
+import { MultiCaseSwitchPipe } from './pipes/multi-case-switch.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
     DisplayEmptyValuePipe,
     RowComponent,
     ContextMenuComponent,
-    IconSrcResolverPipe
+    IconSrcResolverPipe,
+    MultiCaseSwitchPipe
   ],
   imports: [
     CommonModule,

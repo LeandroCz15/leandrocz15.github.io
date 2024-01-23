@@ -26,23 +26,17 @@ export interface DialogData {
 })
 export class RowFormComponent {
 
-  // Base row structure
-  readonly baseRow: any = {};
-
-  // Form profile
-  public profileForm!: FormGroup<{}>;
-
-  // Boolean to indicate if the form was submitted
-  public submitted: boolean = false;
-
-  // True if the row is being inserted. False otherwise
-  public isNew: boolean = true;
-
   // Boolean to render the modal 
   public formReady: boolean = false;
 
   // Subject for update the form
   public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
+
+  // Form profile
+  private profileForm!: FormGroup<{}>;
+
+  // True if the row is being inserted. False otherwise
+  private isNew: boolean = true;
 
   constructor(
     private authService: AuthService,
@@ -52,13 +46,12 @@ export class RowFormComponent {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
     this.profileForm = this.formBuilder.group(this.buildGroup());
-    this.buildBaseRowStructure();
     this.updateModal(this.data.currentRow);
     this.formReady = true;
   }
 
   /**
-   * This function updates the current form with the values of the row passed as argument and then opens the modal
+   * This function updates the current form modal with the values of the row passed as argument and then opens the modal
    * @param row Row to update the current form
    */
   updateModal(row: any): void {
@@ -67,16 +60,15 @@ export class RowFormComponent {
       this.isNew = false;
       this.updateFormWithRowValues();
     } else {
-      this.data.currentRow = Object.assign({}, this.baseRow);
       this.isNew = true;
-      this.profileForm.reset();
+      this.data.currentRow = this.buildBaseRowStructure();
     }
     this.programmaticUpdate.next(false);
   }
 
   /**
    * Build every group needed on the form based on the view filters
-   * @returns 
+   * @returns The group for the form
    */
   buildGroup(): any {
     const group: any = {};
@@ -97,7 +89,9 @@ export class RowFormComponent {
         return filter.defaultValue || null;
       case DataType.CHECKBOX:
         return JSON.parse(filter.defaultValue) || false;
-      case DataType.NUMERIC:
+      case DataType.NATURAL:
+      case DataType.INTEGER:
+      case DataType.DECIMAL:
         return +filter.defaultValue || null;
       case DataType.DATE:
         return filter.defaultValue || null;
@@ -117,7 +111,9 @@ export class RowFormComponent {
         return this.buildTextValidators(filter);
       case DataType.CHECKBOX:
         return [];
-      case DataType.NUMERIC:
+      case DataType.NATURAL:
+      case DataType.INTEGER:
+      case DataType.DECIMAL:
         return this.buildNumericValidators(filter);
       case DataType.DATE:
         return this.buildDateValidators(filter);
@@ -262,11 +258,15 @@ export class RowFormComponent {
 
   /**
    * Build the base row structure for those rows that will be created from scratch.
+   * 
+   * @returns A base row object with every hqlProperty equals to null
    */
-  buildBaseRowStructure(): void {
+  buildBaseRowStructure(): any {
+    const baseRow: any = {};
     this.data.viewComponent.formFields.forEach((field: any) => {
-      this.baseRow[field.hqlProperty] = null;
+      baseRow[field.hqlProperty] = null;
     });
+    return baseRow;
   }
 
   get form() {

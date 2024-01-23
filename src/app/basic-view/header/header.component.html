@@ -36,7 +36,7 @@
                     <mat-date-range-picker #picker></mat-date-range-picker>
                 </mat-form-field>
                 <!--Numeric case-->
-                <input *ngSwitchCase="'numeric'"
+                <input *ngSwitchCase="field.type | multiCaseSwitch : 'natural' : 'integer' : 'decimal'"
                     type="text" class="form-control rounded-0 field-input"
                     (keyup.enter)="processNumericInputChange(i)"
                     (blur)="processNumericInputChange(i)"
