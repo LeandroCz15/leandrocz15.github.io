@@ -21,6 +21,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
+const CURRENT_DATE = "CURRENT_DATE";
+
 @Component({
   selector: 'app-row-form',
   templateUrl: './row-form.component.html',
@@ -101,7 +103,7 @@ export class RowFormComponent {
       case DataType.DECIMAL:
         return +filter.defaultValue || null;
       case DataType.DATE:
-        return filter.defaultValue || null;
+        return filter.defaultValue === CURRENT_DATE ? new Date() : filter.defaultValue;
       default:
         return null;
     }
