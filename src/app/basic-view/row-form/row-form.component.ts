@@ -35,9 +35,6 @@ export class RowFormComponent {
   // Form profile
   private profileForm!: FormGroup<{}>;
 
-  // True if the row is being inserted. False otherwise
-  private isNew: boolean = true;
-
   constructor(
     private authService: AuthService,
     private formBuilder: NonNullableFormBuilder,
@@ -57,10 +54,8 @@ export class RowFormComponent {
   updateModal(row: any): void {
     this.programmaticUpdate.next(true);
     if (row) {
-      this.isNew = false;
       this.updateFormWithRowValues();
     } else {
-      this.isNew = true;
       this.data.currentRow = this.buildBaseRowStructure();
     }
     this.programmaticUpdate.next(false);
@@ -86,6 +81,7 @@ export class RowFormComponent {
   getDefaultValueForGroup(filter: any): any {
     switch (filter.type) {
       case DataType.TEXT:
+      case DataType.LARGE_TEXT:
         return filter.defaultValue || null;
       case DataType.CHECKBOX:
         return JSON.parse(filter.defaultValue) || false;
@@ -108,6 +104,7 @@ export class RowFormComponent {
   buildPropertiesForGroup(filter: any): Array<any> {
     switch (filter.type) {
       case DataType.TEXT:
+      case DataType.LARGE_TEXT:
         return this.buildTextValidators(filter);
       case DataType.CHECKBOX:
         return [];
@@ -186,7 +183,7 @@ export class RowFormComponent {
       this.formReady = true;
       console.error(`Timeout while storing entity: ${this.data.viewComponent.mainTabEntityName}`);
     },
-      JSON.stringify({ entity: this.buildObjectToSend(), isNew: this.isNew }));
+      JSON.stringify({ entity: this.buildObjectToSend() }));
   }
 
   /**
@@ -263,6 +260,8 @@ export class RowFormComponent {
    */
   buildBaseRowStructure(): any {
     const baseRow: any = {};
+    // Hardcode base row id because it is always needed
+    baseRow.id = null;
     this.data.viewComponent.formFields.forEach((field: any) => {
       baseRow[field.hqlProperty] = null;
     });

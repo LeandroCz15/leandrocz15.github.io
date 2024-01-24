@@ -10,7 +10,7 @@
             </span>
             <ng-container [ngSwitch]="field.type">
                 <!--Text case-->
-                <input *ngSwitchCase="'text'"
+                <input *ngSwitchCase="field.type | multiCaseSwitch : 'text' : 'lg-text'"
                     type="text" class="form-control rounded-0 field-input"
                     (keyup.enter)="processTextInputChange(i)"
                     (blur)="processTextInputChange(i)"

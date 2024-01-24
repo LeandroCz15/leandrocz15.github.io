@@ -22,6 +22,7 @@ export const enum HttpMethod {
 
 export const enum DataType {
     TEXT = "text",
+    LARGE_TEXT = "lg-text",
     CHECKBOX = "checkbox",
     NATURAL = "natural",
     INTEGER = "integer",

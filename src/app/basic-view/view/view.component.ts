@@ -90,7 +90,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       this.currentFormFieldsIndexedByHqlProperty = indexArrayByProperty(this.formFields, "hqlProperty");
       this.viewReady = true;
     }, async (response: Response) => {
-      console.log(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
+      console.error(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
     }, (error: any) => {
       console.error("Error while fetching main tab information");
     });
@@ -105,9 +105,17 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.mainTabId = viewData.id;
     this.mainTabEntityName = viewData.entityName;
     this.constructMenuItems(viewData.buttonAndProcess);
+    this.constructFieldsAndHeaders(viewData.fields);
+  }
+
+  /**
+   * 
+   * @param fields Properties of the entity to construct the header and form
+   */
+  constructFieldsAndHeaders(fields: any[]): void {
     const newGridFields: any[] = [];
-    const newFormFields: any[] = []
-    viewData.fields.forEach((field: any) => {
+    const newFormFields: any[] = [];
+    fields.forEach((field: any) => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
       if (field.showInGrid) {
