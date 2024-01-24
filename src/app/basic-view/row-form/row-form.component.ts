@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
 import { AuthService } from 'src/app/login-module/auth-service';
@@ -13,6 +13,12 @@ import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils'
 export interface DialogData {
   viewComponent: ViewComponent,
   currentRow: any
+}
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return !!(control && control.invalid);
+  }
 }
 
 @Component({
@@ -29,6 +35,10 @@ export class RowFormComponent {
   // Boolean to render the modal 
   public formReady: boolean = false;
 
+
+  // Variable to store the matcher that will control the errors in the angular-material inputs (date, selector)
+  public matcher: any;
+
   // Subject for update the form
   public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
 
@@ -42,6 +52,7 @@ export class RowFormComponent {
     public dialogRef: MatDialogRef<RowFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
+    this.matcher = new MyErrorStateMatcher();
     this.profileForm = this.formBuilder.group(this.buildGroup());
     this.updateModal(this.data.currentRow);
     this.formReady = true;
