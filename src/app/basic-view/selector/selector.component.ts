@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsu
 import { FormGroup } from '@angular/forms';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from 'src/app/login-module/auth-service';
-import { RowFormComponent } from '../row-form/row-form.component';
+import { MyErrorStateMatcher, RowFormComponent } from '../row-form/row-form.component';
 import { HttpMethod } from 'src/application-constants';
 
 @Component({
@@ -21,6 +21,8 @@ export class SelectorComponent implements OnInit, OnDestroy {
   @Input() rowFormComponent!: RowFormComponent;
 
   @Input() programmaticUpdate!: Subject<boolean>;
+
+  @Input() matcher!: MyErrorStateMatcher;
 
   @ViewChild("input") inputElement!: ElementRef;
 

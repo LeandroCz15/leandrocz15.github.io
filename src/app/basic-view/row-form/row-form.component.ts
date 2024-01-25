@@ -37,9 +37,8 @@ export class RowFormComponent {
   // Boolean to render the modal 
   public formReady: boolean = false;
 
-
   // Variable to store the matcher that will control the errors in the angular-material inputs (date, selector)
-  public matcher: any;
+  public matcher: MyErrorStateMatcher;
 
   // Subject for update the form
   public programmaticUpdate: Subject<boolean> = new Subject<boolean>;

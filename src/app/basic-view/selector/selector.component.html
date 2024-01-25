@@ -5,7 +5,7 @@
             matInput
             [matAutocomplete]="auto"
             [formControlName]="formName"
-            [ngClass]="{'is-invalid': formInput.get(formName)!.errors}">
+            [errorStateMatcher]="matcher">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="showProperty">
             <mat-option *ngFor="let option of resultSet"
                 [value]="option"
