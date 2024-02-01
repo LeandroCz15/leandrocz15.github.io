@@ -245,7 +245,7 @@ export class RowFormComponent {
     Object.keys(this.profileForm.getRawValue()).forEach(key => {
       // Normalize object
       const normalizedKey = this.normalizeOrFormatKey(key, true);
-      returnObject[normalizedKey] = formRawValue[key];
+      returnObject[normalizedKey] = typeof formRawValue[key] === 'string' ? formRawValue[key]?.trim() : formRawValue[key];
     });
     return returnObject;
   }
