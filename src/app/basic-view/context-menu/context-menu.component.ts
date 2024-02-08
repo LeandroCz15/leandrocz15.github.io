@@ -4,6 +4,7 @@ import { OpenContextMenuService } from '../services/open-context-menu.service';
 export interface ContextMenuItem {
   label: string,
   imageSource: string,
+  javaClass?: string,
   clickFn?: (row: any, item: any) => void,
   items?: ContextMenuItem[]
 }

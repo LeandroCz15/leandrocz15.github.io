@@ -12,7 +12,7 @@ export const CAZZEON_DATE_FORMAT = {
     },
 }
 
-export const enum HttpMethod {
+export enum HttpMethod {
     GET = "GET",
     POST = "POST",
     PUT = "PUT",
@@ -20,7 +20,7 @@ export const enum HttpMethod {
     DELETE = "DELETE"
 }
 
-export const enum DataType {
+export enum DataType {
     TEXT = "text",
     LARGE_TEXT = "lg-text",
     CHECKBOX = "checkbox",

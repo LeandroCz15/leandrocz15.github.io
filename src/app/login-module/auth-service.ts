@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Subject, Observable } from "rxjs";
 import { HttpMethod, SERVER_URL } from "src/application-constants";
 import { ViewComponent } from "../basic-view/view/view.component";
+import { ContextMenuItem } from "../basic-view/context-menu/context-menu.component";
 
 @Injectable({
   providedIn: "root",
@@ -86,7 +87,7 @@ export class AuthService {
         view.gridComponent.rows = view.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
       },
       async (response: Response) => {
-        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabEntityName}. Error ${await response.text()}`);
+        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabEntityName}. Error: ${await response.text()}`);
       },
       (error: any) => {
         console.error(`Timeout while deleting rows of of the entity: ${view.mainTabEntityName}`);
@@ -100,8 +101,14 @@ export class AuthService {
    * @param row Row to execute the process
    * @param item Item clicked
    */
-  executeProcess(row: any, item: any): void {
-    console.log("ASD")
+  executeProcess(row: any, item: ContextMenuItem): void {
+    this.fetchInformation(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
+    }, async (response: Response) => {
+      const errorResponse = await response.json();
+      console.error(`Error while calling process: ${item.javaClass}. Error: ${await errorResponse.message}`);
+    }, (response: Response) => {
+      console.error(`Timeout while calling process: ${item.javaClass}`);
+    }, JSON.stringify({ item: item, row: row }));
   }
 
 }

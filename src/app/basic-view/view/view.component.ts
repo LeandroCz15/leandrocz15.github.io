@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ComponentRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subject, Subscription, filter } from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -8,7 +8,9 @@ import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ContextMenuComponent, ContextMenuItem } from '../context-menu/context-menu.component';
+import { ContextMenuItem } from '../context-menu/context-menu.component';
+
+const HQL_PROPERTY = "hqlProperty";
 
 @Component({
   selector: 'app-view',
@@ -50,9 +52,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   // Subscription for page change service
   private pageChangeSubscription!: Subscription;
 
-  // Buttons and process of the main tab
-  private buttonsAndProcess: any[] = [];
-
   // Header children component
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
 
@@ -86,8 +85,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
       // TODO: BOTH ARRAYS STARTS FROM THE SAME. TRY TO INDEX BOTH TO AVOID TRAVELING THE LIST SO MANY TIMES
-      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
-      this.currentFormFieldsIndexedByHqlProperty = indexArrayByProperty(this.formFields, "hqlProperty");
+      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, HQL_PROPERTY);
+      this.currentFormFieldsIndexedByHqlProperty = indexArrayByProperty(this.formFields, HQL_PROPERTY);
       this.viewReady = true;
     }, async (response: Response) => {
       console.error(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
@@ -141,7 +140,8 @@ export class ViewComponent implements OnInit, OnDestroy {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
-        clickFn(row: any, item: any) {
+        javaClass: obj.javaClass,
+        clickFn(row: any, item: ContextMenuItem) {
           executeProcessFunction(row, item);
         },
         //items: [{label: "HOLA", imageSource: "asd"}]
@@ -167,7 +167,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
       moveItemInArray(this.gridFields, event.previousIndex, event.currentIndex);
-      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, "hqlProperty");
+      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, HQL_PROPERTY);
       this.reloadViewSubject.next();
     }
   }

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
@@ -44,13 +44,13 @@ export class RowFormComponent {
   public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
 
   // Form profile
-  private profileForm!: FormGroup<{}>;
+  private profileForm: FormGroup<{}>;
 
   constructor(
     private authService: AuthService,
     private formBuilder: NonNullableFormBuilder,
     private getIdForFormPipe: GenerateIdForFormPipe,
-    public dialogRef: MatDialogRef<RowFormComponent>,
+    private dialogRef: MatDialogRef<RowFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
     this.matcher = new MyErrorStateMatcher();
@@ -117,63 +117,18 @@ export class RowFormComponent {
     switch (filter.type) {
       case DataType.TEXT:
       case DataType.LARGE_TEXT:
-        return this.buildTextValidators(filter);
-      case DataType.CHECKBOX:
-        return [];
+        return filter.isMandatory ? [Validators.required, noWhitespaceValidator] : [];
       case DataType.NATURAL:
       case DataType.INTEGER:
+        return filter.isMandatory ? [Validators.required, Validators.pattern(/^\d+$/)] : [Validators.pattern(/^\d+$/)];
       case DataType.DECIMAL:
-        return this.buildNumericValidators(filter);
       case DataType.DATE:
-        return this.buildDateValidators(filter);
+        return filter.isMandatory ? [Validators.required] : [];
       case DataType.SELECTOR:
         return filter.isMandatory ? [Validators.required, isObjectValidator] : [isObjectValidator];
       default:
         return [];
     }
-  }
-
-  /**
-   * Build text validators
-   * @param filter Filter to build the validator
-   * 
-   * @returns An array of validators for text type
-   */
-  buildTextValidators(filter: any): Array<any> {
-    const properties: Array<any> = [];
-    if (filter.isMandatory) {
-      properties.push(Validators.required);
-      properties.push(noWhitespaceValidator);
-    }
-    return properties;
-  }
-
-  /**
-   * Build numeric validators
-   * @param filter Filter to build the validator
-   * 
-   * @returns An array of validators for numeric type
-   */
-  buildNumericValidators(filter: any): Array<any> {
-    const properties: Array<any> = [];
-    if (filter.isMandatory) {
-      properties.push(Validators.required);
-    }
-    return properties;
-  }
-
-  /**
-   * Build date validators
-   * @param filter Filter to build the validator
-   * 
-   * @returns An array of validators for date type
-   */
-  buildDateValidators(filter: any): Array<any> {
-    const properties: Array<any> = [];
-    if (filter.isMandatory) {
-      properties.push(Validators.required);
-    }
-    return properties;
   }
 
   /**
@@ -245,9 +200,22 @@ export class RowFormComponent {
     Object.keys(this.profileForm.getRawValue()).forEach(key => {
       // Normalize object
       const normalizedKey = this.normalizeOrFormatKey(key, true);
-      returnObject[normalizedKey] = typeof formRawValue[key] === 'string' ? formRawValue[key]?.trim() : formRawValue[key];
+      returnObject[normalizedKey] = this.convertToNullIfEmptyString(formRawValue[key]);
     });
     return returnObject;
+  }
+
+  /**
+   * Convert empty string to null value to avoid filling the
+   * database with ""
+   * @param value Value to be converted
+   */
+  convertToNullIfEmptyString(value: any): any {
+    if (typeof value === 'string') {
+      const trimmedValue = value.trim();
+      return trimmedValue === "" ? null : trimmedValue;
+    }
+    return value
   }
 
   /**
