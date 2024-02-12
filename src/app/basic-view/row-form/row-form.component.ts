@@ -5,7 +5,7 @@ import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
-import { AuthService } from 'src/app/login-module/auth-service';
+import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { ViewComponent } from '../view/view.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
@@ -47,7 +47,7 @@ export class RowFormComponent {
   private profileForm: FormGroup<{}>;
 
   constructor(
-    private authService: AuthService,
+    private cazzeonService: CazzeonService,
     private formBuilder: NonNullableFormBuilder,
     private getIdForFormPipe: GenerateIdForFormPipe,
     private dialogRef: MatDialogRef<RowFormComponent>,
@@ -139,7 +139,7 @@ export class RowFormComponent {
       return;
     }
     this.formReady = false;
-    this.authService.fetchInformation(`api/store/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.POST, async (response: Response) => {
+    this.cazzeonService.request(`api/store/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
       this.formReady = true;
@@ -157,7 +157,7 @@ export class RowFormComponent {
    * This function deletes a single entity. The entity deleted will be the current entity displayed in the modal
    */
   deleteEntity() {
-    this.authService.fetchInformation(`api/delete/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.DELETE,
+    this.cazzeonService.request(`api/delete/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.DELETE,
       (response: Response) => {
         this.dialogRef.close();
         const indexToDelete = this.data.viewComponent.gridComponent.rows.findIndex(row => row === this.data.currentRow);

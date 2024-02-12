@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { AuthService } from 'src/app/login-module/auth-service';
+import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MyErrorStateMatcher, RowFormComponent } from '../row-form/row-form.component';
 import { HttpMethod } from 'src/application-constants';
 
@@ -36,7 +36,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
 
   private lastOptionIdClicked: string = "";
 
-  constructor(private authService: AuthService) { }
+  constructor(private cazzeonService: CazzeonService) { }
 
   ngOnInit(): void {
     this.valueChangeObservable = this.formInput.get(this.formName)!.valueChanges.pipe(debounceTime(950), distinctUntilChanged())
@@ -70,7 +70,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
       return;
     }
     const url = `api/data/selector?entityFrom=${this.rowFormComponent.data.viewComponent.mainTabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
-    this.authService.fetchInformation(url, HttpMethod.GET, async (response: Response) => {
+    this.cazzeonService.request(url, HttpMethod.GET, async (response: Response) => {
       this.resultSet = await response.json();
     }, async (response: Response) => {
       console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);

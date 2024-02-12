@@ -3,7 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { AuthService } from 'src/app/login-module/auth-service';
+import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { SelectPageService } from '../services/select-page.service';
 import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
@@ -62,7 +62,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
   constructor(
-    private authService: AuthService,
+    private cazzeonService: CazzeonService,
     private pageChangeService: SelectPageService
   ) { }
 
@@ -82,7 +82,7 @@ export class ViewComponent implements OnInit, OnDestroy {
    * This function fetch the main tab information
    */
   fetchMainTabInformation() {
-    this.authService.fetchInformation(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
+    this.cazzeonService.request(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
       // TODO: BOTH ARRAYS STARTS FROM THE SAME. TRY TO INDEX BOTH TO AVOID TRAVELING THE LIST SO MANY TIMES
       this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, HQL_PROPERTY);
@@ -133,8 +133,8 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @param items Items from response. This items needs to be converted into ContextMenuItem interface
    */
   constructMenuItems(items: any[]): void {
-    const deleteFunction = this.authService.deleteRows.bind(this.authService);
-    const executeProcessFunction = this.authService.executeProcess.bind(this.authService);
+    const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
+    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
     const viewComponent = this;
     const actionMenuItems: ContextMenuItem[] = items.map(function (obj) {
       return {

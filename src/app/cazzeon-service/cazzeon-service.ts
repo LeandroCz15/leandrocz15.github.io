@@ -1,64 +1,67 @@
 import { Injectable } from "@angular/core";
-import { Subject, Observable } from "rxjs";
-import { HttpMethod, SERVER_URL } from "src/application-constants";
+import { HttpMethod, LoginStatus, SERVER_URL } from "src/application-constants";
 import { ViewComponent } from "../basic-view/view/view.component";
 import { ContextMenuItem } from "../basic-view/context-menu/context-menu.component";
+import { Observable, Subject } from "rxjs";
+
+const JWT_TOKEN = "jwtToken";
+const CSRF_TOKEN = "csrfToken";
 
 @Injectable({
   providedIn: "root",
 })
-export class AuthService {
+export class CazzeonService {
 
-  private authServiceSubject = new Subject<AuthService>();
+  public loginSubject: Subject<LoginStatus> = new Subject();
 
-  getUser(): any {
-    return sessionStorage.getItem("user") || "";
+  getLoginSubjectAsObservable(): Observable<LoginStatus> {
+    return this.loginSubject.asObservable();
   }
 
-  setUser(value: any): void {
-    sessionStorage.setItem("user", JSON.stringify(value));
-    this.authServiceSubject.next(this);
+  getJwtToken(): string {
+    return sessionStorage.getItem(JWT_TOKEN) || "";
   }
 
-  getToken(): string {
-    return sessionStorage.getItem("token") || "";
+  setJwtToken(value: string): void {
+    sessionStorage.setItem(JWT_TOKEN, value);
   }
 
-  setToken(value: string): void {
-    sessionStorage.setItem("token", JSON.stringify(value));
-    this.authServiceSubject.next(this);
+  getCsrfToken(): string {
+    return sessionStorage.getItem(CSRF_TOKEN) || "";
   }
 
-  clear(): void {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-    this.authServiceSubject.next(this);
+  setCsrfToken(value: string): void {
+    sessionStorage.setItem(CSRF_TOKEN, value);
   }
 
-  getCredentialsObservable(): Observable<AuthService> {
-    return this.authServiceSubject.asObservable();
+  clearTokens(): void {
+    sessionStorage.removeItem(JWT_TOKEN);
+    sessionStorage.removeItem(CSRF_TOKEN);
   }
 
-  fetchInformation(
+  /**
+   * Do a request to the server
+   * @param urlSufix Path of the endpoint to fetch against. This parameter will be concatenated after DOMAIN
+   * @param method HTTP Method of the request
+   * @param successResponseFunction Function to execute if the response is successfull
+   * @param errorResponseFunction Function to execute if the response is not successfull
+   * @param timeOutFunction Function to execute if the response is not successfull because of a timeout
+   * @param requestBody Body to send in the request
+   */
+  request(
     urlSufix: string,
-    method: string,
+    method: HttpMethod,
     successResponseFunction: (response: Response) => void,
     errorResponseFunction: (response: Response) => void,
     timeOutFunction: (error: any) => void,
     requestBody?: any,
-    email?: string,
-    password?: string
   ): void {
-    if (method === HttpMethod.GET && requestBody) {
-      throw new Error("The request should not have body if it's a GET type");
-    }
-    let storagedUserJson: any = this.getUser() ? JSON.parse(this.getUser()) : undefined;
     fetch(`${SERVER_URL}${urlSufix}`, {
       method: method,
       headers: {
-        "Authorization": "Basic " + btoa(`${email || storagedUserJson?.email}:${password || storagedUserJson?.password}`),
+        "Authorization": `Bearer ${btoa(this.getJwtToken())}`,
+        "Content-Type": "application/json",
         "Accept": "application/json",
-        "Origin": origin,
       },
       body: requestBody
     }).then(response => {
@@ -82,7 +85,7 @@ export class AuthService {
     const dataArrayToDelete = rowsToDelete.map(function (obj) {
       return obj.id;
     });
-    this.fetchInformation(`api/delete/${view.mainTabEntityName}`, HttpMethod.DELETE,
+    this.request(`api/delete/${view.mainTabEntityName}`, HttpMethod.DELETE,
       (response: Response) => {
         view.gridComponent.rows = view.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
       },
@@ -102,13 +105,23 @@ export class AuthService {
    * @param item Item clicked
    */
   executeProcess(row: any, item: ContextMenuItem): void {
-    this.fetchInformation(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
+    this.request(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
     }, async (response: Response) => {
       const errorResponse = await response.json();
       console.error(`Error while calling process: ${item.javaClass}. Error: ${await errorResponse.message}`);
     }, (response: Response) => {
       console.error(`Timeout while calling process: ${item.javaClass}`);
     }, JSON.stringify({ item: item, row: row }));
+  }
+
+  private askForCsrfToken() {
+    this.request(`api/auth/csrf`, HttpMethod.GET, async (response: Response) => {
+      this.setCsrfToken((await response.json()).token);
+    }, async (response: Response) => {
+      throw new Error(`Error while fetching CSRF TOKEN. Error: ${await response.text()}`);
+    }, (error: any) => {
+      throw new Error(`Timeout while fetching CSRF TOKEN`);
+    });
   }
 
 }

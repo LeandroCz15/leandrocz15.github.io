@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { AuthService } from 'src/app/login-module/auth-service';
+import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import * as bootstrap from 'bootstrap';
-import { HttpMethod } from 'src/application-constants';
+import { HttpMethod, LoginStatus } from 'src/application-constants';
 import { ToggleSidebarService } from 'src/app/top-navbar/services/toggle-sidebar.service';
 import { Subscription } from 'rxjs';
 import { NavbarElementComponent } from '../navbarelement/navbarelement.component';
@@ -26,17 +26,19 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
 
   @ViewChild("sideBarElement") sidebarElement!: ElementRef;
 
+  @ViewChild("userText") userText!: ElementRef;
+
   @ViewChildren(NavbarElementComponent) sidebarButtons!: QueryList<NavbarElementComponent>;
 
-  constructor(private authService: AuthService, private toggleSidebarService: ToggleSidebarService) { }
+  constructor(private cazzeonService: CazzeonService, private toggleSidebarService: ToggleSidebarService) { }
 
   ngOnInit(): void {
     this.toggleSidebarSubscription = this.toggleSidebarService.getObservable().subscribe(data => this.toggleSidebar(data));
-    this.authService.fetchInformation(`api/data/menu`, HttpMethod.GET, async (response: Response) => {
+    this.cazzeonService.request(`api/data/menu`, HttpMethod.GET, async (response: Response) => {
       this.menuItems = await response.json();
       this.viewReady = true;
-    }, (response: Response) => {
-      console.log(`Error while retrieving menu items: Error status: ${response.status}`);
+    }, async (response: Response) => {
+      console.error(`Error while retrieving menu items. Error: ${await response.text()}`);
     }, (error: any) => {
       console.error("Timeout when fetching menu items");
     });
@@ -51,16 +53,23 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
       this.sidebarButtons.forEach(button => {
         button.titleDisplayer.nativeElement.style.display = "none";
       });
+      this.userText.nativeElement.style.display = "none";
       this.sidebarElement.nativeElement.style.width = SIDEBAR_TOGGLED_WIDTH;
     } else {
       this.sidebarButtons.forEach(button => {
         button.titleDisplayer.nativeElement.style.display = "";
       });
+      this.userText.nativeElement.style.display = "";
       this.sidebarElement.nativeElement.style = null;
     }
   }
 
-  // Opens the login modal
+  logout(): void {
+    this.cazzeonService.clearTokens();
+    this.cazzeonService.loginSubject.next(LoginStatus.LOGOUT);
+  }
+
+  // Opens the login modal. Deprecated, only left for future reference
   openLoginModal(): void {
     bootstrap.Modal.getOrCreateInstance("#appLoginModal").show();
   }

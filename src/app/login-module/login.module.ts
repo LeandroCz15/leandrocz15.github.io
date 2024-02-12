@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './auth-service';
-import { ApplicationLoginModalComponent } from './application-login-modal/application-login-modal.component';
+import { CazzeonService } from '../cazzeon-service/cazzeon-service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginScreenComponent } from './login-screen/login-screen.component';
 
 @NgModule({
   declarations: [
-    ApplicationLoginModalComponent,
+    LoginScreenComponent,
   ],
   imports: [
     CommonModule,
@@ -14,10 +14,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
   ],
   exports: [
-    ApplicationLoginModalComponent
+    LoginScreenComponent
   ],
   providers: [
-    AuthService,
+    CazzeonService,
   ]
 })
 export class LoginModule { }

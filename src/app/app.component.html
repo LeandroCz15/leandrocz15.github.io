@@ -1,31 +1,33 @@
-<!--Modals-->
-<app-application-login-modal></app-application-login-modal>
+<app-login-screen *ngIf="!isLogged; else elseBlock"></app-login-screen>
 
-<!--Container of all the page-->
-<div class="container-fluid vw-100 vh-100 p-0 m-0 page-container">
+<ng-template #elseBlock>
+  <!--Container of all the page-->
+  <div class="container-fluid vw-100 vh-100 p-0 m-0 page-container">
 
-  <!--Row of all the page, same as his parent container-->
-  <div class="row h-100 w-100 p-0 m-0">
+    <!--Row of all the page, same as his parent container-->
+    <div class="row h-100 w-100 p-0 m-0">
 
-    <!--Column of the left taskbar-->
-    <div class="col-auto h-100 p-0 m-0">
-      <!--Left taskbar-->
-      <app-left-taskbar></app-left-taskbar>
-    </div>
+      <!--Column of the left taskbar-->
+      <div class="col-auto h-100 p-0 m-0">
+        <!--Left taskbar-->
+        <app-left-taskbar></app-left-taskbar>
+      </div>
 
-    <!--Column of the rest of page-->
-    <div class="col h-100 w-100 p-0 m-0 overflow-hidden">
+      <!--Column of the rest of page-->
+      <div class="col h-100 w-100 p-0 m-0 overflow-hidden">
 
-      <!--Top navigation bar-->
-      <app-top-navbar></app-top-navbar>
+        <!--Top navigation bar-->
+        <app-top-navbar></app-top-navbar>
 
-      <!--Row with the rest of the page--><!--It is important that this row max-height is distributed along top navbar height (example: 10%-90%) -->
-      <div class="row h-100 w-100 p-0 m-0" style="max-height: 90%;">
+        <!--Row with the rest of the page--><!--It is important that this row max-height is distributed along top navbar height (example: 10%-90%) -->
+        <div class="row h-100 w-100 p-0 m-0" style="max-height: 90%;">
 
-        <!--Column same as his parent row-->
-        <div class="col h-100 w-100 p-0 m-0">
+          <!--Column same as his parent row-->
+          <div class="col h-100 w-100 p-0 m-0">
 
-          <app-view></app-view>
+            <app-view></app-view>
+
+          </div>
 
         </div>
 
@@ -35,6 +37,6 @@
 
   </div>
 
-</div>
+</ng-template>
 
 <router-outlet></router-outlet>

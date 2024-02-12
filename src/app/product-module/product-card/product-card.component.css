@@ -1,7 +1,0 @@
-.product-name {
-    max-width: 100%; /* Define el ancho máximo permitido para el nombre del producto */
-    white-space: nowrap; /* Evita el salto de línea */
-    overflow: hidden; /* Oculta el texto que desborda el ancho máximo */
-    text-overflow: ellipsis; /* Muestra puntos suspensivos (...) si el texto se corta */
-    line-height: 1.4; /* Ajusta la altura de la línea de texto para evitar el corte vertical */
-}

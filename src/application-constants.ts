@@ -30,3 +30,8 @@ export enum DataType {
     DATE = "date",
     SELECTOR = "selector",
 }
+
+export enum LoginStatus {
+    LOGIN,
+    LOGOUT
+} 

@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { ViewComponent } from '../view/view.component';
-import { AuthService } from 'src/app/login-module/auth-service';
+import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { HttpMethod } from 'src/application-constants';
 import { PaginationEventType } from '../pagination/pagination.component';
 import { FetchRowsService } from '../services/fetch-rows.service';
@@ -30,7 +30,7 @@ export class GridComponent implements OnInit, OnDestroy {
   private reloadViewSubscription!: Subscription;
 
   constructor(
-    private authService: AuthService,
+    private cazzeonService: CazzeonService,
     private fetchRows: FetchRowsService,
   ) { }
 
@@ -48,7 +48,7 @@ export class GridComponent implements OnInit, OnDestroy {
   // Only in OnInit. The first fetch should not have a where clause
   doFirstFetch(): void {
     const url: string = `api/data/retrieve/${this.viewComponent.mainTabEntityName}?limit=${this.viewComponent.paginationComponent.currentFetchSize}&mainTabId=${this.viewComponent.mainTabId}`;
-    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
+    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     });
   }
@@ -69,7 +69,7 @@ export class GridComponent implements OnInit, OnDestroy {
       currentFetchFirstId: this.viewComponent.paginationComponent.getCurrentFetchFirstId(),
       currentFetchLastId: this.viewComponent.paginationComponent.getCurrentFetchLastId(),
     }
-    this.authService.fetchInformation(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
+    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     },
       JSON.stringify(requestBody));

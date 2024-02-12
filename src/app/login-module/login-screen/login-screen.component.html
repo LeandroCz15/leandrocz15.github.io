@@ -1,0 +1,29 @@
+<div class="d-flex flex-column vh-100 vw-100 justify-content-center align-items-center"
+    style="background-image: url('../../../assets/background-image.jpg'); background-repeat: no-repeat; background-position: center;">
+    <div class="w-50 rounded-3 bg-dark text-white">
+        <div class="d-flex align-items-center justify-content-center mt-3 mb-1">
+            <img src="assets/icon.png" width="25%">
+        </div>
+        <form class="p-4" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+            <div class="mb-3">
+                <label for="emailLoginInput" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="emailLoginInput" aria-describedby="emailHelp"
+                    formControlName="email" [ngClass]="{'is-invalid': loginInputStyling(loginForm.get('email')!)}">
+            </div>
+            <div class="mb-3">
+                <label for="passwordLoginInput" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordLoginInput" formControlName="password"
+                    [ngClass]="{'is-invalid': loginInputStyling(loginForm.get('password')!)}">
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-4">
+                <button type="submit" class="btn btn-primary"
+                    [disabled]="!loginForm.valid && loginForm.touched">
+                    <span *ngIf="!this.loading; else elseBlock">Log In</span>
+                    <ng-template #elseBlock>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </ng-template>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
