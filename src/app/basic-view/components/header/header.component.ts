@@ -17,9 +17,11 @@ import { Subject } from 'rxjs';
 })
 export class HeaderComponent {
 
-  @Input() headerChange!: Subject<number | undefined>;
-
+  /********************** INPUTS  **********************/
   @Input() tabData!: TabData;
+
+  /********************** SUBJECTS  **********************/
+  @Input() doFetchSubject!: Subject<number | undefined>;
 
   constructor() { }
 
@@ -34,7 +36,7 @@ export class HeaderComponent {
     // Change last value used to search
     changedFilter.lastValueUsedForSearch = trimmedValue;
     changedFilter.value = trimmedValue;
-    this.headerChange.next(undefined);
+    this.doFetchSubject.next(undefined);
   }
 
   // Process boolean input change
@@ -57,13 +59,13 @@ export class HeaderComponent {
         break;
     }
     checkboxField.value = valueToChange;
-    this.headerChange.next(undefined);
+    this.doFetchSubject.next(undefined);
   }
 
   // Process date input change
   processDateChange(event: any): void {
     if (!event.target.errorState) {
-      this.headerChange.next(undefined);
+      this.doFetchSubject.next(undefined);
     }
   }
 
@@ -100,9 +102,14 @@ export class HeaderComponent {
       }
     }
     changedFilter.lastValueUsedForSearch = changedFilter.value;
-    this.headerChange.next(undefined);
+    this.doFetchSubject.next(undefined);
   }
 
+  /**
+   * Check if the filter has been modified or not
+   * @param filter Filter to check if it's value has been modified
+   * @returns True if the value has been modified. False otherwise
+   */
   didTextInputChange(filter: any) {
     return !(filter.value?.toUpperCase() === filter.lastValueUsedForSearch?.toUpperCase());
   }

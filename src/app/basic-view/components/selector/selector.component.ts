@@ -69,13 +69,13 @@ export class SelectorComponent implements OnInit, OnDestroy {
     if (value?.id === this.lastOptionIdClicked) {
       return;
     }
-    const url = `api/data/selector?entityFrom=${this.rowFormComponent.data.tabData.tabEntityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
+    const url = `api/data/selector?entityFrom=${this.rowFormComponent.data.tabData.tab.entityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
     this.cazzeonService.request(url, HttpMethod.GET, async (response: Response) => {
       this.resultSet = await response.json();
     }, async (response: Response) => {
-      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tabEntityName}. Error: ${await response.text()}`);
+      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tab.entityName}. Error: ${await response.text()}`);
     }, (error: any) => {
-      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tabEntityName}. Timeout`);
+      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tab.entityName}. Timeout`);
     });
   }
 

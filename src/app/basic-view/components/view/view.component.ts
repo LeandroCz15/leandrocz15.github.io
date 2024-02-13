@@ -29,8 +29,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
-    tabEntityName: "",
-    tabId: ""
+    tab: {}
   };
 
   /********************** SUBJECTS  **********************/
@@ -83,10 +82,9 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @param data View data
    */
   processMainTabInformation(viewData: any) {
-    this.mainTabData.tabId = viewData.id;
-    this.mainTabData.tabEntityName = viewData.entityName;
+    this.mainTabData.tab = viewData.mainTab;
     this.constructMenuItems(viewData);
-    this.constructFieldsAndHeaders(viewData.fields);
+    this.constructFieldsAndHeaders(viewData.mainTab.fields);
   }
 
   /**
@@ -132,14 +130,25 @@ export class ViewComponent implements OnInit, OnDestroy {
     ];
   }
 
+  /**
+   * Open the selected tab
+   * @param row Row from which the click was fired
+   * @param item Selected item representing a tab
+   */
   openTab(row: any, item: ContextMenuItem): void {
     this.dialog.open(TabComponent, {
-      data: { clickedRow: row, tab: item },
+      data: { clickedRow: row, tab: item.tab },
       height: "80%",
       width: "80%"
     });
   }
 
+  /**
+   * Construct the items in the context menu that will contain
+   * all the tabs
+   * @param items Object to construct the ContextMenuItem array
+   * @returns Array of ContextMenuItem representing tabs
+   */
   constructTabItems(items: any[]): ContextMenuItem[] {
     const openTabFuncntion = this.openTab.bind(this);
     return items.map(function (obj) {
@@ -149,11 +158,17 @@ export class ViewComponent implements OnInit, OnDestroy {
         clickFn(row: any, item: ContextMenuItem) {
           openTabFuncntion(row, item);
         },
-        tabId: obj.id
+        tab: obj
       }
     });
   }
 
+  /**
+   * Construct the items in the context menu that will contain
+   * all the processes
+   * @param items Object to construct the ContextMenuItem array
+   * @returns Array of ContextMenuItem representing processes
+   */
   constructProcessItems(items: any[]): ContextMenuItem[] {
     const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
     return items.map(function (obj) {
@@ -164,7 +179,6 @@ export class ViewComponent implements OnInit, OnDestroy {
         clickFn(row: any, item: ContextMenuItem) {
           executeProcessFunction(row, item);
         },
-        //items: [{label: "HOLA", imageSource: "asd"}]
       }
     });
   }

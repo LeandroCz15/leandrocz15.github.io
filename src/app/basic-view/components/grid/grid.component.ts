@@ -47,9 +47,11 @@ export class GridComponent implements OnInit, OnDestroy {
     this.doFetchSubscription.unsubscribe();
   }
 
-  // Only in OnInit. The first fetch should not have a where clause
+  /**
+   * Do fetch when initializing. This fetch shouldn't have a where clase
+   */
   doFirstFetch(): void {
-    const url: string = `api/data/retrieve/${this.tabData.tabEntityName}?limit=${this.paginationComponent.currentFetchSize}&mainTabId=${this.tabData.tabId}`;
+    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${this.paginationComponent.currentFetchSize}&mainTabId=${this.tabData.tab.id}`;
     this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     });
@@ -63,7 +65,7 @@ export class GridComponent implements OnInit, OnDestroy {
   */
   doFetch(paginationAction?: number): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
-    const url: string = `api/data/retrieve/${this.tabData.tabEntityName}?limit=${fetchSize}&mainTabId=${this.tabData.tabId}`;
+    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
     const requestBody: any = { filters: this.tabData.gridFields.filter(field => field.showInGrid) };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,

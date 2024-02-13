@@ -140,16 +140,16 @@ export class RowFormComponent {
       return;
     }
     this.formReady = false;
-    this.cazzeonService.request(`api/store/${this.data.tabData!.tabEntityName}`, HttpMethod.POST, async (response: Response) => {
+    this.cazzeonService.request(`api/store/${this.data.tabData.tab.entityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
       this.formReady = true;
     }, async (response: Response) => {
       this.formReady = true;
-      console.error(`Error while storing entity: ${this.data.tabData!.tabEntityName}. Error: ${await response.text()}`);
+      console.error(`Error while storing entity: ${this.data.tabData.tab.entityName}. Error: ${await response.text()}`);
     }, (error: any) => {
       this.formReady = true;
-      console.error(`Timeout while storing entity: ${this.data.tabData!.tabEntityName}`);
+      console.error(`Timeout while storing entity: ${this.data.tabData.tab.entitynName}`);
     },
       JSON.stringify({ entity: this.buildObjectToSend() }));
   }
@@ -158,17 +158,17 @@ export class RowFormComponent {
    * This function deletes a single entity. The entity deleted will be the current entity displayed in the modal
    */
   deleteEntity() {
-    this.cazzeonService.request(`api/delete/${this.data.tabData!.tabEntityName}`, HttpMethod.DELETE,
+    this.cazzeonService.request(`api/delete/${this.data.tabData.tab.entityName}`, HttpMethod.DELETE,
       (response: Response) => {
         this.dialogRef.close();
         const indexToDelete = this.data.allRows.findIndex(row => row === this.data.currentRow);
         this.data.allRows.splice(indexToDelete, 1);
       },
       async (response: Response) => {
-        console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData!.tabEntityName}. Error ${await response.text()}`);
+        console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData.tab.entityName}. Error ${await response.text()}`);
       },
       (error: any) => {
-        console.error(`Timeout while deleting the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData!.tabEntityName}`);
+        console.error(`Timeout while deleting the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData.tab.entityName}`);
       },
       JSON.stringify({ data: [this.data.currentRow.id] }));
   }

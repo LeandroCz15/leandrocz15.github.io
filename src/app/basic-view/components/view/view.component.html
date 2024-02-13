@@ -1,7 +1,7 @@
 <div class="d-flex flex-column h-100 w-100">
     <div class="overflow-scroll flex-fill" cdkDropList cdkDropListOrientation="horizontal"
         (cdkDropListDropped)="dropFilterColumn($event)" *ngIf="viewReady; else elseBlock">
-        <app-header [tabData]="mainTabData"></app-header>
+        <app-header [tabData]="mainTabData" [doFetchSubject]="doFetchSubject"></app-header>
         <app-grid [reloadViewSubject]="reloadViewSubject" [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"
             [paginationComponent]="paginationComponent"></app-grid>
     </div>
