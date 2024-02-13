@@ -1,6 +1,6 @@
 <div *ngIf="reload">
     <div *ngFor="let currentRow of rows; let i = index; trackBy: trackByFn">
         <!--This is start of a row-->
-        <app-row [row]="currentRow" [viewComponent]="viewComponent"></app-row>
+        <app-row [row]="currentRow" [gridComponent]="this"></app-row>
     </div>
 </div>

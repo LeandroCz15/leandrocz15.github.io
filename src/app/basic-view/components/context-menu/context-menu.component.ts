@@ -6,7 +6,8 @@ export interface ContextMenuItem {
   imageSource: string,
   javaClass?: string,
   clickFn?: (row: any, item: any) => void,
-  items?: ContextMenuItem[]
+  items?: ContextMenuItem[],
+  tabId?: string
 }
 
 export interface ContextMenuData {

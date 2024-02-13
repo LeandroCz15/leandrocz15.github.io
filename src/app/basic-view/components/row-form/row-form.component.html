@@ -1,6 +1,6 @@
 <div mat-dialog-content [hidden]="!formReady" class="h-100">
     <form [formGroup]="form">
-        <ng-container *ngFor="let filter of data.viewComponent.formFields; let i = index ; trackBy: trackByFn">
+        <ng-container *ngFor="let filter of data.tabData?.formFields; let i = index ; trackBy: trackByFn">
             <!--Workaround to store a value-->
             <ng-container [ngSwitch]="filter.type" *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
                 <label [for]="idForInput" class="form-label">{{filter.name}}</label>

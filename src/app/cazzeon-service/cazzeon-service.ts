@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpMethod, LoginStatus, SERVER_URL } from "src/application-constants";
-import { ViewComponent } from "../basic-view/view/view.component";
-import { ContextMenuItem } from "../basic-view/context-menu/context-menu.component";
+import { ViewComponent } from "../basic-view/components/view/view.component";
+import { ContextMenuItem } from "../basic-view/components/context-menu/context-menu.component";
 import { Observable, Subject } from "rxjs";
 
 const JWT_TOKEN = "jwtToken";
@@ -85,15 +85,15 @@ export class CazzeonService {
     const dataArrayToDelete = rowsToDelete.map(function (obj) {
       return obj.id;
     });
-    this.request(`api/delete/${view.mainTabEntityName}`, HttpMethod.DELETE,
+    this.request(`api/delete/${view.mainTabData.tabEntityName}`, HttpMethod.DELETE,
       (response: Response) => {
         view.gridComponent.rows = view.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
       },
       async (response: Response) => {
-        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabEntityName}. Error: ${await response.text()}`);
+        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabData.tabEntityName}. Error: ${await response.text()}`);
       },
       (error: any) => {
-        console.error(`Timeout while deleting rows of of the entity: ${view.mainTabEntityName}`);
+        console.error(`Timeout while deleting rows of of the entity: ${view.mainTabData.tabEntityName}`);
       },
       JSON.stringify({ data: dataArrayToDelete }));
   }

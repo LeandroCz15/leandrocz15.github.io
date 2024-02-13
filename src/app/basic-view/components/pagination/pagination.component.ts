@@ -1,10 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FetchRowsService } from '../services/fetch-rows.service';
 import { DialogData, RowFormComponent } from '../row-form/row-form.component';
-import { ViewComponent } from '../view/view.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectPageService } from '../services/select-page.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { TabData } from '../../basic-view-utils/tab-structure';
 
 @Component({
   selector: 'app-pagination',
@@ -25,9 +24,12 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   public currentFetchSize: number = 50;
 
-  @Input() viewComponent!: ViewComponent;
+  @Input() tabData!: TabData;
 
-  constructor(private fetchRows: FetchRowsService, public dialog: MatDialog, private pageChangeService: SelectPageService) { }
+  /********************** SUBJECTS  **********************/
+  @Input() doFetchSubject!: Subject<number | undefined>;
+
+  constructor(public dialog: MatDialog, private pageChangeService: SelectPageService) { }
 
   ngOnInit(): void {
     this.changePageSubscription = this.pageChangeService.getPageChangeObservable().subscribe(() => {
@@ -41,7 +43,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.changePageSubscription.unsubscribe();
   }
-  
+
   getPreviousFetchFirstId(): string {
     return this.previousFetchFirstId;
   }
@@ -71,7 +73,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
       return;
     }
     this.pageNumber++;
-    this.fetchRows.sendFetchChange(PaginationEventType.FETCH_NEXT);
+    this.doFetchSubject.next(PaginationEventType.FETCH_NEXT);
   }
 
   fetchPreviousPage(): void {
@@ -79,20 +81,21 @@ export class PaginationComponent implements OnInit, OnDestroy {
       return;
     }
     this.pageNumber--;
-    this.fetchRows.sendFetchChange(PaginationEventType.FETCH_BACK);
+    this.doFetchSubject.next(PaginationEventType.FETCH_BACK);
   }
 
   changeFetchSize(newfetchSize: number): void {
     if (this.currentFetchSize !== newfetchSize) {
       this.currentFetchSize = newfetchSize;
-      this.fetchRows.sendFetchChange(PaginationEventType.RELOAD);
+      this.doFetchSubject.next(PaginationEventType.RELOAD);
     }
   }
 
   openNewRowModal(): void {
     const dialogData: DialogData = {
-      viewComponent: this.viewComponent,
-      currentRow: undefined
+      currentRow: undefined,
+      allRows: [],
+      tabData: this.tabData
     }
     const dialogRef = this.dialog.open(RowFormComponent, {
       data: dialogData,

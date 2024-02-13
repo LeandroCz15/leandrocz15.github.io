@@ -1,9 +1,9 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { ViewComponent } from '../view/view.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
-import { FetchRowsService } from '../services/fetch-rows.service';
+import { TabData } from '../../basic-view-utils/tab-structure';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -17,17 +17,15 @@ import { FetchRowsService } from '../services/fetch-rows.service';
 })
 export class HeaderComponent {
 
-  // View component reference
-  @Input() viewComponent!: ViewComponent;
+  @Input() headerChange!: Subject<number | undefined>;
 
-  // Filters to render in this component
-  @Input() fields!: Array<any>;
+  @Input() tabData!: TabData;
 
-  constructor(private fetchRows: FetchRowsService) { }
+  constructor() { }
 
   // Process text input change
   processTextInputChange(index: number): void {
-    const changedFilter = this.fields.at(index);
+    const changedFilter = this.tabData.gridFields.at(index);
     // Only triggers when detect changes in the input
     const trimmedValue: string = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter) || trimmedValue === "" && changedFilter.value?.length !== 0) {
@@ -36,13 +34,13 @@ export class HeaderComponent {
     // Change last value used to search
     changedFilter.lastValueUsedForSearch = trimmedValue;
     changedFilter.value = trimmedValue;
-    this.fetchRows.sendFetchChange();
+    this.headerChange.next(undefined);
   }
 
   // Process boolean input change
   processCheckBoxChange(index: number): void {
     // Property binding not working with check's so update the value manually
-    const checkboxField = this.fields.at(index);
+    const checkboxField = this.tabData.gridFields.at(index);
     let valueToChange;
     switch (checkboxField.value) {
       case undefined:
@@ -59,19 +57,19 @@ export class HeaderComponent {
         break;
     }
     checkboxField.value = valueToChange;
-    this.fetchRows.sendFetchChange();
+    this.headerChange.next(undefined);
   }
 
   // Process date input change
   processDateChange(event: any): void {
     if (!event.target.errorState) {
-      this.fetchRows.sendFetchChange();
+      this.headerChange.next(undefined);
     }
   }
 
   // Process numeric input change
   processNumericInputChange(index: number): void {
-    let changedFilter = this.fields.at(index);
+    let changedFilter = this.tabData.gridFields.at(index);
     changedFilter.value = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter)) {
       changedFilter.invalidExpression = false;
@@ -102,7 +100,7 @@ export class HeaderComponent {
       }
     }
     changedFilter.lastValueUsedForSearch = changedFilter.value;
-    this.fetchRows.sendFetchChange();
+    this.headerChange.next(undefined);
   }
 
   didTextInputChange(filter: any) {

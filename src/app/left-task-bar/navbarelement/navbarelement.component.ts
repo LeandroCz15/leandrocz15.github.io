@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { SelectPageService } from 'src/app/basic-view/services/select-page.service';
+import { SelectPageService } from 'src/app/basic-view/components/services/select-page.service';
 
 @Component({
   selector: 'app-navbarelement',

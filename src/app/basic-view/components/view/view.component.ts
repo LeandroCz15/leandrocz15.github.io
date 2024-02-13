@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component,OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
@@ -9,6 +9,9 @@ import { HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
+import { MatDialog } from '@angular/material/dialog';
+import { TabComponent } from '../tab/tab.component';
+import { TabData } from '../../basic-view-utils/tab-structure'
 
 const HQL_PROPERTY = "hqlProperty";
 
@@ -19,51 +22,33 @@ const HQL_PROPERTY = "hqlProperty";
 })
 export class ViewComponent implements OnInit, OnDestroy {
 
-  // View id of this view component
+  /********************** COMPONENT ATTRIBUTES **********************/
   public viewId: string = "";
+  public viewReady: boolean = false; // Boolean used to render the child components once the main fetch is done
+  public mainTabData: TabData = {  // Details of the main tab
+    contextMenuItems: [],
+    formFields: [],
+    gridFields: [],
+    tabEntityName: "",
+    tabId: ""
+  };
 
-  // Main tab id of this view component
-  public mainTabId: string = "";
+  /********************** SUBJECTS  **********************/
+  public reloadViewSubject: Subject<void> = new Subject();
+  public doFetchSubject: Subject<number | undefined> = new Subject();
 
-  // Entity name of the main tab
-  public mainTabEntityName: string = "";
-
-  // Boolean used to render the child components once the main fetch is done
-  public viewReady: boolean = false;
-
-  // Fields to show in the grid of the current tab
-  public gridFields: any[] = [];
-
-  // Fields to show in the form of the current tab
-  public formFields: any[] = [];
-
-  // Indexed fields to show in the grid for better performance
-  public currentGridFieldsIndexedByHqlProperty: any = {};
-
-  // Indexed fields to show in the form for better performance
-  public currentFormFieldsIndexedByHqlProperty: any = {};
-
-  // Array of items of the context menu to show in this view. Buid in this component to reuse and not build on every right click
-  public contextMenuItems: ContextMenuItem[] = [];
-
-  // Service to reload the view
-  public reloadViewSubject: Subject<void> = new Subject<void>;
-
-  // Subscription for page change service
+  /********************** SUBSCRIPTIONS  **********************/
   private pageChangeSubscription!: Subscription;
 
-  // Header children component
+  /********************** CHILD COMPONENTS  **********************/
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
-
-  // Grid children component
   @ViewChild(GridComponent) gridComponent!: GridComponent;
-
-  // Pagination children component
   @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
   constructor(
     private cazzeonService: CazzeonService,
-    private pageChangeService: SelectPageService
+    private pageChangeService: SelectPageService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -79,14 +64,11 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * This function fetch the main tab information
+   * Fetch information about the main tab of the current view
    */
   fetchMainTabInformation() {
     this.cazzeonService.request(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
       this.processMainTabInformation(await response.json());
-      // TODO: BOTH ARRAYS STARTS FROM THE SAME. TRY TO INDEX BOTH TO AVOID TRAVELING THE LIST SO MANY TIMES
-      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, HQL_PROPERTY);
-      this.currentFormFieldsIndexedByHqlProperty = indexArrayByProperty(this.formFields, HQL_PROPERTY);
       this.viewReady = true;
     }, async (response: Response) => {
       console.error(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
@@ -98,12 +80,12 @@ export class ViewComponent implements OnInit, OnDestroy {
   /**
    * This function process all the view data retrieved and sets the correspondent variables
    * 
-   * @param data View fetch data
+   * @param data View data
    */
   processMainTabInformation(viewData: any) {
-    this.mainTabId = viewData.id;
-    this.mainTabEntityName = viewData.entityName;
-    this.constructMenuItems(viewData.buttonAndProcess);
+    this.mainTabData.tabId = viewData.id;
+    this.mainTabData.tabEntityName = viewData.entityName;
+    this.constructMenuItems(viewData);
     this.constructFieldsAndHeaders(viewData.fields);
   }
 
@@ -124,19 +106,57 @@ export class ViewComponent implements OnInit, OnDestroy {
         newFormFields.push(field);
       }
     });
-    this.gridFields = newGridFields;
-    this.formFields = newFormFields;
+    this.mainTabData.gridFields = newGridFields;
+    this.mainTabData.formFields = newFormFields;
   }
 
   /**
    * Construct the items of the context menu. This is made in the view component because the buttons and process are view related
    * @param items Items from response. This items needs to be converted into ContextMenuItem interface
    */
-  constructMenuItems(items: any[]): void {
+  constructMenuItems(viewData: any): void {
     const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
-    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
     const viewComponent = this;
-    const actionMenuItems: ContextMenuItem[] = items.map(function (obj) {
+    this.mainTabData.contextMenuItems = [
+      {
+        label: "Actions", imageSource: "bi-cpu", items: this.constructProcessItems(viewData.buttonAndProcess)
+      },
+      {
+        label: "Tabs", imageSource: "bi-journals", items: this.constructTabItems(viewData.tabs)
+      },
+      {
+        label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
+          deleteFunction(viewComponent, [row]);
+        }
+      }
+    ];
+  }
+
+  openTab(row: any, item: ContextMenuItem): void {
+    this.dialog.open(TabComponent, {
+      data: { clickedRow: row, tab: item },
+      height: "80%",
+      width: "80%"
+    });
+  }
+
+  constructTabItems(items: any[]): ContextMenuItem[] {
+    const openTabFuncntion = this.openTab.bind(this);
+    return items.map(function (obj) {
+      return {
+        label: obj.name,
+        imageSource: obj.iconSource,
+        clickFn(row: any, item: ContextMenuItem) {
+          openTabFuncntion(row, item);
+        },
+        tabId: obj.id
+      }
+    });
+  }
+
+  constructProcessItems(items: any[]): ContextMenuItem[] {
+    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
+    return items.map(function (obj) {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
@@ -147,16 +167,6 @@ export class ViewComponent implements OnInit, OnDestroy {
         //items: [{label: "HOLA", imageSource: "asd"}]
       }
     });
-    this.contextMenuItems = [
-      {
-        label: "Actions", imageSource: "bi-cpu", items: actionMenuItems
-      },
-      {
-        label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
-          deleteFunction(viewComponent, [row]);
-        }
-      }
-    ];
   }
 
   /**
@@ -166,8 +176,8 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   dropFilterColumn(event: CdkDragDrop<any[]>): void {
     if (event.previousIndex !== event.currentIndex) {
-      moveItemInArray(this.gridFields, event.previousIndex, event.currentIndex);
-      this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.gridFields, HQL_PROPERTY);
+      moveItemInArray(this.mainTabData.gridFields, event.previousIndex, event.currentIndex);
+      this.gridComponent.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.mainTabData.gridFields, HQL_PROPERTY);
       this.reloadViewSubject.next();
     }
   }

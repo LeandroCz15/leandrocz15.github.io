@@ -1,5 +1,5 @@
 <div class="d-flex sticky-top mb-3">
-    <ng-container *ngFor="let field of fields ; let i = index; trackBy: trackByFn">
+    <ng-container *ngFor="let field of tabData.gridFields; let i = index; trackBy: trackByFn">
         <div class="field-box"
             cdkDrag
             [cdkDragData]="field"
@@ -19,8 +19,8 @@
                 <input *ngSwitchCase="'checkbox'"
                     type="checkbox"
                     class="form-check-input rounded-0 field-input checkbox-input"
-                    [indeterminate]="fields.at(i).value === undefined"
-                    [checked]="fields.at(i).value"
+                    [indeterminate]="tabData.gridFields.at(i).value === undefined"
+                    [checked]="tabData.gridFields.at(i).value"
                     (click)="processCheckBoxChange(i)">
                 <!--Date case-->
                 <mat-form-field *ngSwitchCase="'date'" class="w-100 rounded-0 dense-3" color="primary"

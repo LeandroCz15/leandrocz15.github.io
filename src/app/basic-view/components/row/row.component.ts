@@ -1,10 +1,10 @@
 import { KeyValue } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ViewComponent } from '../view/view.component';
 import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { OpenContextMenuService } from '../services/open-context-menu.service';
 import { ContextMenuData } from '../context-menu/context-menu.component';
+import { GridComponent } from '../grid/grid.component';
 
 @Component({
   selector: 'app-row',
@@ -13,17 +13,13 @@ import { ContextMenuData } from '../context-menu/context-menu.component';
 })
 export class RowComponent {
 
-  // Boolean to indicate if this row is being selected
-  public selected: boolean = false;
+  /********************** COMPONENT ATTRIBUTES **********************/
+  public selected: boolean = false; // Boolean to indicate if this row is being selected
+  private static lastRowSelected: RowComponent | undefined = undefined; // Reference to the last row component selected to apply styles correctly
 
-  // Reference to the last row component selected to apply styles correctly
-  private static lastRowSelected: RowComponent | undefined = undefined;
-
-  // Row object
+  /********************** INPUTS **********************/
   @Input() row: any;
-
-  // View component
-  @Input() viewComponent!: ViewComponent;
+  @Input() gridComponent!: GridComponent;
 
   constructor(
     private dialog: MatDialog,
@@ -33,8 +29,9 @@ export class RowComponent {
   openRowInFormMode(row: any): void {
     this.updateLastSelectedRow();
     const dialogData: DialogData = {
-      viewComponent: this.viewComponent,
       currentRow: row,
+      tabData: this.gridComponent.tabData,
+      allRows: this.gridComponent.rows
     }
     this.dialog.open(RowFormComponent, {
       data: dialogData,
@@ -50,7 +47,7 @@ export class RowComponent {
       top: event.clientY,
       left: event.clientX + 12, //12 px offset
       rowClicked: row,
-      items: this.viewComponent.contextMenuItems // Items already initialized in the view
+      items: this.gridComponent.tabData.contextMenuItems // Items already initialized in the view
     }
     this.contextMenuService.openContextMenu(data);
   }
@@ -73,11 +70,11 @@ export class RowComponent {
 
   // Pipe to sort keys of the rows
   sortKeys = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    const firstElement = this.viewComponent.currentGridFieldsIndexedByHqlProperty[a.key];
+    const firstElement = this.gridComponent.currentGridFieldsIndexedByHqlProperty[a.key];
     if (!firstElement) {
       return 1;
     }
-    return firstElement.index > this.viewComponent.currentGridFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
+    return firstElement.index > this.gridComponent.currentGridFieldsIndexedByHqlProperty[b.key]?.index ? 1 : -1;
   }
 
   // Function to keep track of rows using the index given by the *ngFor

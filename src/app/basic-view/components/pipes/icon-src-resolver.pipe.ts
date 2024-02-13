@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class IconSrcResolverPipe implements PipeTransform {
 
   transform(value: string): unknown {
-    return value.includes("/");
+    return value && value.includes("/");
   }
 
 }

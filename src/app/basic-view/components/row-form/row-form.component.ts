@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
@@ -6,13 +6,14 @@ import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } fro
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { ViewComponent } from '../view/view.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
+import { TabData } from '../../basic-view-utils/tab-structure';
 
 export interface DialogData {
-  viewComponent: ViewComponent,
-  currentRow: any
+  currentRow: any,
+  tabData: TabData,
+  allRows: any[]
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -79,7 +80,7 @@ export class RowFormComponent {
    */
   buildGroup(): any {
     const group: any = {};
-    this.data.viewComponent.formFields.forEach((field: any) => {
+    this.data.tabData!.formFields.forEach((field: any) => {
       group[this.normalizeOrFormatKey(field.hqlProperty, false)] = [this.getDefaultValueForGroup(field), this.buildPropertiesForGroup(field)];
     });
     return group;
@@ -139,16 +140,16 @@ export class RowFormComponent {
       return;
     }
     this.formReady = false;
-    this.cazzeonService.request(`api/store/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.POST, async (response: Response) => {
+    this.cazzeonService.request(`api/store/${this.data.tabData!.tabEntityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
       this.formReady = true;
     }, async (response: Response) => {
       this.formReady = true;
-      console.error(`Error while storing entity: ${this.data.viewComponent.mainTabEntityName}. Error: ${await response.text()}`);
+      console.error(`Error while storing entity: ${this.data.tabData!.tabEntityName}. Error: ${await response.text()}`);
     }, (error: any) => {
       this.formReady = true;
-      console.error(`Timeout while storing entity: ${this.data.viewComponent.mainTabEntityName}`);
+      console.error(`Timeout while storing entity: ${this.data.tabData!.tabEntityName}`);
     },
       JSON.stringify({ entity: this.buildObjectToSend() }));
   }
@@ -157,17 +158,17 @@ export class RowFormComponent {
    * This function deletes a single entity. The entity deleted will be the current entity displayed in the modal
    */
   deleteEntity() {
-    this.cazzeonService.request(`api/delete/${this.data.viewComponent.mainTabEntityName}`, HttpMethod.DELETE,
+    this.cazzeonService.request(`api/delete/${this.data.tabData!.tabEntityName}`, HttpMethod.DELETE,
       (response: Response) => {
         this.dialogRef.close();
-        const indexToDelete = this.data.viewComponent.gridComponent.rows.findIndex(row => row === this.data.currentRow);
-        this.data.viewComponent.gridComponent.rows.splice(indexToDelete, 1);
+        const indexToDelete = this.data.allRows.findIndex(row => row === this.data.currentRow);
+        this.data.allRows.splice(indexToDelete, 1);
       },
       async (response: Response) => {
-        console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.viewComponent.mainTabEntityName}. Error ${await response.text()}`);
+        console.error(`Server error while trying to delete the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData!.tabEntityName}. Error ${await response.text()}`);
       },
       (error: any) => {
-        console.error(`Timeout while deleting the record with id: ${this.data.currentRow.id} of the entity: ${this.data.viewComponent.mainTabEntityName}`);
+        console.error(`Timeout while deleting the record with id: ${this.data.currentRow.id} of the entity: ${this.data.tabData!.tabEntityName}`);
       },
       JSON.stringify({ data: [this.data.currentRow.id] }));
   }
@@ -242,7 +243,7 @@ export class RowFormComponent {
     const baseRow: any = {};
     // Hardcode base row id because it is always needed
     baseRow.id = null;
-    this.data.viewComponent.formFields.forEach((field: any) => {
+    this.data.tabData!.formFields.forEach((field: any) => {
       baseRow[field.hqlProperty] = null;
     });
     return baseRow;
