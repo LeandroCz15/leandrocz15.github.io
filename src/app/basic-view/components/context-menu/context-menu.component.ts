@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ComponentRef, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
-import { OpenContextMenuService } from '../services/open-context-menu.service';
+import { OpenContextMenuService } from '../../services/open-context-menu.service';
 
 export interface ContextMenuItem {
   label: string,

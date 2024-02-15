@@ -2,7 +2,7 @@ import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
-import { TabData } from '../../basic-view-utils/tab-structure';
+import { TabData } from '../../interfaces/tab-structure';
 import { Subject } from 'rxjs';
 
 @Component({

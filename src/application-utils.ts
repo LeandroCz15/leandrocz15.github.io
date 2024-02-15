@@ -12,7 +12,7 @@ export const indexArrayByProperty = function (array: any[], property: string): a
  * @param control Form control
  */
 export function isObjectValidator(control: FormControl): any {
-    return typeof control.value === "object" && control.value !== null ? null : { "notObject": true };
+    return typeof control.value === "object" || control.value === null ? null : { "notObject": true };
 }
 
 /**

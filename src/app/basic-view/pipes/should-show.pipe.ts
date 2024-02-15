@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { GridComponent } from '../grid/grid.component';
+import { GridComponent } from '../components/grid/grid.component';
 
 @Pipe({
   name: 'shouldShow'

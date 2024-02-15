@@ -1,5 +1,5 @@
 import { ApplicationRef, ComponentFactoryResolver, ComponentRef, EmbeddedViewRef, Injectable, Injector } from '@angular/core';
-import { ContextMenuComponent, ContextMenuData } from '../context-menu/context-menu.component';
+import { ContextMenuComponent, ContextMenuData } from '../components/context-menu/context-menu.component';
 
 @Injectable({
   providedIn: 'root'

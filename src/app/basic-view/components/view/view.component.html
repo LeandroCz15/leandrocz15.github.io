@@ -3,10 +3,10 @@
         (cdkDropListDropped)="dropFilterColumn($event)" *ngIf="viewReady; else elseBlock">
         <app-header [tabData]="mainTabData" [doFetchSubject]="doFetchSubject"></app-header>
         <app-grid [reloadViewSubject]="reloadViewSubject" [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"
-            [paginationComponent]="paginationComponent"></app-grid>
+            [paginationComponent]="pagination"></app-grid>
     </div>
     <div class="bg-dark">
-        <app-pagination [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"></app-pagination>
+        <app-pagination #pagination [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"></app-pagination>
     </div>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">

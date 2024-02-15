@@ -1,13 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
-import { ViewComponent } from '../view/view.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { HttpMethod } from 'src/application-constants';
+import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
 import { PaginationComponent, PaginationEventType } from '../pagination/pagination.component';
-import { TabData } from '../../basic-view-utils/tab-structure';
+import { TabData } from '../../interfaces/tab-structure';
 import { indexArrayByProperty } from 'src/application-utils';
-
-const HQL_PROPERTY = "hqlProperty";
 
 @Component({
   selector: 'app-grid',
@@ -51,7 +48,7 @@ export class GridComponent implements OnInit, OnDestroy {
    * Do fetch when initializing. This fetch shouldn't have a where clase
    */
   doFirstFetch(): void {
-    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${this.paginationComponent.currentFetchSize}&mainTabId=${this.tabData.tab.id}`;
+    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
     this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     });
@@ -66,7 +63,7 @@ export class GridComponent implements OnInit, OnDestroy {
   doFetch(paginationAction?: number): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
     const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
-    const requestBody: any = { filters: this.tabData.gridFields.filter(field => field.showInGrid) };
+    const requestBody: any = { filters: this.tabData.gridFields };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,
       previousFetchFirstId: this.paginationComponent.getPreviousFetchFirstId(),

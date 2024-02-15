@@ -12,6 +12,8 @@ export const CAZZEON_DATE_FORMAT = {
     },
 }
 
+export const HQL_PROPERTY = "hqlProperty";
+
 export enum HttpMethod {
     GET = "GET",
     POST = "POST",

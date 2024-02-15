@@ -4,16 +4,14 @@ import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { SelectPageService } from '../services/select-page.service';
-import { HttpMethod } from 'src/application-constants';
+import { SelectPageService } from '../../services/select-page.service';
+import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
 import { indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
-import { TabData } from '../../basic-view-utils/tab-structure'
-
-const HQL_PROPERTY = "hqlProperty";
+import { TabData } from '../../interfaces/tab-structure'
 
 @Component({
   selector: 'app-view',
@@ -40,9 +38,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   private pageChangeSubscription!: Subscription;
 
   /********************** CHILD COMPONENTS  **********************/
-  @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
   @ViewChild(GridComponent) gridComponent!: GridComponent;
-  @ViewChild(PaginationComponent) paginationComponent!: PaginationComponent;
 
   constructor(
     private cazzeonService: CazzeonService,

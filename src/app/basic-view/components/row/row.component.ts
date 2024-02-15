@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 import { MatDialog } from '@angular/material/dialog';
-import { OpenContextMenuService } from '../services/open-context-menu.service';
+import { OpenContextMenuService } from '../../services/open-context-menu.service';
 import { ContextMenuData } from '../context-menu/context-menu.component';
 import { GridComponent } from '../grid/grid.component';
 

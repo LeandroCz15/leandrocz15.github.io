@@ -1,14 +1,14 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { GenerateIdForFormPipe } from '../pipes/generate-id-for-form.pipe';
+import { GenerateIdForFormPipe } from '../../pipes/generate-id-for-form.pipe';
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
-import { TabData } from '../../basic-view-utils/tab-structure';
+import { TabData } from '../../interfaces/tab-structure';
 
 export interface DialogData {
   currentRow: any,

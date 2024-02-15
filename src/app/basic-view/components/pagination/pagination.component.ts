@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 import { MatDialog } from '@angular/material/dialog';
-import { SelectPageService } from '../services/select-page.service';
+import { SelectPageService } from '../../services/select-page.service';
 import { Subject, Subscription } from 'rxjs';
-import { TabData } from '../../basic-view-utils/tab-structure';
+import { TabData } from '../../interfaces/tab-structure';
 
 @Component({
   selector: 'app-pagination',
@@ -12,18 +12,15 @@ import { TabData } from '../../basic-view-utils/tab-structure';
 })
 export class PaginationComponent implements OnInit, OnDestroy {
 
+  /********************** COMPONENT ATTRIBUTES **********************/
   private previousFetchFirstId: string = "";
-
   private currentFetchLastId: string = "";
-
   private currentFetchFirstId: string = "";
-
   private pageNumber: number = 1;
-
   private changePageSubscription!: Subscription;
-
   public currentFetchSize: number = 50;
 
+  /********************** INPUTS **********************/
   @Input() tabData!: TabData;
 
   /********************** SUBJECTS  **********************/
