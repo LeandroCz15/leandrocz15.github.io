@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../../pipes/generate-id-for-form.pipe';
@@ -197,7 +197,7 @@ export class RowFormComponent {
    */
   buildObjectToSend(): any {
     const formRawValue: any = this.profileForm.getRawValue();
-    const returnObject: any = Object.assign({}, this.data.currentRow);
+    const returnObject: any = { id: this.data.currentRow.id };
     Object.keys(this.profileForm.getRawValue()).forEach(key => {
       // Normalize object
       const normalizedKey = this.normalizeOrFormatKey(key, true);
@@ -243,7 +243,7 @@ export class RowFormComponent {
     const baseRow: any = {};
     // Hardcode base row id because it is always needed
     baseRow.id = null;
-    this.data.tabData!.formFields.forEach((field: any) => {
+    this.data.tabData.formFields.forEach((field: any) => {
       baseRow[field.hqlProperty] = null;
     });
     return baseRow;

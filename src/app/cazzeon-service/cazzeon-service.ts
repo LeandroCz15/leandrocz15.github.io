@@ -3,6 +3,7 @@ import { HttpMethod, LoginStatus, SERVER_URL } from "src/application-constants";
 import { ViewComponent } from "../basic-view/components/view/view.component";
 import { ContextMenuItem } from "../basic-view/components/context-menu/context-menu.component";
 import { Observable, Subject } from "rxjs";
+import { GridComponent } from "../basic-view/components/grid/grid.component";
 
 const JWT_TOKEN = "jwtToken";
 const CSRF_TOKEN = "csrfToken";
@@ -78,22 +79,22 @@ export class CazzeonService {
   /**
    * Send a request to the backend to delete mutiple rows
    * 
-   * @param view View from which the entity is being deleted
+   * @param view Grid from which the entity is being deleted
    * @param rowsToDelete Rows to delete
    */
-  deleteRows(view: ViewComponent, rowsToDelete: any[]): void {
+  deleteRows(grid: GridComponent, rowsToDelete: any[]): void {
     const dataArrayToDelete = rowsToDelete.map(function (obj) {
       return obj.id;
     });
-    this.request(`api/delete/${view.mainTabData.tab.entityName}`, HttpMethod.DELETE,
+    this.request(`api/delete/${grid.tabData.tab.entityName}`, HttpMethod.DELETE,
       (response: Response) => {
-        view.gridComponent.rows = view.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
+        grid.rows = grid.rows.filter(row => !rowsToDelete.includes(row));
       },
       async (response: Response) => {
-        console.error(`Server error while trying to delete rows of the entity: ${view.mainTabData.tab.entityName}. Error: ${await response.text()}`);
+        console.error(`Server error while trying to delete rows of the entity: ${grid.tabData.tab.entityName}. Error: ${await response.text()}`);
       },
       (error: any) => {
-        console.error(`Timeout while deleting rows of of the entity: ${view.mainTabData.tab.entityName}`);
+        console.error(`Timeout while deleting rows of of the entity: ${grid.tabData.tab.entityName}`);
       },
       JSON.stringify({ data: dataArrayToDelete }));
   }

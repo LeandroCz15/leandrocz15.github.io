@@ -1,8 +1,6 @@
 import { Component,OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
-import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
-import { PaginationComponent } from '../pagination/pagination.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { SelectPageService } from '../../services/select-page.service';
 import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
@@ -27,7 +25,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
-    tab: {}
+    clickedRow: undefined,
+    tab: undefined
   };
 
   /********************** SUBJECTS  **********************/
@@ -110,7 +109,7 @@ export class ViewComponent implements OnInit, OnDestroy {
    */
   constructMenuItems(viewData: any): void {
     const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
-    const viewComponent = this;
+    const gridComponent = this.gridComponent;
     this.mainTabData.contextMenuItems = [
       {
         label: "Actions", imageSource: "bi-cpu", items: this.constructProcessItems(viewData.buttonAndProcess)
@@ -120,7 +119,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       },
       {
         label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
-          deleteFunction(viewComponent, [row]);
+          deleteFunction(gridComponent, [row]);
         }
       }
     ];

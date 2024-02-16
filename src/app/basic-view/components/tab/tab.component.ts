@@ -1,14 +1,13 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TabData } from '../../interfaces/tab-structure';
-import { HeaderComponent } from '../header/header.component';
 import { GridComponent } from '../grid/grid.component';
-import { PaginationComponent } from '../pagination/pagination.component';
 import { Subject } from 'rxjs';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { indexArrayByProperty } from 'src/application-utils';
-import { HQL_PROPERTY } from 'src/application-constants';
+import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
+import { ContextMenuItem } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-tab',
@@ -23,7 +22,8 @@ export class TabComponent implements OnInit {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
-    tab: {}
+    clickedRow: undefined,
+    tab: undefined
   };
 
   /********************** SUBJECTS **********************/
@@ -36,15 +36,71 @@ export class TabComponent implements OnInit {
   constructor(
     private cazzeonService: CazzeonService,
     private dialogRef: MatDialogRef<TabComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    //this.cazzeonService.request(`api/data/tab?${this.data.} `)
-  }
+    @Inject(MAT_DIALOG_DATA) public data: TabData,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
-      this.tabData.tab = this.data.tab;
-      this.constructFieldsAndHeaders(this.data.tab.fields);
-      this.tabReady = true;
+    this.cazzeonService.request(`api/data/tab?tabId=${this.data.tab.id}`, HttpMethod.GET, async (response: Response) => {
+      const jsonResponse = await response.json();
+      const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
+      const gridComponent = this.gridComponent;
+      this.tabData.contextMenuItems = [
+        {
+          label: "Actions", imageSource: "bi-cpu", items: []
+        },
+        {
+          label: "Tabs", imageSource: "bi-journals", items: this.constructTabItems(jsonResponse.tabs)
+        },
+        {
+          label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
+            deleteFunction(gridComponent, [row]);
+          }
+        }
+      ]
+      console.log(jsonResponse)
+    }, async (response: Response) => {
+      console.error(`Error when fetching data for the tab with id: ${this.data.tab.id}. Error: ${await response.text()}`);
+    }, (error: Error) => {
+      console.error(`Timeout when fetching data for the tab with id: ${this.data.tab.id}`);
+    });
+    this.tabData.tab = this.data.tab;
+    this.tabData.clickedRow = this.data.clickedRow;
+    this.constructFieldsAndHeaders(this.data.tab.fields);
+    this.tabReady = true;
+  }
+
+  /**
+    * Construct the items in the context menu that will contain
+    * all the tabs
+    * @param items Object to construct the ContextMenuItem array
+    * @returns Array of ContextMenuItem representing tabs
+  */
+  constructTabItems(items: any[]): ContextMenuItem[] {
+    const openTabFuncntion = this.openTab.bind(this);
+    return items.map(function (obj) {
+      return {
+        label: obj.name,
+        imageSource: obj.iconSource,
+        clickFn(row: any, item: ContextMenuItem) {
+          openTabFuncntion(row, item);
+        },
+        tab: obj
+      }
+    });
+  }
+
+  /**
+    * Open the selected tab
+    * @param row Row from which the click was fired
+    * @param item Selected item representing a tab
+  */
+  openTab(row: any, item: ContextMenuItem): void {
+    this.dialog.open(TabComponent, {
+      data: { clickedRow: row, tab: item.tab },
+      height: "80%",
+      width: "80%"
+    });
   }
 
   /**

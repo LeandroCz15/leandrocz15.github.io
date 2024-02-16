@@ -48,7 +48,10 @@ export class GridComponent implements OnInit, OnDestroy {
    * Do fetch when initializing. This fetch shouldn't have a where clase
    */
   doFirstFetch(): void {
-    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
+    let url: string = `api/data/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
+    if (this.tabData.clickedRow) {
+      url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
+    }
     this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
       console.error("Timeout when fetching rows");
     });
@@ -62,7 +65,10 @@ export class GridComponent implements OnInit, OnDestroy {
   */
   doFetch(paginationAction?: number): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
-    const url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
+    let url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
+    if (this.tabData.clickedRow) {
+      url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
+    }
     const requestBody: any = { filters: this.tabData.gridFields };
     requestBody.paginationInfo = {
       action: paginationAction || PaginationEventType.RELOAD,
