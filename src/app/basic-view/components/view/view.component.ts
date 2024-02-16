@@ -108,8 +108,8 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @param items Items from response. This items needs to be converted into ContextMenuItem interface
    */
   constructMenuItems(viewData: any): void {
-    const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
-    const gridComponent = this.gridComponent;
+    const deleteFunction = this.cazzeonService.deleteRowsWithPaginationComponent.bind(this.cazzeonService);
+    const viewComponent = this;
     this.mainTabData.contextMenuItems = [
       {
         label: "Actions", imageSource: "bi-cpu", items: this.constructProcessItems(viewData.buttonAndProcess)
@@ -119,7 +119,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       },
       {
         label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
-          deleteFunction(gridComponent, [row]);
+          deleteFunction(viewComponent, [row]);
         }
       }
     ];

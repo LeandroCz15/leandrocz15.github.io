@@ -35,17 +35,13 @@ const CURRENT_DATE = "CURRENT_DATE";
 })
 export class RowFormComponent {
 
-  // Boolean to render the modal 
-  public formReady: boolean = false;
+  /********************** COMPONENT ATTRIBUTES **********************/
+  public formReady: boolean = false; // Boolean to render the modal 
+  public matcher: MyErrorStateMatcher; // Variable to store the matcher that will control the errors in the angular-material inputs (date, selector)
+  private profileForm: FormGroup<{}>; // Form profile
 
-  // Variable to store the matcher that will control the errors in the angular-material inputs (date, selector)
-  public matcher: MyErrorStateMatcher;
-
-  // Subject for update the form
-  public programmaticUpdate: Subject<boolean> = new Subject<boolean>;
-
-  // Form profile
-  private profileForm: FormGroup<{}>;
+  /********************** SUBJECTS **********************/
+  public programmaticUpdate: Subject<boolean> = new Subject<boolean>; // Subject for update the form
 
   constructor(
     private cazzeonService: CazzeonService,
@@ -121,8 +117,8 @@ export class RowFormComponent {
         return filter.isMandatory ? [Validators.required, noWhitespaceValidator] : [];
       case DataType.NATURAL:
       case DataType.INTEGER:
-        return filter.isMandatory ? [Validators.required, Validators.pattern(/^\d+$/)] : [Validators.pattern(/^\d+$/)];
       case DataType.DECIMAL:
+        return filter.isMandatory ? [Validators.required, Validators.pattern(/^\d+$/)] : [Validators.pattern(/^\d+$/)];
       case DataType.DATE:
         return filter.isMandatory ? [Validators.required] : [];
       case DataType.SELECTOR:
@@ -141,7 +137,7 @@ export class RowFormComponent {
     }
     this.formReady = false;
     const parentObject = { id: this.data.tabData.clickedRow?.id, hqlConnectionProperty: this.data.tabData.tab.hqlConnectionProperty };
-    this.cazzeonService.request(`api/store/${this.data.tabData.tab.entityName}`, HttpMethod.POST, async (response: Response) => {
+    this.cazzeonService.request(`api/entity/store/${this.data.tabData.tab.entityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
       this.formReady = true;
@@ -159,7 +155,7 @@ export class RowFormComponent {
    * This function deletes a single entity. The entity deleted will be the current entity displayed in the modal
    */
   deleteEntity() {
-    this.cazzeonService.request(`api/delete/${this.data.tabData.tab.entityName}`, HttpMethod.DELETE,
+    this.cazzeonService.request(`api/entity/delete/${this.data.tabData.tab.entityName}`, HttpMethod.DELETE,
       (response: Response) => {
         this.dialogRef.close();
         const indexToDelete = this.data.allRows.findIndex(row => row === this.data.currentRow);

@@ -47,7 +47,7 @@ export class TabComponent implements OnInit {
       const gridComponent = this.gridComponent;
       this.tabData.contextMenuItems = [
         {
-          label: "Actions", imageSource: "bi-cpu", items: []
+          label: "Actions", imageSource: "bi-cpu", items: this.constructProcessItems(jsonResponse.buttonAndProcess)
         },
         {
           label: "Tabs", imageSource: "bi-journals", items: this.constructTabItems(jsonResponse.tabs)
@@ -85,6 +85,26 @@ export class TabComponent implements OnInit {
           openTabFuncntion(row, item);
         },
         tab: obj
+      }
+    });
+  }
+
+  /**
+    * Construct the items in the context menu that will contain
+    * all the processes
+    * @param items Object to construct the ContextMenuItem array
+    * @returns Array of ContextMenuItem representing processes
+  */
+  constructProcessItems(items: any[]): ContextMenuItem[] {
+    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
+    return items.map(function (obj) {
+      return {
+        label: obj.name,
+        imageSource: obj.iconSource,
+        javaClass: obj.javaClass,
+        clickFn(row: any, item: ContextMenuItem) {
+          executeProcessFunction(row, item);
+        },
       }
     });
   }

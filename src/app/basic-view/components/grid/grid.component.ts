@@ -48,7 +48,7 @@ export class GridComponent implements OnInit, OnDestroy {
    * Do fetch when initializing. This fetch shouldn't have a where clase
    */
   doFirstFetch(): void {
-    let url: string = `api/data/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
+    let url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
     if (this.tabData.clickedRow) {
       url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
     }
@@ -65,7 +65,7 @@ export class GridComponent implements OnInit, OnDestroy {
   */
   doFetch(paginationAction?: number): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
-    let url: string = `api/data/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
+    let url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
     if (this.tabData.clickedRow) {
       url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
     }
