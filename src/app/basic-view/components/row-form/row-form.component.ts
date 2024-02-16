@@ -140,6 +140,7 @@ export class RowFormComponent {
       return;
     }
     this.formReady = false;
+    const parentObject = { id: this.data.tabData.clickedRow?.id, hqlConnectionProperty: this.data.tabData.tab.hqlConnectionProperty };
     this.cazzeonService.request(`api/store/${this.data.tabData.tab.entityName}`, HttpMethod.POST, async (response: Response) => {
       const jsonResponse: any = await response.json();
       this.updateRowAndFormWithBackendResponse(jsonResponse);
@@ -151,7 +152,7 @@ export class RowFormComponent {
       this.formReady = true;
       console.error(`Timeout while storing entity: ${this.data.tabData.tab.entitynName}`);
     },
-      JSON.stringify({ entity: this.buildObjectToSend() }));
+      JSON.stringify({ entity: this.buildObjectToSend(), parent: parentObject }));
   }
 
   /**
@@ -212,7 +213,7 @@ export class RowFormComponent {
    * @param value Value to be converted
    */
   convertToNullIfEmptyString(value: any): any {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const trimmedValue = value.trim();
       return trimmedValue === "" ? null : trimmedValue;
     }

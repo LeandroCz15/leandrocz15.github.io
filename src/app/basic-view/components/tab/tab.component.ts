@@ -57,8 +57,7 @@ export class TabComponent implements OnInit {
             deleteFunction(gridComponent, [row]);
           }
         }
-      ]
-      console.log(jsonResponse)
+      ];
     }, async (response: Response) => {
       console.error(`Error when fetching data for the tab with id: ${this.data.tab.id}. Error: ${await response.text()}`);
     }, (error: Error) => {
