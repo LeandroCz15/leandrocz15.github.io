@@ -16,6 +16,8 @@
                 <textarea *ngSwitchCase="'lg-text'" type="text" [id]=idForInput [formControlName]="idForInput"
                     [ngClass]="{'is-invalid': form.get(idForInput)?.errors}" class="form-control" rows="6">
                 </textarea>
+                <input *ngSwitchCase="'password'" type="password" [id]=idForInput [formControlName]="idForInput"
+                    [ngClass]="{'is-invalid': form.get(idForInput)?.errors}" class="form-control">
                 <!--Checkbox case-->
                 <input #checkboxInput *ngSwitchCase="'checkbox'" type="checkbox" [id]="idForInput"
                     [formControlName]="idForInput" class="btn ms-2">
