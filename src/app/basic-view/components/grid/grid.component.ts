@@ -24,7 +24,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
   /********************** SUBJECTS  **********************/
   @Input() reloadViewSubject!: Subject<void>;
-  @Input() doFetchSubject!: Subject<number | undefined>;
+  @Input() doFetchSubject!: Subject<PaginationEventType>;
 
   /********************** SUBSCRIPTIONS  **********************/
   private reloadViewSubscription!: Subscription;
@@ -34,9 +34,9 @@ export class GridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.tabData.gridFields, HQL_PROPERTY);
-    this.doFirstFetch();
     this.reloadViewSubscription = this.reloadViewSubject.asObservable().subscribe(() => this.reloadView());
     this.doFetchSubscription = this.doFetchSubject.asObservable().subscribe(action => this.doFetch(action));
+    this.doFirstFetch();
   }
 
   ngOnDestroy(): void {
@@ -45,57 +45,71 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Do fetch when initializing. This fetch shouldn't have a where clase
+   * This function will do the first fetch of the data while initializing the view.
+   * 
+   * This first fetch doesn't have any filters at the moment
    */
   doFirstFetch(): void {
-    let url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
-    if (this.tabData.clickedRow) {
-      url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
-    }
-    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
-      console.error("Timeout when fetching rows");
-    });
+    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
+    const parentConnector: any = this.tabData.clickedRow ? { parentId: this.tabData.clickedRow.id, parentConnectorProperty: this.tabData.tab.hqlConnectionProperty } : undefined;
+    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), this.timeoutFetch.bind(this), JSON.stringify({ parentConnector: parentConnector }));
   }
 
   /**
-   * Fetch rows of the entity in the current tab parent
+   * This function will fetch rows with using the data of it's siblings components.
    * 
-   * @param paginationInfo 
-   *  Object containing information about the pagination to fetch data. If this object is null then the where clause wont have a entity id filter
+   * For example: Pagination size, tab filters, etc.
+   * 
+   * @param paginationAction Action to do (FETCH NEXT, BACK OR RELOAD)
   */
-  doFetch(paginationAction?: number): void {
+  doFetch(paginationAction: PaginationEventType): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
-    let url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
-    if (this.tabData.clickedRow) {
-      url += `&parentId=${this.tabData.clickedRow.id}&parentConnectorProperty=${this.tabData.tab.hqlConnectionProperty}`;
-    }
-    const requestBody: any = { filters: this.tabData.gridFields };
-    requestBody.paginationInfo = {
-      action: paginationAction || PaginationEventType.RELOAD,
+    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
+    const parentConnector: any = this.tabData.clickedRow ? {
+      parentId: this.tabData.clickedRow.id,
+      parentConnectorProperty: this.tabData.tab.hqlConnectionProperty
+    } : undefined;
+    const paginationData: any = {
+      action: paginationAction,
       previousFetchFirstId: this.paginationComponent.getPreviousFetchFirstId(),
       currentFetchFirstId: this.paginationComponent.getCurrentFetchFirstId(),
       currentFetchLastId: this.paginationComponent.getCurrentFetchLastId(),
-    }
-    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), (error: any) => {
-      console.error("Timeout when fetching rows");
-    },
-      JSON.stringify(requestBody));
+    };
+    const body: any = { filters: this.tabData.gridFields, parentConnector: parentConnector, paginationData: paginationData };
+    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), this.timeoutFetch.bind(this),
+      JSON.stringify(body));
   }
 
-  // Executed when fetch is successfull
+  /**
+   * Executed when the response is OK
+   * 
+   * @param response Response of the request
+   */
   async successFetch(response: Response): Promise<void> {
-    const newRows = await response.json();
-    this.rows = newRows;
+    this.rows = await response.json();
     this.updateLastFetchValues();
     this.updateCurrentFetchValues();
   }
 
-  // Executed when fetch failed
+  /**
+   * Executed when the response is not OK
+   * 
+   * @param response Response of the request
+   */
   async errorFetch(response: Response): Promise<void> {
     console.error(await response.text())
     this.rows.splice(0);
     this.updateLastFetchValues();
     this.updateCurrentFetchValues();
+  }
+
+  /**
+   * Executed when timeout while fetching data
+   * 
+   * @param error 
+   */
+  timeoutFetch(error: any): void {
+    console.error("Timeout while fetching data");
   }
 
   // Update last row id of last fetch in the PaginationComponent

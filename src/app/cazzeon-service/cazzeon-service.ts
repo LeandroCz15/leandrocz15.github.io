@@ -100,29 +100,29 @@ export class CazzeonService {
       JSON.stringify({ data: dataArrayToDelete }));
   }
 
-    /**
-   * Send a request to the backend to delete mutiple rows. This function is an alternative for those cases
-   * where some function is build before the GridComponent is initialized. So use this instead.
-   * 
-   * @param viewComponent Grid from which the entity is being deleted
-   * @param rowsToDelete Rows to delete
-   */
-    deleteRowsWithPaginationComponent(viewComponent: ViewComponent, rowsToDelete: any[]): void {
-      const dataArrayToDelete = rowsToDelete.map(function (obj) {
-        return obj.id;
-      });
-      this.request(`api/entity/delete/${viewComponent.gridComponent.tabData.tab.entityName}`, HttpMethod.DELETE,
-        (response: Response) => {
-          viewComponent.gridComponent.rows = viewComponent.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
-        },
-        async (response: Response) => {
-          console.error(`Server error while trying to delete rows of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}. Error: ${await response.text()}`);
-        },
-        (error: any) => {
-          console.error(`Timeout while deleting rows of of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}`);
-        },
-        JSON.stringify({ data: dataArrayToDelete }));
-    }
+  /**
+ * Send a request to the backend to delete mutiple rows. This function is an alternative for those cases
+ * where some function is build before the GridComponent is initialized. So use this instead.
+ * 
+ * @param viewComponent Grid from which the entity is being deleted
+ * @param rowsToDelete Rows to delete
+ */
+  deleteRowsWithPaginationComponent(viewComponent: ViewComponent, rowsToDelete: any[]): void {
+    const dataArrayToDelete = rowsToDelete.map(function (obj) {
+      return obj.id;
+    });
+    this.request(`api/entity/delete/${viewComponent.gridComponent.tabData.tab.entityName}`, HttpMethod.DELETE,
+      (response: Response) => {
+        viewComponent.gridComponent.rows = viewComponent.gridComponent.rows.filter(row => !rowsToDelete.includes(row));
+      },
+      async (response: Response) => {
+        console.error(`Server error while trying to delete rows of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}. Error: ${await response.text()}`);
+      },
+      (error: any) => {
+        console.error(`Timeout while deleting rows of of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}`);
+      },
+      JSON.stringify({ data: dataArrayToDelete }));
+  }
 
   /**
    * Send a request to the backend to execute a cazzeon process
@@ -138,16 +138,6 @@ export class CazzeonService {
     }, (response: Response) => {
       console.error(`Timeout while calling process: ${item.javaClass}`);
     }, JSON.stringify({ item: item, row: row }));
-  }
-
-  private askForCsrfToken() {
-    this.request(`api/auth/csrf`, HttpMethod.GET, async (response: Response) => {
-      this.setCsrfToken((await response.json()).token);
-    }, async (response: Response) => {
-      throw new Error(`Error while fetching CSRF TOKEN. Error: ${await response.text()}`);
-    }, (error: any) => {
-      throw new Error(`Timeout while fetching CSRF TOKEN`);
-    });
   }
 
 }

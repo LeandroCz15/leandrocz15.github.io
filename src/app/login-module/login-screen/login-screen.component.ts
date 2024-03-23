@@ -28,11 +28,9 @@ export class LoginScreenComponent implements OnInit {
         this.checkIfTokenIsValid().then(() => {
           this.cazzeonService.loginSubject.next(LoginStatus.LOGIN);
         }).catch(reason => {
-          this.cazzeonService.clearTokens();
-        }).finally(() => {
           this.loading = false;
+          this.cazzeonService.clearTokens();
         });
-
       }, 1000);
     }
   }

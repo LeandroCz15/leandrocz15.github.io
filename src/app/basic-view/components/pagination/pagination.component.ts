@@ -24,7 +24,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   @Input() tabData!: TabData;
 
   /********************** SUBJECTS  **********************/
-  @Input() doFetchSubject!: Subject<number | undefined>;
+  @Input() doFetchSubject!: Subject<PaginationEventType>;
 
   constructor(public dialog: MatDialog, private pageChangeService: SelectPageService) { }
 
@@ -104,7 +104,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 }
 
 export enum PaginationEventType {
-  RELOAD,
-  FETCH_NEXT,
-  FETCH_BACK
+  RELOAD = 0,
+  FETCH_NEXT = 1,
+  FETCH_BACK = 2
 }

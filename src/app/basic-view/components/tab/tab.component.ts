@@ -8,6 +8,7 @@ import { indexArrayByProperty } from 'src/application-utils';
 import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
+import { PaginationEventType } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-tab',
@@ -28,7 +29,7 @@ export class TabComponent implements OnInit {
 
   /********************** SUBJECTS **********************/
   public reloadViewSubject: Subject<void> = new Subject();
-  public doFetchSubject: Subject<number | undefined> = new Subject();
+  public doFetchSubject: Subject<PaginationEventType> = new Subject();
 
   /********************** CHILD COMPONENTS **********************/
   @ViewChild(GridComponent) gridComponent!: GridComponent;

@@ -10,6 +10,7 @@ import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
 import { TabData } from '../../interfaces/tab-structure'
+import { PaginationEventType } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-view',
@@ -31,7 +32,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   /********************** SUBJECTS  **********************/
   public reloadViewSubject: Subject<void> = new Subject();
-  public doFetchSubject: Subject<number | undefined> = new Subject();
+  public doFetchSubject: Subject<PaginationEventType> = new Subject();
 
   /********************** SUBSCRIPTIONS  **********************/
   private pageChangeSubscription!: Subscription;

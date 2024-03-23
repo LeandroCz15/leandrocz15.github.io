@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(private cazzeonService: CazzeonService) { }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.cazzeonService.getLoginSubjectAsObservable().subscribe(loginStatus => {
       this.isLogged = loginStatus === LoginStatus.LOGIN;
     });

@@ -4,6 +4,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { CAZZEON_DATE_FORMAT } from 'src/application-constants';
 import { TabData } from '../../interfaces/tab-structure';
 import { Subject } from 'rxjs';
+import { PaginationEventType } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-header',
@@ -21,9 +22,7 @@ export class HeaderComponent {
   @Input() tabData!: TabData;
 
   /********************** SUBJECTS  **********************/
-  @Input() doFetchSubject!: Subject<number | undefined>;
-
-  constructor() { }
+  @Input() doFetchSubject!: Subject<PaginationEventType>;
 
   // Process text input change
   processTextInputChange(index: number): void {
@@ -36,7 +35,7 @@ export class HeaderComponent {
     // Change last value used to search
     changedFilter.lastValueUsedForSearch = trimmedValue;
     changedFilter.value = trimmedValue;
-    this.doFetchSubject.next(undefined);
+    this.doFetchSubject.next(PaginationEventType.RELOAD);
   }
 
   // Process boolean input change
@@ -59,19 +58,19 @@ export class HeaderComponent {
         break;
     }
     checkboxField.value = valueToChange;
-    this.doFetchSubject.next(undefined);
+    this.doFetchSubject.next(PaginationEventType.RELOAD);
   }
 
   // Process date input change
   processDateChange(event: any): void {
     if (!event.target.errorState) {
-      this.doFetchSubject.next(undefined);
+      this.doFetchSubject.next(PaginationEventType.RELOAD);
     }
   }
 
   // Process numeric input change
   processNumericInputChange(index: number): void {
-    let changedFilter = this.tabData.gridFields.at(index);
+    const changedFilter = this.tabData.gridFields.at(index);
     changedFilter.value = changedFilter.value?.trim();
     if (!this.didTextInputChange(changedFilter)) {
       changedFilter.invalidExpression = false;
@@ -83,7 +82,7 @@ export class HeaderComponent {
       changedFilter.number = undefined;
       changedFilter.invalidExpression = false;
     } else {
-      let numericValue = +changedFilter.value;
+      const numericValue = +changedFilter.value;
       if (!isNaN(numericValue)) {
         // SIMPLE NUMERIC VALUE
         changedFilter.operator = undefined;
@@ -102,7 +101,7 @@ export class HeaderComponent {
       }
     }
     changedFilter.lastValueUsedForSearch = changedFilter.value;
-    this.doFetchSubject.next(undefined);
+    this.doFetchSubject.next(PaginationEventType.RELOAD);
   }
 
   /**

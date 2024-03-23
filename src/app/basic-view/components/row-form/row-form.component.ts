@@ -206,6 +206,7 @@ export class RowFormComponent {
   /**
    * Convert empty string to null value to avoid filling the
    * database with ""
+   * 
    * @param value Value to be converted
    */
   convertToNullIfEmptyString(value: any): any {
@@ -213,11 +214,11 @@ export class RowFormComponent {
       const trimmedValue = value.trim();
       return trimmedValue === "" ? null : trimmedValue;
     }
-    return value
+    return value;
   }
 
   /**
-   * This function is needed after the update/insert in the fail case
+   * This function will update the form with the row values when the modal is opened
    */
   updateFormWithRowValues(): void {
     Object.keys(this.profileForm.controls).forEach(key => {
@@ -237,10 +238,9 @@ export class RowFormComponent {
    * @returns A base row object with every hqlProperty equals to null
    */
   buildBaseRowStructure(): any {
-    const baseRow: any = {};
     // Hardcode base row id because it is always needed
-    baseRow.id = null;
-    this.data.tabData.formFields.forEach((field: any) => {
+    const baseRow: any = { id: null };
+    this.data.tabData.formFields.forEach(field => {
       baseRow[field.hqlProperty] = null;
     });
     return baseRow;
