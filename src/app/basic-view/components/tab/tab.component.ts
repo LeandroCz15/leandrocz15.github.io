@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { TabData } from '../../interfaces/tab-structure';
 import { GridComponent } from '../grid/grid.component';
 import { Subject } from 'rxjs';
@@ -9,7 +9,6 @@ import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, TABS_MODAL } from 'src/applicat
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { PaginationEventType } from '../pagination/pagination.component';
-import { ProcessExecutorService } from 'src/app/process/services/process-executor.service';
 
 @Component({
   selector: 'app-tab',
@@ -24,6 +23,7 @@ export class TabComponent implements OnInit {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
+    allFields: [],
     clickedRow: undefined,
     tab: undefined
   };
@@ -37,7 +37,6 @@ export class TabComponent implements OnInit {
 
   constructor(
     private cazzeonService: CazzeonService,
-    private processExecutorService: ProcessExecutorService,
     @Inject(MAT_DIALOG_DATA) public data: TabData,
     private dialog: MatDialog
   ) { }
@@ -103,7 +102,7 @@ export class TabComponent implements OnInit {
     * @returns Array of ContextMenuItem representing processes
   */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.processExecutorService.executeProcess.bind(this.cazzeonService);
+    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
     return items.map(obj => {
       return {
         label: obj.name,
@@ -145,6 +144,7 @@ export class TabComponent implements OnInit {
       if (field.showInForm) {
         newFormFields.push(field);
       }
+      this.tabData.allFields.push(field);
     });
     this.tabData.gridFields = newGridFields;
     this.tabData.formFields = newFormFields;

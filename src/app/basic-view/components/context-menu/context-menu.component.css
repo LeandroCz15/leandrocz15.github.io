@@ -1,5 +1,8 @@
 .context-menu {
-    overflow-x: hidden;
     overflow-y: auto;
     z-index: 1021;
+}
+
+.context-menu-button {
+    min-width: 100%;
 }

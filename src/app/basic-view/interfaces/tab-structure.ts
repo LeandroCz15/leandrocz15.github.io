@@ -5,5 +5,6 @@ export interface TabData {
     tab: any
     gridFields: any[]
     formFields: any[]
+    allFields: any []
     contextMenuItems: ContextMenuItem[]
 }

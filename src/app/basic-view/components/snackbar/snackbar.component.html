@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center align-items-center snackbar-container">
     <span class="d-flex justify-content-center fw-bold pe-0"
-        [ngClass]="snackBarData.status == 'OK' ? 'snackbar-ok' : 'snackbar-error'" matSnackBarLabel>{{snackBarData.title}}</span>
+        [ngClass]="snackBarData.status == 'OK' ? 'snackbar-ok' : 'snackbar-error'" matSnackBarLabel>{{snackBarData.message}}</span>
     <span class="fw-bold" *ngIf="snackBarData.status !== 'OK'">
         <button class="btn error-btn m-0" mat-button matSnackBarAction (click)="onErrorDetailClick()">{{snackbarErrorIcon}} </button>
     </span>

@@ -24,9 +24,9 @@ export interface ContextMenuData {
 })
 export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 
-  public readonly DEFAULT_MENU_WIDTH = 100;
+  public readonly MIN_MENU_WIDTH = 100;
 
-  public readonly DEFAULT_MENU_HEIGHT = 150;
+  public readonly MAX_MENU_HEIGHT = 150;
 
   public data!: ContextMenuData;
 
@@ -43,8 +43,8 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
   constructor(private contextMenuService: OpenContextMenuService) { }
 
   ngAfterViewInit(): void {
-    const adjustedX = Math.min(this.data.left, window.innerWidth - this.DEFAULT_MENU_WIDTH);
-    const adjustedY = Math.min(this.data.top, window.innerHeight - this.DEFAULT_MENU_HEIGHT);
+    const adjustedX = Math.min(this.data.left, window.innerWidth - this.MIN_MENU_WIDTH);
+    const adjustedY = Math.min(this.data.top, window.innerHeight - this.MAX_MENU_HEIGHT);
     this.contextMenuElement.nativeElement.style.top = `${adjustedY}px`;
     this.contextMenuElement.nativeElement.style.left = `${adjustedX}px`;
   }
@@ -69,7 +69,7 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
     if (menuItem.items) {
       const data: ContextMenuData = {
         top: this.data.top + (event.currentTarget! as any).parentElement.clientHeight * index,
-        left: this.data.left + this.DEFAULT_MENU_WIDTH,
+        left: this.data.left + this.MIN_MENU_WIDTH,
         rowClicked: this.data.rowClicked,
         items: menuItem.items
       };

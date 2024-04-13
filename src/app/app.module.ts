@@ -6,6 +6,7 @@ import { LoginModule } from './login-module/login.module';
 import { BasicViewModule } from './basic-view/basic-view.module';
 import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
 import { TopNavbarModule } from './top-navbar/top-navbar.module';
+import { CazzeonService } from './cazzeon-service/cazzeon-service';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,6 @@ import { TopNavbarModule } from './top-navbar/top-navbar.module';
     LeftTaskbarModule,
     TopNavbarModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {

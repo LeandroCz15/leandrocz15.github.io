@@ -30,7 +30,7 @@ export function getServerUrl(): string {
 
 export interface ServerResponse {
     message: string,
-    httpStatus: string,
+    status: string,
     body: any,
     exceptionStackTrace: string,
     refreshGrid: boolean

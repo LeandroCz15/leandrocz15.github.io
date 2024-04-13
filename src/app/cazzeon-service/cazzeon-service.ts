@@ -4,7 +4,7 @@ import { ViewComponent } from "../basic-view/components/view/view.component";
 import { ContextMenuItem } from "../basic-view/components/context-menu/context-menu.component";
 import { Observable, Subject } from "rxjs";
 import { GridComponent } from "../basic-view/components/grid/grid.component";
-import { getServerUrl } from "src/application-utils";
+import { ServerResponse, getServerUrl } from "src/application-utils";
 import { SnackbarComponent } from "../basic-view/components/snackbar/snackbar.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
@@ -125,6 +125,30 @@ export class CazzeonService {
         console.error(`Timeout while deleting rows of of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}`);
       },
       JSON.stringify({ data: dataArrayToDelete }));
+  }
+
+  /**
+   * Send a request to the backend to execute a cazzeon process
+   * 
+   * @param rows Rows to execute the process
+   * @param item Item clicked
+   */
+  executeProcess(rows: any[], item: ContextMenuItem): void {
+    this.request(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
+      const jsonResponse = await response.json();
+      this.snackBar.openFromComponent(SnackbarComponent, {
+        duration: SNACKBAR.defaultSuccessDuration,
+        data: jsonResponse as ServerResponse
+      });
+    }, async (response: Response) => {
+      const jsonResponse = await response.json();
+      this.snackBar.openFromComponent(SnackbarComponent, {
+        duration: SNACKBAR.defaultErrorDuration,
+        data: jsonResponse as ServerResponse
+      });
+    }, (error: TypeError) => {
+      console.error(`Unexpected error: ${error.message}`);
+    }, JSON.stringify({ item: item, rows: rows }));
   }
 
 }

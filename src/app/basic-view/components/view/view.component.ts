@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
 import { TabData } from '../../interfaces/tab-structure'
 import { PaginationEventType } from '../pagination/pagination.component';
-import { ProcessExecutorService } from 'src/app/process/services/process-executor.service';
 
 @Component({
   selector: 'app-view',
@@ -26,6 +25,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
+    allFields: [],
     clickedRow: undefined,
     tab: undefined
   };
@@ -42,7 +42,6 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cazzeonService: CazzeonService,
-    private processExecutorService: ProcessExecutorService,
     private pageChangeService: SelectPageService,
     private dialog: MatDialog
   ) { }
@@ -93,6 +92,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       if (field.showInForm) {
         newFormFields.push(field);
       }
+      this.mainTabData.allFields.push(field);
     });
     this.mainTabData.gridFields = newGridFields;
     this.mainTabData.formFields = newFormFields;
@@ -128,7 +128,7 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @returns Array of ContextMenuItem representing processes
    */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.processExecutorService.executeProcess.bind(this.cazzeonService);
+    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
     return items.map(obj => {
       return {
         label: obj.name,

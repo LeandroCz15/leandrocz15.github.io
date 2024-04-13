@@ -1,18 +1,17 @@
-<div #contextMenuElement class="d-flex flex-column context-menu position-absolute"
-    [style.max-width.px]="DEFAULT_MENU_WIDTH"
-    [style.min-width.px]="DEFAULT_MENU_WIDTH"
-    [style.max-height.px]="DEFAULT_MENU_HEIGHT">
+<div #contextMenuElement class="d-flex flex-column position-absolute p-0 m-0 context-menu"
+    [style.min-width.px]="MIN_MENU_WIDTH"
+    [style.max-height.px]="MAX_MENU_HEIGHT">
     <div *ngFor="let item of data?.items; let i = index; trackBy: trackByFn">
-        <button class="btn btn-secondary w-100 rounded-0 text-nowrap"
+        <button class="btn btn-secondary rounded-0 text-nowrap context-menu-button"
             (click)="item.clickFn?.(data.rowClicked, item)"
             (mouseenter)="onItemHover(item, $event, i)"
             (mouseleave)="onItemHoverLeave($event)">
             <div class="float-start">
                 <img *ngIf="item.imageSource | iconSrcResolver ; else elseBlock" [src]="item.imageSource" width="25px">
                 <ng-template #elseBlock>
-                    <i [class]="'bi bootstrap-icon h5 ' + item.imageSource"></i>
+                    <i [class]="'bi h5 ' + item.imageSource"></i>
                 </ng-template>
-                <span class="w-100">
+                <span>
                     {{item.label}}
                 </span>
             </div>

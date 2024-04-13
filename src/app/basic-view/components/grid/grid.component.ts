@@ -62,7 +62,7 @@ export class GridComponent implements OnInit, OnDestroy {
       },
       this.errorFetch.bind(this),
       this.timeoutFetch.bind(this),
-      JSON.stringify({ filters: this.tabData.gridFields, parentConnector: parentConnector }));
+      JSON.stringify({ gridFields: this.tabData.gridFields, formFields: this.tabData.formFields, parentConnector: parentConnector }));
   }
 
   /**
@@ -98,7 +98,7 @@ export class GridComponent implements OnInit, OnDestroy {
       },
       this.errorFetch.bind(this),
       this.timeoutFetch.bind(this),
-      JSON.stringify({ filters: this.tabData.gridFields, parentConnector: parentConnector, paginationData: paginationData }));
+      JSON.stringify({ gridFields: this.tabData.gridFields, formFields: this.tabData.formFields, parentConnector: parentConnector, paginationData: paginationData }));
   }
 
   /**

@@ -26,7 +26,7 @@ export class SnackbarComponent {
   /**
    * Getter for easy access to snackbar data
    */
-  get snackBarData(): any {
+  get snackBarData(): ServerResponse {
     return this.snackBarRef.containerInstance.snackBarConfig.data;
   }
 
