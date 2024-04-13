@@ -26,7 +26,7 @@ export class LoginScreenComponent implements OnInit {
       this.loading = true;
       setTimeout(() => {
         this.checkIfTokenIsValid().then(() => {
-          this.cazzeonService.loginSubject.next(LoginStatus.LOGIN);
+          this.cazzeonService.login();
         }).catch(reason => {
           this.loading = false;
           this.cazzeonService.clearTokens();
@@ -45,7 +45,7 @@ export class LoginScreenComponent implements OnInit {
       this.cazzeonService.request(`api/auth/login`, HttpMethod.POST, async (response: Response) => {
         this.loading = false;
         this.cazzeonService.setJwtToken((await response.json()).token);
-        this.cazzeonService.loginSubject.next(LoginStatus.LOGIN);
+        this.cazzeonService.login();
       }, async (response: Response) => {
         this.loading = false;
       }, (error: any) => {

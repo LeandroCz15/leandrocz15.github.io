@@ -1,7 +1,7 @@
 <div class="d-flex flex-column">
     <mat-form-field [formGroup]="formInput">
         <mat-label>Select an entry</mat-label>
-        <input #input type="text" placeholder="Pick one" aria-label="Number"
+        <input type="text" placeholder="Pick one" aria-label="Number"
             matInput
             [matAutocomplete]="auto"
             [formControlName]="formName"
@@ -10,7 +10,7 @@
             <mat-option *ngFor="let option of resultSet"
                 [value]="option"
                 (click)="clickInOption(option.id)">
-                {{option.name}}
+                {{option.identifier}}
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>

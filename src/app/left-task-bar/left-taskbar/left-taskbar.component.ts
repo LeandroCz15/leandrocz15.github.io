@@ -30,7 +30,7 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
 
   @ViewChildren(NavbarElementComponent) sidebarButtons!: QueryList<NavbarElementComponent>;
 
-  constructor(private cazzeonService: CazzeonService, private toggleSidebarService: ToggleSidebarService) { }
+  constructor(public cazzeonService: CazzeonService, private toggleSidebarService: ToggleSidebarService) { }
 
   ngOnInit(): void {
     this.toggleSidebarSubscription = this.toggleSidebarService.getObservable().subscribe(data => this.toggleSidebar(data));
@@ -38,7 +38,7 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
       this.menuItems = await response.json();
       this.viewReady = true;
     }, async (response: Response) => {
-      console.error(`Error while retrieving menu items. Error: ${await response.text()}`);
+      console.error(`Error while retrieving menu items: ${await response.text()}`);
     }, (error: any) => {
       console.error("Timeout when fetching menu items");
     });
@@ -62,16 +62,6 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
       this.userText.nativeElement.style.display = "";
       this.sidebarElement.nativeElement.style = null;
     }
-  }
-
-  logout(): void {
-    this.cazzeonService.clearTokens();
-    this.cazzeonService.loginSubject.next(LoginStatus.LOGOUT);
-  }
-
-  // Opens the login modal. Deprecated, only left for future reference
-  openLoginModal(): void {
-    bootstrap.Modal.getOrCreateInstance("#appLoginModal").show();
   }
 
   // Function to keep track of rows using the index given by the *ngFor

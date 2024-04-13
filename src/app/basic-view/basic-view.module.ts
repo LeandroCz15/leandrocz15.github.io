@@ -25,6 +25,10 @@ import { ContextMenuComponent } from './components/context-menu/context-menu.com
 import { IconSrcResolverPipe } from './pipes/icon-src-resolver.pipe';
 import { MultiCaseSwitchPipe } from './pipes/multi-case-switch.pipe';
 import { TabComponent } from './components/tab/tab.component';
+import { ViewFinderComponent } from './components/view-finder/view-finder.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +46,8 @@ import { TabComponent } from './components/tab/tab.component';
     IconSrcResolverPipe,
     MultiCaseSwitchPipe,
     TabComponent,
+    ViewFinderComponent,
+    SnackbarComponent,
   ],
   imports: [
     CommonModule,
@@ -57,9 +63,11 @@ import { TabComponent } from './components/tab/tab.component';
     NgbModule,
     MatAutocompleteModule,
     MatDialogModule,
+    MatSnackBarModule
   ],
   exports: [
     ViewComponent,
+    ViewFinderComponent,
     IconSrcResolverPipe
   ],
   providers: [

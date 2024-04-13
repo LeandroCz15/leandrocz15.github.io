@@ -1,0 +1,22 @@
+<div #viewFinder class="view-finder" *ngIf="this.isDisplayed">
+  <mat-form-field class="w-100">
+    <mat-label>Search for a window</mat-label>
+    <input
+      #searchInput
+      type="text"
+      placeholder="Window name..."
+      aria-label="windowFinder"
+      matInput
+      [formControl]="formControl"
+      [matAutocomplete]="auto">
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      autoActiveFirstOption
+      [displayWith]="displayFunction"
+      (optionSelected)="closeFinderAndOpenWindow($event)">
+      <mat-option *ngFor="let option of viewOptions" [value]="option">
+        {{option.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>

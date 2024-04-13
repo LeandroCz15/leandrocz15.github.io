@@ -13,12 +13,10 @@ import { TabData } from '../../interfaces/tab-structure';
 export class PaginationComponent implements OnInit, OnDestroy {
 
   /********************** COMPONENT ATTRIBUTES **********************/
-  private previousFetchFirstId: string = "";
-  private currentFetchLastId: string = "";
-  private currentFetchFirstId: string = "";
-  private pageNumber: number = 1;
-  private changePageSubscription!: Subscription;
+  public lastId: string = "";
+  public firstId: string = "";
   public currentFetchSize: number = 50;
+  private changePageSubscription!: Subscription;
 
   /********************** INPUTS **********************/
   @Input() tabData!: TabData;
@@ -30,10 +28,8 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.changePageSubscription = this.pageChangeService.getPageChangeObservable().subscribe(() => {
-      this.previousFetchFirstId = "";
-      this.currentFetchLastId = "";
-      this.currentFetchFirstId = "";
-      this.pageNumber = 1;
+      this.lastId = "";
+      this.firstId = "";
     });
   }
 
@@ -41,43 +37,11 @@ export class PaginationComponent implements OnInit, OnDestroy {
     this.changePageSubscription.unsubscribe();
   }
 
-  getPreviousFetchFirstId(): string {
-    return this.previousFetchFirstId;
-  }
-
-  setPreviousFetchFirstId(previousFetchFirstId: string): void {
-    this.previousFetchFirstId = previousFetchFirstId;
-  }
-
-  getCurrentFetchFirstId(): string {
-    return this.currentFetchFirstId;
-  }
-
-  setCurrentFetchFirstId(currentFetchFirstId: string): void {
-    this.currentFetchFirstId = currentFetchFirstId;
-  }
-
-  getCurrentFetchLastId(): string {
-    return this.currentFetchLastId;
-  }
-
-  setCurrentFetchLastId(currentFetchLastId: string): void {
-    this.currentFetchLastId = currentFetchLastId;
-  }
-
   fetchNextPage(): void {
-    if (this.currentFetchLastId === "") {
-      return;
-    }
-    this.pageNumber++;
     this.doFetchSubject.next(PaginationEventType.FETCH_NEXT);
   }
 
   fetchPreviousPage(): void {
-    if (this.pageNumber == 1) {
-      return;
-    }
-    this.pageNumber--;
     this.doFetchSubject.next(PaginationEventType.FETCH_BACK);
   }
 
@@ -94,7 +58,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
       allRows: [],
       tabData: this.tabData
     }
-    const dialogRef = this.dialog.open(RowFormComponent, {
+    this.dialog.open(RowFormComponent, {
       data: dialogData,
       height: "80%",
       width: "80%"

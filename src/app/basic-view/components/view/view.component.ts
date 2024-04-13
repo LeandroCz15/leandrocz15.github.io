@@ -1,16 +1,17 @@
-import { Component,OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { GridComponent } from '../grid/grid.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { SelectPageService } from '../../services/select-page.service';
-import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
-import { indexArrayByProperty } from 'src/application-utils';
+import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, TABS_MODAL } from 'src/application-constants';
+import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
 import { TabData } from '../../interfaces/tab-structure'
 import { PaginationEventType } from '../pagination/pagination.component';
+import { ProcessExecutorService } from 'src/app/process/services/process-executor.service';
 
 @Component({
   selector: 'app-view',
@@ -20,7 +21,6 @@ import { PaginationEventType } from '../pagination/pagination.component';
 export class ViewComponent implements OnInit, OnDestroy {
 
   /********************** COMPONENT ATTRIBUTES **********************/
-  public viewId: string = "";
   public viewReady: boolean = false; // Boolean used to render the child components once the main fetch is done
   public mainTabData: TabData = {  // Details of the main tab
     contextMenuItems: [],
@@ -42,6 +42,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cazzeonService: CazzeonService,
+    private processExecutorService: ProcessExecutorService,
     private pageChangeService: SelectPageService,
     private dialog: MatDialog
   ) { }
@@ -49,8 +50,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageChangeSubscription = this.pageChangeService.getPageChangeObservable().subscribe(viewId => {
       this.viewReady = false;
-      this.viewId = viewId;
-      this.fetchMainTabInformation();
+      this.fetchMainTabData(viewId);
     });
   }
 
@@ -61,36 +61,30 @@ export class ViewComponent implements OnInit, OnDestroy {
   /**
    * Fetch information about the main tab of the current view
    */
-  fetchMainTabInformation() {
-    this.cazzeonService.request(`api/data/view?viewId=${this.viewId}`, HttpMethod.GET, async (response: Response) => {
-      this.processMainTabInformation(await response.json());
+  fetchMainTabData(viewId: string) {
+    this.cazzeonService.request(`api/data/view?viewId=${viewId}`, HttpMethod.GET, async (response: Response) => {
+      const jsonResponse: ServerResponse = await response.json();
+      this.mainTabData.tab = jsonResponse.body.mainTab;
+      this.constructMenuItems(jsonResponse.body);
+      this.constructFields(jsonResponse.body.mainTab.fields);
       this.viewReady = true;
     }, async (response: Response) => {
-      console.error(`Error while fetching data of the view with id: ${this.viewId}. Error: ${await response.text()}`);
-    }, (error: any) => {
-      console.error("Error while fetching main tab information");
+      const jsonResponse: ServerResponse = await response.json();
+      console.error(`Error while fetching data of the view: ${jsonResponse.message}`);
+    }, (error: TypeError) => {
+      console.error(`Error while initializing the view: ${error.message}`);
     });
   }
 
   /**
-   * This function process all the view data retrieved and sets the correspondent variables
-   * 
-   * @param data View data
-   */
-  processMainTabInformation(viewData: any) {
-    this.mainTabData.tab = viewData.mainTab;
-    this.constructMenuItems(viewData);
-    this.constructFieldsAndHeaders(viewData.mainTab.fields);
-  }
-
-  /**
+   * This function will construct the grid and form fields of the current view.
    * 
    * @param fields Properties of the entity to construct the header and form
    */
-  constructFieldsAndHeaders(fields: any[]): void {
+  constructFields(fields: any[]): void {
     const newGridFields: any[] = [];
     const newFormFields: any[] = [];
-    fields.forEach((field: any) => {
+    fields.forEach(field => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
       if (field.showInGrid) {
@@ -113,13 +107,13 @@ export class ViewComponent implements OnInit, OnDestroy {
     const viewComponent = this;
     this.mainTabData.contextMenuItems = [
       {
-        label: "Actions", imageSource: "bi-cpu", items: this.constructProcessItems(viewData.buttonAndProcess)
+        label: CONTEXT_MENU.actionsLabel, imageSource: CONTEXT_MENU.actionsIcon, items: this.constructProcessItems(viewData.buttonAndProcess)
       },
       {
-        label: "Tabs", imageSource: "bi-journals", items: this.constructTabItems(viewData.tabs)
+        label: CONTEXT_MENU.tabsLabel, imageSource: CONTEXT_MENU.tabsIcon, items: this.constructTabItems(viewData.tabs)
       },
       {
-        label: "Delete", imageSource: "bi-trash", clickFn(row, item) {
+        label: CONTEXT_MENU.deleteLabel, imageSource: CONTEXT_MENU.deleteIcon, clickFn(row, item) {
           deleteFunction(viewComponent, [row]);
         }
       }
@@ -127,47 +121,15 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Open the selected tab
-   * @param row Row from which the click was fired
-   * @param item Selected item representing a tab
-   */
-  openTab(row: any, item: ContextMenuItem): void {
-    this.dialog.open(TabComponent, {
-      data: { clickedRow: row, tab: item.tab },
-      height: "80%",
-      width: "80%"
-    });
-  }
-
-  /**
-   * Construct the items in the context menu that will contain
-   * all the tabs
-   * @param items Object to construct the ContextMenuItem array
-   * @returns Array of ContextMenuItem representing tabs
-   */
-  constructTabItems(items: any[]): ContextMenuItem[] {
-    const openTabFuncntion = this.openTab.bind(this);
-    return items.map(function (obj) {
-      return {
-        label: obj.name,
-        imageSource: obj.iconSource,
-        clickFn(row: any, item: ContextMenuItem) {
-          openTabFuncntion(row, item);
-        },
-        tab: obj
-      }
-    });
-  }
-
-  /**
    * Construct the items in the context menu that will contain
    * all the processes
+   * 
    * @param items Object to construct the ContextMenuItem array
    * @returns Array of ContextMenuItem representing processes
    */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
-    return items.map(function (obj) {
+    const executeProcessFunction = this.processExecutorService.executeProcess.bind(this.cazzeonService);
+    return items.map(obj => {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
@@ -176,6 +138,41 @@ export class ViewComponent implements OnInit, OnDestroy {
           executeProcessFunction(row, item);
         },
       }
+    });
+  }
+
+  /**
+   * Construct the items in the context menu that will contain
+   * all the tabs
+   * 
+   * @param items Object to construct the ContextMenuItem array
+   * @returns Array of ContextMenuItem representing tabs
+   */
+  constructTabItems(items: any[]): ContextMenuItem[] {
+    const openTabFunction = this.openTab.bind(this);
+    return items.map(obj => {
+      return {
+        label: obj.name,
+        imageSource: obj.iconSource,
+        clickFn(row: any, item: ContextMenuItem) {
+          openTabFunction(row, item);
+        },
+        tab: obj
+      }
+    });
+  }
+
+  /**
+   * Open the selected tab
+   * 
+   * @param row Row from which the click was fired
+   * @param item Selected item representing a tab
+   */
+  openTab(row: any, item: ContextMenuItem): void {
+    this.dialog.open(TabComponent, {
+      data: { clickedRow: row, tab: item.tab },
+      height: TABS_MODAL.defaultHeight,
+      width: TABS_MODAL.defaultWidth
     });
   }
 

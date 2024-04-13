@@ -1,20 +1,32 @@
 import { Injectable } from "@angular/core";
-import { HttpMethod, LoginStatus, SERVER_URL } from "src/application-constants";
+import { HttpMethod, LoginStatus, SNACKBAR } from "src/application-constants";
 import { ViewComponent } from "../basic-view/components/view/view.component";
 import { ContextMenuItem } from "../basic-view/components/context-menu/context-menu.component";
 import { Observable, Subject } from "rxjs";
 import { GridComponent } from "../basic-view/components/grid/grid.component";
-import { PaginationComponent } from "../basic-view/components/pagination/pagination.component";
+import { getServerUrl } from "src/application-utils";
+import { SnackbarComponent } from "../basic-view/components/snackbar/snackbar.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 const JWT_TOKEN = "jwtToken";
-const CSRF_TOKEN = "csrfToken";
 
 @Injectable({
   providedIn: "root",
 })
 export class CazzeonService {
 
-  public loginSubject: Subject<LoginStatus> = new Subject();
+  private loginSubject: Subject<LoginStatus> = new Subject();
+
+  constructor(private snackBar: MatSnackBar) { }
+
+  login(): void {
+    this.loginSubject.next(LoginStatus.LOGIN);
+  }
+
+  logout(): void {
+    this.loginSubject.next(LoginStatus.LOGOUT);
+    this.clearTokens();
+  }
 
   getLoginSubjectAsObservable(): Observable<LoginStatus> {
     return this.loginSubject.asObservable();
@@ -28,17 +40,8 @@ export class CazzeonService {
     sessionStorage.setItem(JWT_TOKEN, value);
   }
 
-  getCsrfToken(): string {
-    return sessionStorage.getItem(CSRF_TOKEN) || "";
-  }
-
-  setCsrfToken(value: string): void {
-    sessionStorage.setItem(CSRF_TOKEN, value);
-  }
-
   clearTokens(): void {
     sessionStorage.removeItem(JWT_TOKEN);
-    sessionStorage.removeItem(CSRF_TOKEN);
   }
 
   /**
@@ -55,10 +58,10 @@ export class CazzeonService {
     method: HttpMethod,
     successResponseFunction: (response: Response) => void,
     errorResponseFunction: (response: Response) => void,
-    timeOutFunction: (error: any) => void,
+    timeOutFunction: (error: TypeError) => void,
     requestBody?: any,
   ): void {
-    fetch(`${SERVER_URL}${urlSufix}`, {
+    fetch(`${getServerUrl()}${urlSufix}`, {
       method: method,
       headers: {
         "Authorization": `Bearer ${btoa(this.getJwtToken())}`,
@@ -122,22 +125,6 @@ export class CazzeonService {
         console.error(`Timeout while deleting rows of of the entity: ${viewComponent.gridComponent.tabData.tab.entityName}`);
       },
       JSON.stringify({ data: dataArrayToDelete }));
-  }
-
-  /**
-   * Send a request to the backend to execute a cazzeon process
-   * 
-   * @param row Row to execute the process
-   * @param item Item clicked
-   */
-  executeProcess(row: any, item: ContextMenuItem): void {
-    this.request(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
-    }, async (response: Response) => {
-      const errorResponse = await response.json();
-      console.error(`Error while calling process: ${item.javaClass}. Error: ${await errorResponse.message}`);
-    }, (response: Response) => {
-      console.error(`Timeout while calling process: ${item.javaClass}`);
-    }, JSON.stringify({ item: item, row: row }));
   }
 
 }

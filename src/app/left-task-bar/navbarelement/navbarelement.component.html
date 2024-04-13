@@ -1,4 +1,4 @@
-<button (click)="changePageCall()" type="button" class="navbar-button mb-1 text-white w-100"
+<button (click)="pageChangeService.sendPageChange(viewIdReference)" type="button" class="navbar-button mb-1 text-white w-100"
     [ngStyle]="{'background-color': selected ? '#0d6efd' : '#212529'}">
     <div class="float-start">
         <img *ngIf="imagePath | iconSrcResolver ; else elseBlock" [src]="imagePath" width="25px">

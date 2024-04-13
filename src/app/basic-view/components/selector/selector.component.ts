@@ -4,6 +4,7 @@ import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged }
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MyErrorStateMatcher, RowFormComponent } from '../row-form/row-form.component';
 import { HttpMethod } from 'src/application-constants';
+import { Type } from '@angular/compiler';
 
 @Component({
   selector: 'app-selector',
@@ -23,8 +24,6 @@ export class SelectorComponent implements OnInit, OnDestroy {
   @Input() programmaticUpdate!: Subject<boolean>;
 
   @Input() matcher!: MyErrorStateMatcher;
-
-  @ViewChild("input") inputElement!: ElementRef;
 
   private programmaticUpdateSubscription!: Subscription;
 
@@ -57,7 +56,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
   }
 
   showProperty(value: any) {
-    return value?.name || "";
+    return value?.identifier || "";
   }
 
   clickInOption(value: string): void {
@@ -69,14 +68,15 @@ export class SelectorComponent implements OnInit, OnDestroy {
     if (value?.id === this.lastOptionIdClicked) {
       return;
     }
-    const url = `api/data/selector?entityFrom=${this.rowFormComponent.data.tabData.tab.entityName}&hqlSelectorEntity=${this.filter.hqlProperty}&value=${value}`
-    this.cazzeonService.request(url, HttpMethod.GET, async (response: Response) => {
+    const url: string = `api/data/selector?entityFrom=${this.rowFormComponent.data.tabData.tab.entityName}`;
+    const selectorDetails: any = { rowFromId: this.rowFormComponent.data.currentRow.id, fieldOfSelector: this.filter, value: value };
+    this.cazzeonService.request(url, HttpMethod.POST, async (response: Response) => {
       this.resultSet = await response.json();
     }, async (response: Response) => {
-      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tab.entityName}. Error: ${await response.text()}`);
-    }, (error: any) => {
-      console.error(`Error while fetching data for the selector: ${this.rowFormComponent.data.tabData.tab.entityName}. Timeout`);
-    });
+      console.error(`Error while fetching data for the selector ${this.rowFormComponent.data.tabData.tab.entityName}: ${await response.text()}`);
+    }, (error: TypeError) => {
+      console.error(`Error while fetching data for the selector ${this.rowFormComponent.data.tabData.tab.entityName}: ${error.message}`);
+    }, JSON.stringify(selectorDetails));
   }
 
 }

@@ -4,11 +4,13 @@ import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuil
 import { GenerateIdForFormPipe } from '../../pipes/generate-id-for-form.pipe';
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { CAZZEON_DATE_FORMAT, DataType, HttpMethod } from 'src/application-constants';
+import { CAZZEON_DATE_FORMAT, DataType, HttpMethod, SNACKBAR } from 'src/application-constants';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
+import { ServerResponse, isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
 import { TabData } from '../../interfaces/tab-structure';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 export interface DialogData {
   currentRow: any,
@@ -45,6 +47,7 @@ export class RowFormComponent {
 
   constructor(
     private cazzeonService: CazzeonService,
+    private snackBar: MatSnackBar,
     private formBuilder: NonNullableFormBuilder,
     private getIdForFormPipe: GenerateIdForFormPipe,
     private dialogRef: MatDialogRef<RowFormComponent>,
@@ -138,15 +141,25 @@ export class RowFormComponent {
     this.formReady = false;
     const parentObject = { id: this.data.tabData.clickedRow?.id, hqlConnectionProperty: this.data.tabData.tab.hqlConnectionProperty };
     this.cazzeonService.request(`api/entity/store/${this.data.tabData.tab.entityName}`, HttpMethod.POST, async (response: Response) => {
-      const jsonResponse: any = await response.json();
-      this.updateRowAndFormWithBackendResponse(jsonResponse);
+      const jsonResponse: ServerResponse = await response.json();
+      // Update the row with the values from backend
+      this.updateRowAndFormWithBackendResponse(jsonResponse.body);
       this.formReady = true;
+      this.snackBar.openFromComponent(SnackbarComponent, {
+        duration: SNACKBAR.defaultSuccessDuration,
+        data: jsonResponse
+      });
     }, async (response: Response) => {
       this.formReady = true;
-      console.error(`Error while storing entity: ${this.data.tabData.tab.entityName}. Error: ${await response.text()}`);
-    }, (error: any) => {
+      const jsonResponse: ServerResponse = await response.json();
+      this.snackBar.openFromComponent(SnackbarComponent, {
+        duration: SNACKBAR.defaultErrorDuration,
+        data: jsonResponse
+      });
+      console.error(`Error while storing entity ${this.data.tabData.tab.entityName}: ${jsonResponse.message}`);
+    }, (error: TypeError) => {
       this.formReady = true;
-      console.error(`Timeout while storing entity: ${this.data.tabData.tab.entitynName}`);
+      console.error(`Unexpected error while sending request to save entity ${this.data.tabData.tab.entityName}: ${error.message}`);
     },
       JSON.stringify({ entity: this.buildObjectToSend(), parent: parentObject }));
   }
@@ -246,7 +259,7 @@ export class RowFormComponent {
     return baseRow;
   }
 
-  get form() {
+  get form(): FormGroup<{}> {
     return this.profileForm;
   }
 

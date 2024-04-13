@@ -60,6 +60,7 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Handle logic on mouse enter for the current item
+   * 
    * @param menuItem Menu item being hovered
    * @param event Mouse event
    * @param index Index of the item being hovered
@@ -70,13 +71,15 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
         top: this.data.top + (event.currentTarget! as any).parentElement.clientHeight * index,
         left: this.data.left + this.DEFAULT_MENU_WIDTH,
         rowClicked: this.data.rowClicked,
-        items: menuItem.items };
+        items: menuItem.items
+      };
       this.childContextMenuOpenedReference = this.contextMenuService.createContextMenu(data, this.selfContextMenuReference);
     }
   }
 
   /**
    * Handle logic on mouse leave for the current item
+   * 
    * @param event Mouse event
    */
   onItemHoverLeave(event: MouseEvent): void {
@@ -99,6 +102,7 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 
   /**
    * This function returns the first child context menu of the main context menu
+   * 
    * @param startContextMenu Context menu from which start to go up
    * @returns The first context menu sub-folder of the main context menu
    */

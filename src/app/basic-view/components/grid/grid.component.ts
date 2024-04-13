@@ -1,10 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
+import { HQL_PROPERTY, HttpMethod, SNACKBAR } from 'src/application-constants';
 import { PaginationComponent, PaginationEventType } from '../pagination/pagination.component';
 import { TabData } from '../../interfaces/tab-structure';
-import { indexArrayByProperty } from 'src/application-utils';
+import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-grid',
@@ -30,7 +31,7 @@ export class GridComponent implements OnInit, OnDestroy {
   private reloadViewSubscription!: Subscription;
   private doFetchSubscription!: Subscription;
 
-  constructor(private cazzeonService: CazzeonService) { }
+  constructor(private cazzeonService: CazzeonService, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.tabData.gridFields, HQL_PROPERTY);
@@ -52,7 +53,16 @@ export class GridComponent implements OnInit, OnDestroy {
   doFirstFetch(): void {
     const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
     const parentConnector: any = this.tabData.clickedRow ? { parentId: this.tabData.clickedRow.id, parentConnectorProperty: this.tabData.tab.hqlConnectionProperty } : undefined;
-    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), this.timeoutFetch.bind(this), JSON.stringify({ parentConnector: parentConnector }));
+    this.cazzeonService.request(url,
+      HttpMethod.POST,
+      async (response: Response) => {
+        const jsonResponse: ServerResponse = await response.json();
+        this.rows = jsonResponse.body;
+        this.updateCurrentFetchValues();
+      },
+      this.errorFetch.bind(this),
+      this.timeoutFetch.bind(this),
+      JSON.stringify({ filters: this.tabData.gridFields, parentConnector: parentConnector }));
   }
 
   /**
@@ -62,7 +72,7 @@ export class GridComponent implements OnInit, OnDestroy {
    * 
    * @param paginationAction Action to do (FETCH NEXT, BACK OR RELOAD)
   */
-  doFetch(paginationAction: PaginationEventType): void {
+  doFetch(paginationEvent: PaginationEventType): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
     const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
     const parentConnector: any = this.tabData.clickedRow ? {
@@ -70,25 +80,25 @@ export class GridComponent implements OnInit, OnDestroy {
       parentConnectorProperty: this.tabData.tab.hqlConnectionProperty
     } : undefined;
     const paginationData: any = {
-      action: paginationAction,
-      previousFetchFirstId: this.paginationComponent.getPreviousFetchFirstId(),
-      currentFetchFirstId: this.paginationComponent.getCurrentFetchFirstId(),
-      currentFetchLastId: this.paginationComponent.getCurrentFetchLastId(),
+      action: paginationEvent,
+      firstId: this.paginationComponent.firstId,
+      lastId: this.paginationComponent.lastId,
     };
-    const body: any = { filters: this.tabData.gridFields, parentConnector: parentConnector, paginationData: paginationData };
-    this.cazzeonService.request(url, HttpMethod.POST, this.successFetch.bind(this), this.errorFetch.bind(this), this.timeoutFetch.bind(this),
-      JSON.stringify(body));
-  }
-
-  /**
-   * Executed when the response is OK
-   * 
-   * @param response Response of the request
-   */
-  async successFetch(response: Response): Promise<void> {
-    this.rows = await response.json();
-    this.updateLastFetchValues();
-    this.updateCurrentFetchValues();
+    this.cazzeonService.request(url,
+      HttpMethod.POST,
+      async (response: Response) => {
+        const jsonResponse: ServerResponse = await response.json();
+        if (jsonResponse.body.length === 0 && paginationEvent !== PaginationEventType.RELOAD) {
+          // NOT RESULTS WHILE FETCHING NEXT OR BACK. JUST SHOW SNACKBAR
+          this.snackBar.openFromComponent(SimpleSnackbar, { duration: SNACKBAR.defaultSuccessDuration * 20 });
+          return;
+        }
+        this.rows = jsonResponse.body;
+        this.updateCurrentFetchValues();
+      },
+      this.errorFetch.bind(this),
+      this.timeoutFetch.bind(this),
+      JSON.stringify({ filters: this.tabData.gridFields, parentConnector: parentConnector, paginationData: paginationData }));
   }
 
   /**
@@ -97,10 +107,10 @@ export class GridComponent implements OnInit, OnDestroy {
    * @param response Response of the request
    */
   async errorFetch(response: Response): Promise<void> {
-    console.error(await response.text())
     this.rows.splice(0);
-    this.updateLastFetchValues();
     this.updateCurrentFetchValues();
+    const jsonResponse: ServerResponse = await response.json();
+    console.error(`The fetch for data of the entity ${this.tabData.tab.entityName} went wrong: ${jsonResponse.message}`);
   }
 
   /**
@@ -108,30 +118,16 @@ export class GridComponent implements OnInit, OnDestroy {
    * 
    * @param error 
    */
-  timeoutFetch(error: any): void {
-    console.error("Timeout while fetching data");
-  }
-
-  // Update last row id of last fetch in the PaginationComponent
-  updateLastFetchValues(): void {
-    this.paginationComponent.setPreviousFetchFirstId(this.paginationComponent.getCurrentFetchFirstId());
+  timeoutFetch(error: TypeError): void {
+    console.error(`Unexpected error while fetching data: ${error.message}`);
   }
 
   // Update current fetch values of the pagination component
   updateCurrentFetchValues(): void {
-    if (this.rows.length <= 0) {
-      this.paginationComponent.setCurrentFetchFirstId("");
-      this.paginationComponent.setCurrentFetchLastId("");
-      return;
-    }
-    const firstRow = this.rows.at(0);
-    const lastRow = this.rows.at(this.rows.length - 1);
-    if (!firstRow.id || !lastRow.id) {
-      console.error("The current fetch did not retrieve rows with an id. Pagination component will not work properly!");
-    } else {
-      this.paginationComponent.setCurrentFetchFirstId(firstRow.id);
-      this.paginationComponent.setCurrentFetchLastId(lastRow.id);
-    }
+    const firstRowId = this.rows.at(0)?.id;
+    const lastRowId = this.rows.at(this.rows.length - 1)?.id;
+    this.paginationComponent.firstId = firstRowId;
+    this.paginationComponent.lastId = lastRowId;
   }
 
   // Forces angular to re-draw the view. This is needed when a column swamp places with another in the headers
@@ -145,4 +141,27 @@ export class GridComponent implements OnInit, OnDestroy {
     return index;
   }
 
+}
+
+@Component({
+  selector: 'simple-snackbar',
+  template: `
+    <span class="w-100 d-flex justify-content-center align-items-center fw-bold simple-snackbar" matSnackBarLabel>{{message}}</span>
+  `,
+  styles: [
+    `
+    :host {
+      display: flex;
+    }
+
+    .simple-snackbar {
+      color: rgb(101, 216, 101);
+    }
+  `,
+  ],
+  standalone: true,
+  imports: [MatSnackBarModule],
+})
+export class SimpleSnackbar {
+  public message: String = SNACKBAR.defaultNoMoreDataMessage;
 }

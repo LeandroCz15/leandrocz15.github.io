@@ -1,0 +1,5 @@
+.view-finder {
+    top: 50%;
+    position: absolute;
+    z-index: 1021;
+}

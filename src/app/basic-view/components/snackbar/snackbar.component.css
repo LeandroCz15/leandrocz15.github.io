@@ -1,0 +1,15 @@
+.snackbar-container {
+    z-index: 1022;
+}
+
+.snackbar-ok {
+    color: rgb(101, 216, 101);
+}
+
+.snackbar-error {
+    color: hotpink;
+}
+
+.error-btn:hover {
+    border-color: hotpink;
+}
