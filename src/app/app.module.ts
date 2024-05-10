@@ -7,10 +7,12 @@ import { BasicViewModule } from './basic-view/basic-view.module';
 import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
 import { TopNavbarModule } from './top-navbar/top-navbar.module';
 import { CazzeonService } from './cazzeon-service/cazzeon-service';
+import { DatePickerComponent } from './general-components/date-picker/date-picker.component';
 
 @NgModule({
   declarations: [
-    AppComponent,  
+    AppComponent,
+    DatePickerComponent,  
   ],
   imports: [
     BrowserModule,

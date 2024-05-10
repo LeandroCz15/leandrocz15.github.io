@@ -17,7 +17,7 @@ import { GenerateIdForFormPipe } from './pipes/generate-id-for-form.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { SelectorComponent } from './components/selector/selector.component';
+import { SelectorComponent } from '../general-components/selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
 import { RowComponent } from './components/row/row.component';
@@ -38,7 +38,6 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
     ShouldShowPipe,
     RowFormComponent,
     GenerateIdForFormPipe,
-    SelectorComponent,
     DisplayEmptyValuePipe,
     RowComponent,
     ContextMenuComponent,
@@ -62,13 +61,13 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
     NgbModule,
     MatAutocompleteModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SelectorComponent
   ],
   exports: [
     ViewComponent,
     ViewFinderComponent,
     IconSrcResolverPipe,
-    SelectorComponent
   ],
   providers: [
     GenerateIdForFormPipe,

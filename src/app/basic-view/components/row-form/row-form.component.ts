@@ -18,7 +18,7 @@ export interface DialogData {
   allRows: any[]
 }
 
-export class MyErrorStateMatcher implements ErrorStateMatcher {
+class DateErrorMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return !!(control && control.invalid);
   }
@@ -38,8 +38,8 @@ const CURRENT_DATE = "CURRENT_DATE";
 export class RowFormComponent {
 
   /********************** COMPONENT ATTRIBUTES **********************/
-  public formReady: boolean = false; // Boolean to render the modal 
-  public matcher: MyErrorStateMatcher; // Variable to store the matcher that will control the errors in the angular-material inputs (date, selector)
+  public formReady: boolean = false; // Boolean to render the modal
+  public dateMatcher: DateErrorMatcher = new DateErrorMatcher();
   private profileForm: FormGroup<{}>; // Form profile
 
   /********************** SUBJECTS **********************/
@@ -53,7 +53,6 @@ export class RowFormComponent {
     private dialogRef: MatDialogRef<RowFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
-    this.matcher = new MyErrorStateMatcher();
     this.profileForm = this.formBuilder.group(this.buildGroup());
     this.updateModal(this.data.currentRow);
     this.formReady = true;

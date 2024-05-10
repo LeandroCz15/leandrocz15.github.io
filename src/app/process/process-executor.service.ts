@@ -8,8 +8,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SelectorComponent } from '../basic-view/components/selector/selector.component';
+import { SelectorComponent } from '../general-components/selector/selector.component';
 import { BasicViewModule } from '../basic-view/basic-view.module';
+import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 export interface ProcessData {
   javaClass: string,
@@ -77,14 +80,17 @@ export class ProcessExecutorService {
     <mat-dialog-content class="h-75">
       <div class="rounded overflow-auto p-3">
         <form [formGroup]="processForm">
-        <ng-container *ngFor="let filter of data.tabData.formFields; let i = index ; trackBy: trackByFn">
+        <ng-container *ngFor="let processParameter of data.processData.buttonParameters; let i = index ; trackBy: trackByFn">
             <!--Workaround to store a value-->
-            <ng-container [ngSwitch]="filter.type" *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
+            <ng-container [ngSwitch]="processParameter.type" *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
                 <label [for]="idForInput" class="form-label">{{filter.name}}</label>
                 <!--Selector case-->
-                <app-selector *ngSwitchCase="'selector'" [formInput]="form" [formName]="idForInput"
-                    [rowFormComponent]="this" [programmaticUpdate]="programmaticUpdate" [filter]="filter"
-                    [matcher]="matcher">
+                <app-selector *ngSwitchCase="'selector'"
+                  [formGroup]="processForm"
+                  [formName]="idForInput"
+                  [programmaticUpdate]="programmaticUpdate"
+                  [entityToSearch]="data.processData.javaClass"
+                  [hqlPropertyOfEntity]="processParameter.hqlProperty">
                 </app-selector>
                 <!--Text case-->
                 <input *ngSwitchCase="'text'" type="text" [id]=idForInput [formControlName]="idForInput"
@@ -131,13 +137,21 @@ export class ProcessExecutorService {
     </mat-dialog-actions>
   `,
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, ReactiveFormsModule, CommonModule, BasicViewModule],
+  imports: [
+    MatDialogModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    CommonModule,
+    BasicViewModule,
+    MatDatepickerModule,
+    MatInputModule
+  ]
 })
 export class ProcessPopup {
 
   public processForm: FormGroup;
 
-  constructor(@Inject(MAT_DIALOG_DATA) private data: any) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.processForm = data.processForm;
   }
 
