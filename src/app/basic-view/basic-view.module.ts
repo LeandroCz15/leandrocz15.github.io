@@ -29,7 +29,6 @@ import { ViewFinderComponent } from './components/view-finder/view-finder.compon
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
-
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -68,7 +67,8 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
   exports: [
     ViewComponent,
     ViewFinderComponent,
-    IconSrcResolverPipe
+    IconSrcResolverPipe,
+    SelectorComponent
   ],
   providers: [
     GenerateIdForFormPipe,

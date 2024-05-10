@@ -127,28 +127,4 @@ export class CazzeonService {
       JSON.stringify({ data: dataArrayToDelete }));
   }
 
-  /**
-   * Send a request to the backend to execute a cazzeon process
-   * 
-   * @param rows Rows to execute the process
-   * @param item Item clicked
-   */
-  executeProcess(rows: any[], item: ContextMenuItem): void {
-    this.request(`api/execute/${item.javaClass}`, HttpMethod.POST, async (response: Response) => {
-      const jsonResponse = await response.json();
-      this.snackBar.openFromComponent(SnackbarComponent, {
-        duration: SNACKBAR.defaultSuccessDuration,
-        data: jsonResponse as ServerResponse
-      });
-    }, async (response: Response) => {
-      const jsonResponse = await response.json();
-      this.snackBar.openFromComponent(SnackbarComponent, {
-        duration: SNACKBAR.defaultErrorDuration,
-        data: jsonResponse as ServerResponse
-      });
-    }, (error: TypeError) => {
-      console.error(`Unexpected error: ${error.message}`);
-    }, JSON.stringify({ item: item, rows: rows }));
-  }
-
 }

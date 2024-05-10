@@ -9,6 +9,7 @@ import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, TABS_MODAL } from 'src/applicat
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { PaginationEventType } from '../pagination/pagination.component';
+import { ProcessExecutorService } from 'src/app/process/process-executor.service';
 
 @Component({
   selector: 'app-tab',
@@ -37,6 +38,7 @@ export class TabComponent implements OnInit {
 
   constructor(
     private cazzeonService: CazzeonService,
+    private processExecutorService: ProcessExecutorService,
     @Inject(MAT_DIALOG_DATA) public data: TabData,
     private dialog: MatDialog
   ) { }
@@ -102,14 +104,14 @@ export class TabComponent implements OnInit {
     * @returns Array of ContextMenuItem representing processes
   */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
+    const executeProcessFunction = this.processExecutorService.callProcess.bind(this.processExecutorService);
     return items.map(obj => {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
         javaClass: obj.javaClass,
         clickFn(row: any, item: ContextMenuItem) {
-          executeProcessFunction(row, item);
+          executeProcessFunction(row, { javaClass: item.javaClass!, buttonParameters: obj.buttonParameters });
         },
       }
     });

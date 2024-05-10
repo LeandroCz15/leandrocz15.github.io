@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
 import { TabData } from '../../interfaces/tab-structure'
 import { PaginationEventType } from '../pagination/pagination.component';
+import { ProcessExecutorService } from 'src/app/process/process-executor.service';
 
 @Component({
   selector: 'app-view',
@@ -42,6 +43,7 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cazzeonService: CazzeonService,
+    private processExecutorService: ProcessExecutorService,
     private pageChangeService: SelectPageService,
     private dialog: MatDialog
   ) { }
@@ -128,14 +130,15 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @returns Array of ContextMenuItem representing processes
    */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.cazzeonService.executeProcess.bind(this.cazzeonService);
+    const executeProcessFunction = this.processExecutorService.callProcess.bind(this.processExecutorService);
     return items.map(obj => {
       return {
         label: obj.name,
         imageSource: obj.iconSource,
         javaClass: obj.javaClass,
+        buttonParameters: obj.buttonParameters,
         clickFn(row: any, item: ContextMenuItem) {
-          executeProcessFunction(row, item);
+          executeProcessFunction(row, { javaClass: item.javaClass!, buttonParameters: obj.buttonParameters });
         },
       }
     });

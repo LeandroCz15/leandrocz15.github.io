@@ -51,7 +51,7 @@ export class GridComponent implements OnInit, OnDestroy {
    * This first fetch doesn't have any filters at the moment
    */
   doFirstFetch(): void {
-    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?mainTabId=${this.tabData.tab.id}`;
+    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}`;
     const parentConnector: any = this.tabData.clickedRow ? { parentId: this.tabData.clickedRow.id, parentConnectorProperty: this.tabData.tab.hqlConnectionProperty } : undefined;
     this.cazzeonService.request(url,
       HttpMethod.POST,
@@ -74,7 +74,7 @@ export class GridComponent implements OnInit, OnDestroy {
   */
   doFetch(paginationEvent: PaginationEventType): void {
     const fetchSize: number = this.paginationComponent.currentFetchSize;
-    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}&mainTabId=${this.tabData.tab.id}`;
+    const url: string = `api/entity/retrieve/${this.tabData.tab.entityName}?limit=${fetchSize}`;
     const parentConnector: any = this.tabData.clickedRow ? {
       parentId: this.tabData.clickedRow.id,
       parentConnectorProperty: this.tabData.tab.hqlConnectionProperty

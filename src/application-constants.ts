@@ -22,6 +22,14 @@ export const TABS_MODAL = {
 }
 
 /**
+ * Configuration object of the process modal
+ */
+export const PROCESS_MODAL = {
+    defaultHeight: "80%",
+    defaultWidth: "80%"
+}
+
+/**
  * Configuration object of the modal with the information about the stacktrace error. 
  * 
  * This modal is opened when the user clicks the button of the snackbar in case of error while saving, updating or deleting an entity
