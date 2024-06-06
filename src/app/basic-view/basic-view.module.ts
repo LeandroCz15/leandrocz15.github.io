@@ -17,7 +17,7 @@ import { GenerateIdForFormPipe } from './pipes/generate-id-for-form.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { SelectorComponent } from '../general-components/selector/selector.component';
+import { SelectorComponent } from '../form-components/selector/selector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DisplayEmptyValuePipe } from './pipes/display-empty-value.pipe';
 import { RowComponent } from './components/row/row.component';
@@ -28,6 +28,7 @@ import { TabComponent } from './components/tab/tab.component';
 import { ViewFinderComponent } from './components/view-finder/view-finder.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { DatePickerComponent } from '../form-components/date-picker/date-picker.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
     MatAutocompleteModule,
     MatDialogModule,
     MatSnackBarModule,
-    SelectorComponent
+    SelectorComponent,
+    DatePickerComponent
   ],
   exports: [
     ViewComponent,

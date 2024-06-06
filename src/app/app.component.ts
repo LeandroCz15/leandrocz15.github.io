@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CazzeonService } from './cazzeon-service/cazzeon-service';
 import { Subscription } from 'rxjs';
-import { HttpMethod, LoginStatus } from 'src/application-constants';
+import { LoginStatus } from 'src/application-constants';
 
 @Component({
   selector: 'app-root',

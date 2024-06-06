@@ -1,11 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { HQL_PROPERTY, HttpMethod, SNACKBAR } from 'src/application-constants';
 import { PaginationComponent, PaginationEventType } from '../pagination/pagination.component';
 import { TabData } from '../../interfaces/tab-structure';
 import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
-import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-grid',

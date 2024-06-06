@@ -1,0 +1,7 @@
+<div [formGroup]="formGroup">
+    <input
+        type="text"
+        class="form-control"
+        [formControl]="formControl"
+        [ngClass]="{'is-invalid': formControl.errors}">
+</div>

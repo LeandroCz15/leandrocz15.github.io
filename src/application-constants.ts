@@ -1,19 +1,4 @@
 /**
- * Date format of the application. This object serves for displaying the date in the date pickers of angualar material
- */
-export const CAZZEON_DATE_FORMAT = {
-    parse: {
-        dateInput: 'YYYY-MM-DD',
-    },
-    display: {
-        dateInput: 'YYYY-MM-DD',
-        monthYearLabel: 'MMM YYYY',
-        dateA11yLabel: 'LL',
-        monthYearA11yLabel: 'MMMM YYYY',
-    },
-}
-
-/**
  * Configuration object of the tabs modal
  */
 export const TABS_MODAL = {
@@ -77,17 +62,6 @@ export enum HttpMethod {
     PUT = "PUT",
     PATCH = "PATCH",
     DELETE = "DELETE"
-}
-
-export enum DataType {
-    TEXT = "text",
-    LARGE_TEXT = "lg-text",
-    CHECKBOX = "checkbox",
-    NATURAL = "natural",
-    INTEGER = "integer",
-    DECIMAL = "decimal",
-    DATE = "date",
-    SELECTOR = "selector",
 }
 
 export enum LoginStatus {

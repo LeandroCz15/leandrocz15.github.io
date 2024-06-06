@@ -8,14 +8,6 @@ export const indexArrayByProperty = function (array: any[], property: string): a
 }
 
 /**
- * Validator to check if the control value is an object
- * @param control Form control
- */
-export function isObjectValidator(control: FormControl): any {
-    return typeof control.value === "object" || control.value === null ? null : { "notObject": true };
-}
-
-/**
  * Validator to check if a string value is blank
  * @param control Form control
  */

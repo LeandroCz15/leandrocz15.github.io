@@ -1,0 +1,9 @@
+<div [formGroup]="formGroup">
+    <input
+        type="number"
+        step="1"
+        min="0"
+        class="form-control"
+        [formControl]="formControl"
+        [ngClass]="{'is-invalid': formControl.errors}">
+</div>

@@ -2,15 +2,16 @@ import { Component, Inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { GenerateIdForFormPipe } from '../../pipes/generate-id-for-form.pipe';
-import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { CAZZEON_DATE_FORMAT, DataType, HttpMethod, SNACKBAR } from 'src/application-constants';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ServerResponse, isObjectValidator, noWhitespaceValidator } from 'src/application-utils';
+import { ServerResponse, noWhitespaceValidator } from 'src/application-utils';
 import { TabData } from '../../interfaces/tab-structure';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
+import { HttpMethod, SNACKBAR } from 'src/application-constants';
+import { DataType } from 'src/app/form-components/cazzeon-form-builder/cazzeon-form-builder.service';
+import { isObjectValidator } from 'src/app/form-components/selector/selector.component';
 
 export interface DialogData {
   currentRow: any,
@@ -29,11 +30,7 @@ const CURRENT_DATE = "CURRENT_DATE";
 @Component({
   selector: 'app-row-form',
   templateUrl: './row-form.component.html',
-  styleUrls: ['./row-form.component.css'],
-  providers: [
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: CAZZEON_DATE_FORMAT }
-  ]
+  styleUrls: ['./row-form.component.css']
 })
 export class RowFormComponent {
 
@@ -124,7 +121,7 @@ export class RowFormComponent {
       case DataType.DATE:
         return filter.isMandatory ? [Validators.required] : [];
       case DataType.SELECTOR:
-        return filter.isMandatory ? [Validators.required, isObjectValidator] : [isObjectValidator];
+        return filter.isMandatory ? [Validators.required, isObjectValidator()] : [isObjectValidator()];
       default:
         return [];
     }

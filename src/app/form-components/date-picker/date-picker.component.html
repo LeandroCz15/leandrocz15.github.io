@@ -1,7 +1,10 @@
 <div class="d-flex flex-column">
-    <mat-form-field>
+    <mat-form-field [formGroup]="formGroup">
         <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepicker]="picker" [id]="idForInput" [formControlName]="idForInput"
+        <input 
+            matInput
+            [matDatepicker]="picker"
+            [formControl]="formControl"
             [errorStateMatcher]="matcher">
         <mat-hint>YYYY/MM/DD</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>

@@ -1,11 +1,9 @@
 import { Injectable } from "@angular/core";
-import { HttpMethod, LoginStatus, SNACKBAR } from "src/application-constants";
+import { HttpMethod, LoginStatus } from "src/application-constants";
 import { ViewComponent } from "../basic-view/components/view/view.component";
-import { ContextMenuItem } from "../basic-view/components/context-menu/context-menu.component";
 import { Observable, Subject } from "rxjs";
 import { GridComponent } from "../basic-view/components/grid/grid.component";
-import { ServerResponse, getServerUrl } from "src/application-utils";
-import { SnackbarComponent } from "../basic-view/components/snackbar/snackbar.component";
+import { getServerUrl } from "src/application-utils";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 const JWT_TOKEN = "jwtToken";
