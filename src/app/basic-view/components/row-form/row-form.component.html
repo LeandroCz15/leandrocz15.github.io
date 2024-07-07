@@ -2,6 +2,7 @@
     <form [formGroup]="form">
         <ng-container *ngFor="let filter of data.tabData.formFields; let i = index ; trackBy: trackByFn">
             <!--Workaround to store a value-->
+            <ng-container *ngIf="showIfFunction(filter.showIf)">
             <ng-container [ngSwitch]="filter.type" *ngIf="filter.hqlProperty | generateIdForForm as idForInput">
                 <label [for]="idForInput" class="form-label">{{filter.name}}</label>
                 <!--Selector case-->
@@ -49,6 +50,7 @@
                 <input *ngSwitchCase="'integer'" type="number" step="1" [id]=idForInput [formControlName]="idForInput"
                     [ngClass]="{'is-invalid': form.get(idForInput)?.errors}" class="form-control">
                 <hr>
+            </ng-container>
             </ng-container>
         </ng-container>
     </form>

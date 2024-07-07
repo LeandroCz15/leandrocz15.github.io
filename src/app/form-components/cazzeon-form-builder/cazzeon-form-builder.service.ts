@@ -2,7 +2,7 @@ import { Component, Inject, Injectable } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectorComponent, SelectorData, SelectorFormComponent } from '../selector/selector.component';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +10,7 @@ import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { FileUploaderComponent, FileUploaderData, FileUploaderFormComponent } from '../file-uploader/file-uploader.component';
 import { PROCESS_MODAL } from 'src/application-constants';
 import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { LargeTextComponent, LargeTextFormComponent } from '../large-text/large-text.component';
 
 export enum DataType {
   TEXT = "text",
@@ -24,6 +25,14 @@ export enum DataType {
   PASSWORD = "password"
 }
 
+export interface CazzeonFormData {
+  elements: CazzeonFormComponent[]
+  okLabel: string
+  cancelLabel: string
+  executionFn: (event: Event, form: FormGroup, extraData: any) => void
+  closeFn: (event: Event, form: FormGroup, extraData: any) => void
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,22 +40,14 @@ export class CazzeonFormBuilderService {
 
   constructor(private dialog: MatDialog) { }
 
-  openCazzeonForm(cazzeonFormData: CazzeonFormData, extraData?: any, heightPcntg?: string, widthPcntg?: string): void {
-    this.dialog.open(CazzeonForm, {
+  openCazzeonForm(cazzeonFormData: CazzeonFormData, extraData: any, heightPcntg?: string, widthPcntg?: string): MatDialogRef<CazzeonForm, any> {
+    return this.dialog.open(CazzeonForm, {
       data: { cazzeonFormData: cazzeonFormData, extraData: extraData },
       height: heightPcntg || PROCESS_MODAL.defaultHeight,
       width: widthPcntg || PROCESS_MODAL.defaultWidth
     });
   }
 
-}
-
-export interface CazzeonFormData {
-  elements: CazzeonFormComponent[]
-  okLabel: string
-  cancelLabel: string
-  executionFn: (event: Event, form: FormGroup, extraData?: any) => void
-  closeFn: (event: Event, form: FormGroup, extraData?: any) => void
 }
 
 @Component({
@@ -66,19 +67,16 @@ export interface CazzeonFormData {
             [selectorData]="buildSelectorData(formElement)">
           </app-selector>
           <!--Text case-->
-          <input *ngSwitchCase="type.TEXT"
-            type="text"
-            class="form-control"
-            [formControl]="formControls[i]"
-            [ngClass]="{'is-invalid': formControls[i].errors}">
+          <app-text *ngSwitchCase="type.TEXT"
+            [formGroup]="formGroup"
+            [formControl]="formControls[i]">
+          </app-text>
           <!--Large text case-->
-          <textarea *ngSwitchCase="type.LARGE_TEXT"
-            type="text"
-            class="form-control"
-            rows="6"
+          <app-large-text
+            [formGroup]="formGroup"
             [formControl]="formControls[i]"
-            [ngClass]="{'is-invalid': formControls[i].errors}">
-          </textarea>
+            [rows]="buildLargeTextData(formElement)">
+          </app-large-text>
           <input *ngSwitchCase="type.PASSWORD"
             type="password"
             class="form-control"
@@ -113,7 +111,7 @@ export interface CazzeonFormData {
           <app-file-uploader *ngSwitchCase="type.FILE"
             [formGroup]="formGroup"
             [formControl]="formControls[i]"
-            [data]="buildFileUploaderData(formElement)">
+            [fileUploaderData]="buildFileUploaderData(formElement)">
           </app-file-uploader>
           <hr>
         </ng-container>
@@ -122,8 +120,8 @@ export interface CazzeonFormData {
     </div>
   </mat-dialog-content>
   <mat-dialog-actions class="h-25" align="end">
-    <button mat-dialog-close tabindex="-1" class="btn btn-secondary me-2">{{data.cazzeonFormData.cancelLabel}}</button>
-    <button mat-dialog-close tabindex="-1" class="btn btn-primary me-2" (click)="data.cazzeonFormData.executionFn($event, formGroup, data.extraData)">{{data.cazzeonFormData.okLabel}}</button>
+    <button mat-dialog-close tabindex="-1" class="btn btn-secondary me-2" (click)="data.cazzeonFormData.closeFn($event, formGroup, data.extraData)">{{data.cazzeonFormData.cancelLabel}}</button>
+    <button tabindex="-1" class="btn btn-primary me-2" (click)="data.cazzeonFormData.executionFn($event, formGroup, data.extraData)">{{data.cazzeonFormData.okLabel}}</button>
   </mat-dialog-actions>
   `,
   standalone: true,
@@ -137,17 +135,18 @@ export interface CazzeonFormData {
     MatInputModule,
     SelectorComponent,
     DatePickerComponent,
-    FileUploaderComponent
+    FileUploaderComponent,
+    LargeTextComponent
   ]
 })
 export class CazzeonForm {
 
-  public type = DataType; // Data types
+  public type = DataType;
 
-  public formGroup: FormGroup; // Form group of this form
-  public formControls: FormControl[] = []; // Form controls of this form. This variable was made to avoid formGroup.get(...) on every style calculation
+  public formGroup: FormGroup;
+  public formControls: FormControl[] = []; // Form controls of this form. This variable exists to avoid formGroup.get(...) on every style calculation
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { cazzeonFormData: CazzeonFormData, extraData?: any }, private formBuilder: FormBuilder) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { cazzeonFormData: CazzeonFormData, extraData: any }, private formBuilder: FormBuilder) {
     const newGroup: any = {};
     for (let i = 0; i < data.cazzeonFormData.elements.length; i++) {
       const currentElement = data.cazzeonFormData.elements[i];
@@ -166,6 +165,11 @@ export class CazzeonForm {
   buildFileUploaderData(element: CazzeonFormComponent): FileUploaderData {
     const castComponent = element as FileUploaderFormComponent;
     return { maxFileSize: castComponent.maxFileSize, fileExtension: castComponent.fileExtension };
+  }
+
+  buildLargeTextData(element: CazzeonFormComponent): number {
+    const castComponent = element as LargeTextFormComponent;
+    return castComponent.rows;
   }
 
   // Function to keep track of rows using the index given by the *ngFor

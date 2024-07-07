@@ -115,9 +115,11 @@ export class RowFormComponent {
       case DataType.LARGE_TEXT:
         return filter.isMandatory ? [Validators.required, noWhitespaceValidator] : [];
       case DataType.NATURAL:
+        return filter.isMandatory ? [Validators.required, Validators.pattern(/^[1-9]\d*$/)] : [Validators.pattern(/^[1-9]\d*$/)];
       case DataType.INTEGER:
+        return filter.isMandatory ? [Validators.required, Validators.pattern(/^-?\d+$/)] : [Validators.pattern(/^-?\d+$/)];
       case DataType.DECIMAL:
-        return filter.isMandatory ? [Validators.required, Validators.pattern(/^\d+$/)] : [Validators.pattern(/^\d+$/)];
+        return filter.isMandatory ? [Validators.required, Validators.pattern(/^[1-9]\d*(\.\d{1,2})?$/)] : [Validators.pattern(/^[1-9]\d*(\.\d{1,2})?$/)];
       case DataType.DATE:
         return filter.isMandatory ? [Validators.required] : [];
       case DataType.SELECTOR:
@@ -262,6 +264,15 @@ export class RowFormComponent {
   // Function to keep track of rows using the index given by the *ngFor
   trackByFn(index: number, item: any): number {
     return index;
+  }
+
+  showIfFunction(showIf: any) {
+    try {
+      return showIf ? eval(showIf) : true;
+    } catch(error) {
+      console.error(error);
+      return true;
+    }
   }
 
 }

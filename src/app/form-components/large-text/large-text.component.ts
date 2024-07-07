@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CazzeonFormComponent } from '../cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
 @Component({
-  selector: 'app-text',
-  templateUrl: './text.component.html',
-  styleUrls: ['./text.component.css'],
+  selector: 'app-large-text',
+  templateUrl: './large-text.component.html',
+  styleUrls: ['./large-text.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -16,16 +16,17 @@ import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TextComponent),
+      useExisting: forwardRef(() => LargeTextComponent),
       multi: true
     }
   ]
 })
-export class TextComponent implements ControlValueAccessor {
+export class LargeTextComponent implements ControlValueAccessor {
 
   /********************** INPUTS **********************/
   @Input() formGroup!: FormGroup;
   @Input() formControl!: FormControl;
+  @Input() rows!: number;
 
   writeValue(obj: any): void { }
 
@@ -37,10 +38,17 @@ export class TextComponent implements ControlValueAccessor {
 
 }
 
-export class TextFormComponent extends CazzeonFormComponent {
+export class LargeTextFormComponent extends CazzeonFormComponent {
 
-  constructor(name: string, formName: string, required: boolean) {
-    super(name, formName, required, DataType.TEXT);
+  private _rows: number;
+
+  constructor(name: string, formName: string, required: boolean, rows: number) {
+    super(name, formName, required, DataType.LARGE_TEXT);
+    this._rows = rows;
+  }
+
+  get rows() {
+    return this._rows;
   }
 
   override buildFormControl = () => {

@@ -1,0 +1,9 @@
+<div [formGroup]="formGroup">
+    <textarea
+        type="text"
+        class="form-control"
+        rows="rows"
+        [formControl]="formControl"
+        [ngClass]="{'is-invalid': formControl.errors}">
+    </textarea>
+</div>

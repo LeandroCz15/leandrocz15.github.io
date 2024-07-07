@@ -51,7 +51,7 @@ export class FileUploaderComponent implements ControlValueAccessor {
   /********************** INPUTS **********************/
   @Input() formGroup!: FormGroup;
   @Input() formControl!: FormControl;
-  @Input() data!: FileUploaderData;
+  @Input() fileUploaderData!: FileUploaderData;
 
   writeValue(obj: any): void { }
 
@@ -69,11 +69,11 @@ export class FileUploaderComponent implements ControlValueAccessor {
    */
   handleFileChange(event: Event): void {
     const file = (event.target as HTMLInputElement).files![0];
-    if (file.size > this.data.maxFileSize) {
+    if (file.size > this.fileUploaderData.maxFileSize) {
       this.formControl.setErrors({ "maxSizeViolation": true });
       return;
     }
-    if (file.type !== this.data.fileExtension) {
+    if (file.type !== this.fileUploaderData.fileExtension) {
       this.formControl.setErrors({ "invalidExtension": true });
       return;
     }
@@ -97,10 +97,10 @@ export class FileUploaderFormComponent extends CazzeonFormComponent {
   private _maxFileSize: number;
   private _fileExtension: FileExtension;
 
-  constructor(name: string, formName: string, required: boolean, maxFileSize: number, fileExtension: FileExtension) {
+  constructor(name: string, formName: string, required: boolean, fileUploaderData: FileUploaderData) {
     super(name, formName, required, DataType.FILE);
-    this._maxFileSize = maxFileSize;
-    this._fileExtension = fileExtension;
+    this._maxFileSize = fileUploaderData.maxFileSize;
+    this._fileExtension = fileUploaderData.fileExtension;
   }
 
   get maxFileSize(): number {
@@ -112,9 +112,7 @@ export class FileUploaderFormComponent extends CazzeonFormComponent {
   }
 
   override buildFormControl = () => {
-    return this.required
-      ? new FormControl(undefined, [Validators.required,])
-      : new FormControl(undefined);
+    return new FormControl(this.required ? Validators.required : undefined);
   }
 
 }

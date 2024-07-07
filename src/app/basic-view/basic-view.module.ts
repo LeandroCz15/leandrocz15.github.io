@@ -29,6 +29,7 @@ import { ViewFinderComponent } from './components/view-finder/view-finder.compon
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { DatePickerComponent } from '../form-components/date-picker/date-picker.component';
+import { ShowIfPipe } from './pipes/show-if.pipe';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { DatePickerComponent } from '../form-components/date-picker/date-picker.
     TabComponent,
     ViewFinderComponent,
     SnackbarComponent,
+    ShowIfPipe,
   ],
   imports: [
     CommonModule,
