@@ -4,7 +4,7 @@ import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Reacti
 import { CazzeonFormComponent } from '../cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
-const DECIMAL_NUMBER_PATTERN = /^[1-9]\d*(\.\d{1,2})?$/;
+const DECIMAL_NUMBER_PATTERN = /^-?\d+(\.\d{1,2})?$/;
 
 @Component({
   selector: 'app-decimal',
@@ -41,14 +41,35 @@ export class DecimalComponent implements ControlValueAccessor {
 
 export class DecimalFormComponent extends CazzeonFormComponent {
 
-  constructor(name: string, formName: string, required: boolean) {
-    super(name, formName, required, DataType.DECIMAL);
+  private _minimum: number | undefined;
+  private _maximum: number | undefined;
+
+  constructor(name: string, formName: string, required: boolean, defaultValue?: string, minimum?: number, maximum?: number) {
+    super(name, formName, required, DataType.DECIMAL, defaultValue);
+    this._minimum = minimum;
+    this._maximum = maximum;
+  }
+
+  get minimum(): number | undefined {
+    return this._minimum;
+  }
+
+  get maximum(): number | undefined {
+    return this._maximum;
   }
 
   override buildFormControl = () => {
-    return this.required
-    ? new FormControl(this.defaultValue ? +this.defaultValue : undefined, [Validators.required, Validators.pattern(DECIMAL_NUMBER_PATTERN)])
-    : new FormControl(this.defaultValue ? +this.defaultValue : undefined, Validators.pattern(DECIMAL_NUMBER_PATTERN));
+    const validators = [Validators.pattern(DECIMAL_NUMBER_PATTERN)];
+    if (this.minimum) {
+      validators.push(Validators.min(this.minimum));
+    }
+    if (this.maximum) {
+      validators.push(Validators.max(this.maximum));
+    }
+    if (this.required) {
+      validators.push(Validators.required);
+    }
+    return new FormControl(this.defaultValue ? +this.defaultValue : undefined, validators);
   };
-  
+
 }

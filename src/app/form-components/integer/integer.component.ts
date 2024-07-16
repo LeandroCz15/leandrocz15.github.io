@@ -41,14 +41,35 @@ export class IntegerComponent implements ControlValueAccessor {
 
 export class IntegerFormComponent extends CazzeonFormComponent {
 
-  constructor(name: string, formName: string, required: boolean) {
-    super(name, formName, required, DataType.INTEGER);
+  private _minimum: number | undefined;
+  private _maximum: number | undefined;
+
+  constructor(name: string, formName: string, required: boolean, defaultValue?: string, minimum?: number, maximum?: number) {
+    super(name, formName, required, DataType.INTEGER, defaultValue);
+    this._minimum = minimum;
+    this._maximum = maximum;
+  }
+
+  get minimum(): number | undefined {
+    return this._minimum;
+  }
+
+  get maximum(): number | undefined {
+    return this._maximum;
   }
 
   override buildFormControl = () => {
-    return this.required
-    ? new FormControl(this.defaultValue ? +this.defaultValue : undefined, [Validators.required, Validators.pattern(INTEGER_NUMBER_PATTERN)])
-    : new FormControl(this.defaultValue ? +this.defaultValue : undefined, Validators.pattern(INTEGER_NUMBER_PATTERN));
+    const validators = [Validators.pattern(INTEGER_NUMBER_PATTERN)];
+    if (this.minimum) {
+      validators.push(Validators.min(this.minimum));
+    }
+    if (this.maximum) {
+      validators.push(Validators.max(this.maximum));
+    }
+    if (this.required) {
+      validators.push(Validators.required);
+    }
+    return new FormControl(this.defaultValue ? +this.defaultValue : undefined, validators);
   };
-  
+
 }

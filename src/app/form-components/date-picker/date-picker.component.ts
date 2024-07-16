@@ -59,14 +59,12 @@ export class DatePickerComponent {
 
 export class DatePickerFormComponent extends CazzeonFormComponent {
 
-  constructor(name: string, formName: string, required: boolean) {
-    super(name, formName, required, DataType.SELECTOR);
+  constructor(name: string, formName: string, required: boolean, defaultValue?: string) {
+    super(name, formName, required, DataType.DATE, defaultValue);
   }
 
   override buildFormControl = () => {
-    return this.required
-      ? new FormControl(this.defaultValue === CURRENT_DATE ? new Date() : undefined, Validators.required)
-      : new FormControl(this.defaultValue === CURRENT_DATE ? new Date() : undefined);
+    return new FormControl(this.defaultValue === CURRENT_DATE ? new Date() : undefined, this.required ? Validators.required : undefined);
   };
 
 }

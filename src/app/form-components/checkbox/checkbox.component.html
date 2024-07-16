@@ -1,9 +1,8 @@
 <div [formGroup]="formGroup">
-    <textarea
-        type="text"
-        class="form-control"
-        [rows]="rows"
+    <input
+        type="checkbox"
+        class="btn"
+        style="height: 1.8em; width: 1.8em;"
         [formControl]="formControl"
         [ngClass]="{'is-invalid': formControl.errors}">
-    </textarea>
 </div>

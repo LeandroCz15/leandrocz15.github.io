@@ -5,9 +5,9 @@ import { CazzeonFormComponent } from '../cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
 @Component({
-  selector: 'app-large-text',
-  templateUrl: './large-text.component.html',
-  styleUrls: ['./large-text.component.css'],
+  selector: 'app-password',
+  templateUrl: './password.component.html',
+  styleUrls: ['./password.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -16,17 +16,16 @@ import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => LargeTextComponent),
+      useExisting: forwardRef(() => PasswordComponent),
       multi: true
     }
   ]
 })
-export class LargeTextComponent implements ControlValueAccessor {
+export class PasswordComponent implements ControlValueAccessor {
 
   /********************** INPUTS **********************/
   @Input() formGroup!: FormGroup;
   @Input() formControl!: FormControl;
-  @Input() rows!: number;
 
   writeValue(obj: any): void { }
 
@@ -38,17 +37,10 @@ export class LargeTextComponent implements ControlValueAccessor {
 
 }
 
-export class LargeTextFormComponent extends CazzeonFormComponent {
+export class PasswordFormComponent extends CazzeonFormComponent {
 
-  private _rows: number;
-
-  constructor(name: string, formName: string, required: boolean, rows: number, defaultValue?: string) {
-    super(name, formName, required, DataType.LARGE_TEXT, defaultValue);
-    this._rows = rows;
-  }
-
-  get rows() {
-    return this._rows;
+  constructor(name: string, formName: string, required: boolean, defaultValue?: string) {
+    super(name, formName, required, DataType.PASSWORD, defaultValue);
   }
 
   override buildFormControl = () => {

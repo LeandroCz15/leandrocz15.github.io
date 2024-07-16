@@ -39,14 +39,12 @@ export class TextComponent implements ControlValueAccessor {
 
 export class TextFormComponent extends CazzeonFormComponent {
 
-  constructor(name: string, formName: string, required: boolean) {
-    super(name, formName, required, DataType.TEXT);
+  constructor(name: string, formName: string, required: boolean, defaultValue?: string) {
+    super(name, formName, required, DataType.TEXT, defaultValue);
   }
 
   override buildFormControl = () => {
-    return this.required
-      ? new FormControl(this.defaultValue, Validators.required)
-      : new FormControl(this.defaultValue);
+    return new FormControl(this.defaultValue, this.required ? Validators.required : undefined);
   };
 
 }

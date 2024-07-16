@@ -3,7 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { GridComponent } from '../grid/grid.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { SelectPageService } from '../../services/select-page.service';
-import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, TABS_MODAL } from 'src/application-constants';
+import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, SNACKBAR, TABS_MODAL } from 'src/application-constants';
 import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
@@ -11,7 +11,21 @@ import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
 import { TabData } from '../../interfaces/tab-structure'
 import { PaginationEventType } from '../pagination/pagination.component';
-import { ProcessExecutorService } from 'src/app/process/process-executor.service';
+import { CazzeonFormBuilderService, DataType } from 'src/app/form-components/cazzeon-form-builder/cazzeon-form-builder.service';
+import { FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackbarComponent } from '../snackbar/snackbar.component';
+import { CazzeonFormComponent } from 'src/app/form-components/cazzeon-form-component';
+import { FileUploaderFormComponent } from 'src/app/form-components/file-uploader/file-uploader.component';
+import { SelectorFormComponent } from 'src/app/form-components/selector/selector.component';
+import { DatePickerFormComponent } from 'src/app/form-components/date-picker/date-picker.component';
+import { DecimalFormComponent } from 'src/app/form-components/decimal/decimal.component';
+import { IntegerFormComponent } from 'src/app/form-components/integer/integer.component';
+import { NaturalFormComponent } from 'src/app/form-components/natural/natural.component';
+import { TextFormComponent } from 'src/app/form-components/text/text.component';
+import { LargeTextFormComponent } from 'src/app/form-components/large-text/large-text.component';
+import { CheckBoxFormComponent } from 'src/app/form-components/checkbox/checkbox.component';
+import { PasswordFormComponent } from 'src/app/form-components/password/password.component';
 
 @Component({
   selector: 'app-view',
@@ -43,9 +57,10 @@ export class ViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cazzeonService: CazzeonService,
-    private processExecutorService: ProcessExecutorService,
+    private snackBar: MatSnackBar,
     private pageChangeService: SelectPageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cazzeonFormBuilderService: CazzeonFormBuilderService
   ) { }
 
   ngOnInit(): void {
@@ -130,7 +145,7 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @returns Array of ContextMenuItem representing processes
    */
   constructProcessItems(items: any[]): ContextMenuItem[] {
-    const executeProcessFunction = this.processExecutorService.callProcess.bind(this.processExecutorService);
+    const view = this;
     return items.map(obj => {
       return {
         label: obj.name,
@@ -138,10 +153,85 @@ export class ViewComponent implements OnInit, OnDestroy {
         javaClass: obj.javaClass,
         buttonParameters: obj.buttonParameters,
         clickFn(row: any, item: ContextMenuItem) {
-          executeProcessFunction(row, { javaClass: item.javaClass!, buttonParameters: obj.buttonParameters });
+          const openedForm = view.cazzeonFormBuilderService.openCazzeonForm(
+            {
+              elements: view.buildElements(obj),
+              okLabel: 'Execute',
+              cancelLabel: 'Cancel',
+              executionFn: (event: Event, form: FormGroup) => {
+                if (!form.valid) {
+                  return;
+                }
+                view.cazzeonService.request(`api/execute/${obj.javaClass}`, HttpMethod.POST, async (response: Response) => {
+                  const jsonResponse = await response.json();
+                  view.snackBar.openFromComponent(SnackbarComponent, {
+                    duration: SNACKBAR.defaultSuccessDuration,
+                    data: jsonResponse as ServerResponse
+                  });
+                }, async (response: Response) => {
+                  const jsonResponse = await response.json();
+                  view.snackBar.openFromComponent(SnackbarComponent, {
+                    duration: SNACKBAR.defaultErrorDuration,
+                    data: jsonResponse as ServerResponse
+                  });
+                }, (error: TypeError) => {
+                  console.error(`Unexpected error: ${error.message}`);
+                }, JSON.stringify({ rows: row, processParameters: form.getRawValue() }));
+                openedForm.close(); // implementar cerrado segun check.
+              },
+              closeFn: () => { }
+            });
         },
       }
     });
+  }
+
+  buildElements(button: any): CazzeonFormComponent[] {
+    const components: CazzeonFormComponent[] = [];
+    button.buttonParameters.forEach((btnParamter: any) => {
+      switch (btnParamter.type) {
+        case DataType.FILE:
+          components.push(new FileUploaderFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, { fileExtension: btnParamter.fileExtension, maxFileSize: btnParamter.fileSize }));
+          break;
+        case DataType.SELECTOR:
+          components.push(new SelectorFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required,
+            {
+              entityToSearch: btnParamter.searchClass,
+              identifiers: btnParamter.identifiers,
+              propertyForMatch: btnParamter.propertyForMatch,
+              predicateExtensorName: btnParamter.predicateExtensionName
+            }
+          ));
+          break;
+        case DataType.DATE:
+          components.push(new DatePickerFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue));
+          break;
+        case DataType.DECIMAL:
+          components.push(new DecimalFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue, btnParamter.minimum, btnParamter.maximum));
+          break;
+        case DataType.INTEGER:
+          components.push(new IntegerFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue, btnParamter.minimum, btnParamter.maximum));
+          break;
+        case DataType.NATURAL:
+          components.push(new NaturalFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue, btnParamter.minimum, btnParamter.maximum));
+          break;
+        case DataType.TEXT:
+          components.push(new TextFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue));
+          break;
+        case DataType.LARGE_TEXT:
+          components.push(new LargeTextFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.rows, btnParamter.defaultValue));
+          break;
+        case DataType.CHECKBOX:
+          components.push(new CheckBoxFormComponent(btnParamter.name, btnParamter.formName, btnParamter.defaultValue));
+          break;
+        case DataType.PASSWORD:
+          components.push(new PasswordFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, btnParamter.defaultValue));
+          break;
+        default:
+          console.error(`Unknown type of button parameter: ${btnParamter.type}`);
+      }
+    });
+    return components;
   }
 
   /**

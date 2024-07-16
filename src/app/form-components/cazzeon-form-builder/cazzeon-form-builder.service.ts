@@ -11,6 +11,12 @@ import { FileUploaderComponent, FileUploaderData, FileUploaderFormComponent } fr
 import { PROCESS_MODAL } from 'src/application-constants';
 import { CazzeonFormComponent } from '../cazzeon-form-component';
 import { LargeTextComponent, LargeTextFormComponent } from '../large-text/large-text.component';
+import { PasswordComponent } from '../password/password.component';
+import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { TextComponent } from '../text/text.component';
+import { IntegerComponent } from '../integer/integer.component';
+import { DecimalComponent } from '../decimal/decimal.component';
+import { NaturalComponent } from '../natural/natural.component';
 
 export enum DataType {
   TEXT = "text",
@@ -29,8 +35,8 @@ export interface CazzeonFormData {
   elements: CazzeonFormComponent[]
   okLabel: string
   cancelLabel: string
-  executionFn: (event: Event, form: FormGroup, extraData: any) => void
-  closeFn: (event: Event, form: FormGroup, extraData: any) => void
+  executionFn: (event: Event, form: FormGroup) => void
+  closeFn: (event: Event, form: FormGroup) => void
 }
 
 @Injectable({
@@ -40,9 +46,9 @@ export class CazzeonFormBuilderService {
 
   constructor(private dialog: MatDialog) { }
 
-  openCazzeonForm(cazzeonFormData: CazzeonFormData, extraData: any, heightPcntg?: string, widthPcntg?: string): MatDialogRef<CazzeonForm, any> {
+  openCazzeonForm(cazzeonFormData: CazzeonFormData, heightPcntg?: string, widthPcntg?: string): MatDialogRef<CazzeonForm, any> {
     return this.dialog.open(CazzeonForm, {
-      data: { cazzeonFormData: cazzeonFormData, extraData: extraData },
+      data: cazzeonFormData,
       height: heightPcntg || PROCESS_MODAL.defaultHeight,
       width: widthPcntg || PROCESS_MODAL.defaultWidth
     });
@@ -57,13 +63,15 @@ export class CazzeonFormBuilderService {
   <mat-dialog-content class="h-75">
     <div class="rounded overflow-auto p-2">
       <form [formGroup]="formGroup">
-      <ng-container *ngFor="let formElement of data.cazzeonFormData.elements; let i = index ; trackBy: trackByFn">
+      <ng-container *ngFor="let formElement of cazzeonFormData.elements; let i = index ; trackBy: trackByFn">
         <ng-container [ngSwitch]="formElement.dataType">
           <label [for]="formElement.name" class="form-label">{{formElement.name}}</label>
           <!--Selector case-->
           <app-selector *ngSwitchCase="type.SELECTOR"
             [formGroup]="formGroup"
-            [formControlName]="formElement.formName"
+            [formControl]="formControls[i]"
+            [labelText]="'Prueba'"
+            [placeHolderText]="'Poronga'"
             [selectorData]="buildSelectorData(formElement)">
           </app-selector>
           <!--Text case-->
@@ -72,25 +80,25 @@ export class CazzeonFormBuilderService {
             [formControl]="formControls[i]">
           </app-text>
           <!--Large text case-->
-          <app-large-text
+          <app-large-text *ngSwitchCase="type.LARGE_TEXT"
             [formGroup]="formGroup"
             [formControl]="formControls[i]"
             [rows]="buildLargeTextData(formElement)">
           </app-large-text>
-          <input *ngSwitchCase="type.PASSWORD"
-            type="password"
-            class="form-control"
-            [formControl]="formControls[i]"
-            [ngClass]="{'is-invalid': formControls[i].errors}">
-          <!--Checkbox case-->
-          <input *ngSwitchCase="type.CHECKBOX"
-            type="checkbox"
-            class="btn ms-2"
+          <!--Password case-->
+          <app-password *ngSwitchCase="type.PASSWORD"
+            [formGroup]="formGroup"
             [formControl]="formControls[i]">
+          </app-password>
+          <!--Checkbox case-->
+          <app-checkbox *ngSwitchCase="type.CHECKBOX"
+            [formGroup]="formGroup"
+            [formControl]="formControls[i]">
+          </app-checkbox>
           <!--Date case-->
           <app-date-picker *ngSwitchCase="type.DATE"
             [formGroup]="formGroup"
-            [formControlName]="formElement.formName">
+            [formControl]="formControls[i]">
           </app-date-picker>
           <!--Decimal case-->
           <app-decimal *ngSwitchCase="type.DECIMAL"
@@ -120,8 +128,8 @@ export class CazzeonFormBuilderService {
     </div>
   </mat-dialog-content>
   <mat-dialog-actions class="h-25" align="end">
-    <button mat-dialog-close tabindex="-1" class="btn btn-secondary me-2" (click)="data.cazzeonFormData.closeFn($event, formGroup, data.extraData)">{{data.cazzeonFormData.cancelLabel}}</button>
-    <button tabindex="-1" class="btn btn-primary me-2" (click)="data.cazzeonFormData.executionFn($event, formGroup, data.extraData)">{{data.cazzeonFormData.okLabel}}</button>
+    <button mat-dialog-close tabindex="-1" class="btn btn-secondary me-2" (click)="cazzeonFormData.closeFn($event, formGroup)">{{cazzeonFormData.cancelLabel}}</button>
+    <button tabindex="-1" class="btn btn-primary me-2" (click)="cazzeonFormData.executionFn($event, formGroup)">{{cazzeonFormData.okLabel}}</button>
   </mat-dialog-actions>
   `,
   standalone: true,
@@ -136,7 +144,13 @@ export class CazzeonFormBuilderService {
     SelectorComponent,
     DatePickerComponent,
     FileUploaderComponent,
-    LargeTextComponent
+    IntegerComponent,
+    DecimalComponent,
+    NaturalComponent,
+    TextComponent,
+    LargeTextComponent,
+    PasswordComponent,
+    CheckboxComponent
   ]
 })
 export class CazzeonForm {
@@ -144,12 +158,14 @@ export class CazzeonForm {
   public type = DataType;
 
   public formGroup: FormGroup;
-  public formControls: FormControl[] = []; // Form controls of this form. This variable exists to avoid formGroup.get(...) on every style calculation
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { cazzeonFormData: CazzeonFormData, extraData: any }, private formBuilder: FormBuilder) {
+  // Form controls of this form. This variable exists to avoid formGroup.get(...) on every style calculation
+  public formControls: FormControl[] = [];
+
+  constructor(@Inject(MAT_DIALOG_DATA) public cazzeonFormData: CazzeonFormData, private formBuilder: FormBuilder) {
     const newGroup: any = {};
-    for (let i = 0; i < data.cazzeonFormData.elements.length; i++) {
-      const currentElement = data.cazzeonFormData.elements[i];
+    for (let i = 0; i < cazzeonFormData.elements.length; i++) {
+      const currentElement = cazzeonFormData.elements[i];
       const currentElementControl = currentElement.buildFormControl();
       this.formControls.push(currentElementControl);
       newGroup[currentElement.formName] = currentElementControl;
@@ -158,8 +174,7 @@ export class CazzeonForm {
   }
 
   buildSelectorData(element: CazzeonFormComponent): SelectorData {
-    const castComponent = element as SelectorFormComponent;
-    return { entityToSearch: castComponent.entityToSearch, propertyForMatch: castComponent.propertyForMatch, identifiers: castComponent.identifiers };
+    return (element as SelectorFormComponent).selectorData;
   }
 
   buildFileUploaderData(element: CazzeonFormComponent): FileUploaderData {

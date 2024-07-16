@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 import { CazzeonFormComponent } from '../cazzeon-form-component';
 
@@ -112,7 +112,7 @@ export class FileUploaderFormComponent extends CazzeonFormComponent {
   }
 
   override buildFormControl = () => {
-    return new FormControl(this.required ? Validators.required : undefined);
+    return new FormControl(undefined, this.required ? Validators.required : undefined);
   }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Configuration object of the tabs modal
+ * Configuration object of the tabs modal.
  */
 export const TABS_MODAL = {
     defaultHeight: "80%",
@@ -7,7 +7,7 @@ export const TABS_MODAL = {
 }
 
 /**
- * Configuration object of the process modal
+ * Configuration object of the process modal.
  */
 export const PROCESS_MODAL = {
     defaultHeight: "80%",
@@ -17,7 +17,7 @@ export const PROCESS_MODAL = {
 /**
  * Configuration object of the modal with the information about the stacktrace error. 
  * 
- * This modal is opened when the user clicks the button of the snackbar in case of error while saving, updating or deleting an entity
+ * This modal is opened when the user clicks the button of the snackbar in case of error while saving, updating or deleting an entity.
  */
 export const STACK_TRACE_MODAL = {
     defaultHeight: "60%",
@@ -25,7 +25,7 @@ export const STACK_TRACE_MODAL = {
 }
 
 /**
- * Configuration object of the snackbars displayed when there is a response from the backend while saving, updating or deleting an entity
+ * Configuration object of the snackbars displayed when there is a response from the backend while saving, updating or deleting an entity.
  */
 export const SNACKBAR = {
     defaultErrorDuration: 6000,
@@ -35,7 +35,7 @@ export const SNACKBAR = {
 }
 
 /**
- * Configuration object of the context menu displayed when right clicking a row
+ * Configuration object of the context menu displayed when right clicking a row.
  */
 export const CONTEXT_MENU = {
     actionsLabel: "Actions",
@@ -47,12 +47,17 @@ export const CONTEXT_MENU = {
 }
 
 /**
- * Configuration object of the view finder
+ * Configuration object of the view finder.
  */
 export const VIEW_FINDER = {
     defaultWidthPcntg: 60,
     defaultDebounceTime: 750
 }
+
+/**
+ * Default debounce time for all the selectors of the application.
+ */
+export const DEFAULT_SELECTOR_DEBOUNCE_TIME = 750;
 
 export const HQL_PROPERTY = "hqlProperty";
 

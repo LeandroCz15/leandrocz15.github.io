@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, forwardRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, forwardRef } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, FormGroupDirective, NG_VALUE_ACCESSOR, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { HttpMethod } from 'src/application-constants';
+import { DEFAULT_SELECTOR_DEBOUNCE_TIME, HttpMethod } from 'src/application-constants';
 import { ServerResponse } from 'src/application-utils';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -14,12 +14,31 @@ import { CazzeonFormComponent } from '../cazzeon-form-component';
 /**
  * Validator to check if the control value is an object.
  * 
- * @param control Form control
+ * @param control Form control with the value to check.
  */
 export function isObjectValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    return typeof control.value === "object" || control.value === null ? null : { "notObject": true };
+    return typeof control.value === 'object' || control.value === null ? null : { 'notObject': true };
   };
+}
+
+/**
+ * Selector error state matcher class.
+ */
+export class SelectorErrorMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return !!(control && control.invalid);
+  }
+}
+
+/**
+ * Selector interface with the attributes needed to properly communicate with the backend.
+ */
+export interface SelectorData {
+  entityToSearch: string,
+  propertyForMatch: string,
+  identifiers: string,
+  predicateExtensorName?: string
 }
 
 @Component({
@@ -49,13 +68,18 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
   private programmaticUpdateSubscription!: Subscription;
   private valueChangeObservable!: Observable<any>;
   private valueChangeSubscription!: Subscription;
-  private lastOptionIdClicked: string = ""; // Id of the last element selected. This is used as a workaround to avoid fetching when click in an already selected value
 
   /********************** INPUTS **********************/
-  @Input() formGroup!: FormGroup; // Form in which this selector is contained
-  @Input() formControlName!: string; // Name for the selector input
-  @Input() selectorData!: SelectorData; // Entity to search of this selector
-  @Input() programmaticUpdate?: Subject<boolean>; // This subject should be used by the parent whenever it wants to change the value of the selector programmatically to avoid unnecesary fetch
+  @Input() formGroup!: FormGroup;
+  @Input() formControl!: FormControl;
+  @Input() selectorData!: SelectorData;
+  @Input() labelText!: string;
+  @Input() placeHolderText?: string;
+  @Input() debounceTime?: number;
+  @Input() programmaticUpdate?: Subject<boolean>;
+
+  /********************** OUTPUTS **********************/
+  @Output() enterOption = new EventEmitter<any>();
 
   constructor(private cazzeonService: CazzeonService) { }
 
@@ -68,20 +92,22 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
   setDisabledState?(isDisabled: boolean): void { }
 
   ngOnInit(): void {
-    this.valueChangeObservable = this.formGroup.get(this.formControlName)!.valueChanges.pipe(debounceTime(950), distinctUntilChanged());
+    // Observe the value change
+    this.valueChangeObservable = this.formControl.valueChanges.pipe(debounceTime(this.debounceTime || DEFAULT_SELECTOR_DEBOUNCE_TIME), distinctUntilChanged());
+    // Subscribe to the change
     this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value));
     if (this.programmaticUpdate) {
       /**
-       * If a programmatic update subject was provided to the selector instance, the parent
-       * has the possibility to de-activate the logic of value handling of this component, which in
-       * some cases is desireable because this components does a lot of fetching
+       * If the programmaticUpdate subject was provided to the current instance, the value change event can be disabled.
+       * 
+       * This is very usefull when changing the value of the selector via JS, since any change will trigger the fetch
+       * and in the mentioned case is not desirable.
        */
       this.programmaticUpdateSubscription = this.programmaticUpdate.asObservable().subscribe(value => {
         if (!value) {
-          this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value));
+          this.valueChangeSubscription = this.valueChangeObservable.subscribe(value => this.handleSelectorChange(value)); // ENABLE
         } else {
-          // DISABLE
-          this.valueChangeSubscription.unsubscribe();
+          this.valueChangeSubscription.unsubscribe(); // DISABLE
         }
       });
     }
@@ -92,17 +118,34 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
     this.valueChangeSubscription.unsubscribe();
   }
 
+  /**
+   * Function executed to display a property of the rendered options.
+   * 
+   * @param value Option object.
+   * @returns The value to show in the context menu.
+   */
   showProperty(value: any) {
-    return value?.identifier || "";
+    return value?.identifier || '';
   }
 
-  clickInOption(value: string): void {
-    this.lastOptionIdClicked = value;
+  /**
+   * Function executed when clicked on an option.
+   * 
+   * @param value Option clicked.
+   */
+  clickInOption(value: any): void {
+    this.enterOption.emit(value);
   }
 
+  /**
+   * Function to handle the change observed by the form pipe. This function will be
+   * executed on any change on the input.
+   * 
+   * @param value Value entered on the input
+   */
   handleSelectorChange(value: any): void {
-    // Workaround to avoid fetch when clicking in a value 
-    if (value?.id === this.lastOptionIdClicked) {
+    // Workaround to avoid fetch when the value is an object, this happens when the user chooses an option.
+    if (typeof value === 'object') {
       return;
     }
     this.cazzeonService.request(`api/data/selector?entityToSearch=${this.selectorData.entityToSearch}`, HttpMethod.POST, async (response: Response) => {
@@ -113,52 +156,26 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
       console.error(`Error while fetching data for the selector ${this.selectorData.entityToSearch}: ${jsonResponse.message}`);
     }, (error: TypeError) => {
       console.error(`Error while fetching data for the selector ${this.selectorData.entityToSearch}: ${error.message}`);
-    }, JSON.stringify({ propertyForMatch: this.selectorData.propertyForMatch, identifiers: this.selectorData.identifiers, value: value }));
+    }, JSON.stringify({ selectorData: this.selectorData, value: value }));
   }
 
-}
-
-export interface SelectorData {
-  entityToSearch: string,
-  propertyForMatch: string,
-  identifiers: string
 }
 
 export class SelectorFormComponent extends CazzeonFormComponent {
 
-  private _entityToSearch: string;
-  private _propertyForMatch: string;
-  private _identifiers: string;
+  private _selectorData: SelectorData;
 
-  constructor(name: string, formName: string, required: boolean, entityToSearch: string, propertyForMatch: string, identifiers: string) {
+  constructor(name: string, formName: string, required: boolean, selectorData: SelectorData) {
     super(name, formName, required, DataType.SELECTOR);
-    this._entityToSearch = entityToSearch;
-    this._propertyForMatch = propertyForMatch;
-    this._identifiers = identifiers;
+    this._selectorData = selectorData;
   }
 
-  get entityToSearch(): string {
-    return this._entityToSearch;
-  }
-
-  get propertyForMatch(): string {
-    return this._propertyForMatch;
-  }
-
-  get identifiers(): string {
-    return this._identifiers;
+  get selectorData(): SelectorData {
+    return this._selectorData;
   }
 
   override buildFormControl = () => {
-    return this.required
-    ? new FormControl(undefined, [Validators.required, isObjectValidator()])
-    : new FormControl(undefined, isObjectValidator()); 
+    return new FormControl(undefined, this.required ? [Validators.required, isObjectValidator()] : isObjectValidator());
   };
 
-}
-
-class SelectorErrorMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    return !!(control && control.invalid);
-  }
 }
