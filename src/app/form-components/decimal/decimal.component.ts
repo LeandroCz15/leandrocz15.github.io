@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, forwardRef } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
 const DECIMAL_NUMBER_PATTERN = /^-?\d+(\.\d{1,2})?$/;

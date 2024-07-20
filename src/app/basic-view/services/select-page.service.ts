@@ -13,7 +13,7 @@ export class SelectPageService {
 
   constructor(private cazzeonService: CazzeonService) {
     this.cazzeonService.getLoginSubjectAsObservable().subscribe(event => {
-      // Clean last view selected if the user logs in or logs out
+      // Clean last view selected if the user logs in or logs out to avoid bugs
       this.lastViewIdSelected = "";
     });
    }

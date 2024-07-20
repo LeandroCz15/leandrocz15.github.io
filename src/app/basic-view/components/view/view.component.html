@@ -1,12 +1,26 @@
-<div class="d-flex flex-column h-100 w-100">
-    <div class="overflow-scroll flex-fill" cdkDropList cdkDropListOrientation="horizontal"
-        (cdkDropListDropped)="dropFilterColumn($event)" *ngIf="viewReady; else elseBlock">
-        <app-header [tabData]="mainTabData" [doFetchSubject]="doFetchSubject"></app-header>
-        <app-grid [reloadViewSubject]="reloadViewSubject" [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"
-            [paginationComponent]="pagination"></app-grid>
+<div class="d-flex flex-column h-100">
+    <div
+        *ngIf="viewReady; else elseBlock"
+        class="overflow-auto flex-fill"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="dropFilterColumn($event)">
+            <app-header 
+                [tabData]="mainTabData"
+                [doFetchSubject]="doFetchSubject">
+            </app-header>
+            <app-grid
+                [tabData]="mainTabData"
+                [doFetchSubject]="doFetchSubject"
+                [reloadViewSubject]="reloadViewSubject"
+                [paginationComponent]="pagination">
+            </app-grid>
     </div>
     <div class="bg-dark">
-        <app-pagination #pagination [doFetchSubject]="doFetchSubject" [tabData]="mainTabData"></app-pagination>
+        <app-pagination
+            [tabData]="mainTabData"
+            [doFetchSubject]="doFetchSubject">
+        </app-pagination>
     </div>
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">

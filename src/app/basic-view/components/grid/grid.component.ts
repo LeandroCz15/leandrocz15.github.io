@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
-import { HQL_PROPERTY, HttpMethod, SNACKBAR } from 'src/application-constants';
+import { HQL_PROPERTY, HttpMethod } from 'src/application-constants';
 import { PaginationComponent, PaginationEventType } from '../pagination/pagination.component';
-import { TabData } from '../../interfaces/tab-structure';
 import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
+import { TabData } from '../view/view.component';
 
 @Component({
   selector: 'app-grid',
@@ -31,7 +31,7 @@ export class GridComponent implements OnInit, OnDestroy {
   private reloadViewSubscription!: Subscription;
   private doFetchSubscription!: Subscription;
 
-  constructor(private cazzeonService: CazzeonService, private snackBar: MatSnackBar) { }
+  constructor(private cazzeonService: CazzeonService, private snackbar: SnackbarService) { }
 
   ngOnInit(): void {
     this.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.tabData.gridFields, HQL_PROPERTY);
@@ -90,7 +90,7 @@ export class GridComponent implements OnInit, OnDestroy {
         const jsonResponse: ServerResponse = await response.json();
         if (jsonResponse.body.length === 0 && paginationEvent !== PaginationEventType.RELOAD) {
           // NOT RESULTS WHILE FETCHING NEXT OR BACK. JUST SHOW SNACKBAR
-          this.snackBar.openFromComponent(SimpleSnackbar, { duration: SNACKBAR.defaultSuccessDuration * 20 });
+          this.snackbar.showSuccess("No more data to show");
           return;
         }
         this.rows = jsonResponse.body;
@@ -141,27 +141,4 @@ export class GridComponent implements OnInit, OnDestroy {
     return index;
   }
 
-}
-
-@Component({
-  selector: 'simple-snackbar',
-  template: `
-    <span class="w-100 d-flex justify-content-center align-items-center fw-bold simple-snackbar" matSnackBarLabel>{{message}}</span>
-  `,
-  styles: [
-    `
-    :host {
-      display: flex;
-    }
-
-    .simple-snackbar {
-      color: rgb(101, 216, 101);
-    }
-  `,
-  ],
-  standalone: true,
-  imports: [MatSnackBarModule],
-})
-export class SimpleSnackbar {
-  public message: String = SNACKBAR.defaultNoMoreDataMessage;
 }

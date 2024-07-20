@@ -30,8 +30,7 @@ export const STACK_TRACE_MODAL = {
 export const SNACKBAR = {
     defaultErrorDuration: 6000,
     defaultSuccessDuration: 3000,
-    defaultErrorIcon: "🗿",
-    defaultNoMoreDataMessage: "No more data to show"
+    defaultMessageDetailIcon: "🗿",
 }
 
 /**

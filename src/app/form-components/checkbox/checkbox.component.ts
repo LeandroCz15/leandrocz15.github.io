@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input, ViewEncapsulation } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
 const TRUE = "true";

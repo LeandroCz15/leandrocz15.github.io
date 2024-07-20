@@ -3,7 +3,7 @@ import { DialogData, RowFormComponent } from '../row-form/row-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectPageService } from '../../services/select-page.service';
 import { Subject, Subscription } from 'rxjs';
-import { TabData } from '../../interfaces/tab-structure';
+import { TabData } from '../view/view.component';
 
 @Component({
   selector: 'app-pagination',

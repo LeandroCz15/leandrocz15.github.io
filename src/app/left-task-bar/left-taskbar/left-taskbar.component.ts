@@ -5,6 +5,7 @@ import { HttpMethod, LoginStatus } from 'src/application-constants';
 import { ToggleSidebarService } from 'src/app/top-navbar/services/toggle-sidebar.service';
 import { Subscription } from 'rxjs';
 import { NavbarElementComponent } from '../navbarelement/navbarelement.component';
+import { ServerResponse } from 'src/application-utils';
 
 const SIDEBAR_TOGGLED_WIDTH = "55px";
 
@@ -35,12 +36,14 @@ export class LeftTaskbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.toggleSidebarSubscription = this.toggleSidebarService.getObservable().subscribe(data => this.toggleSidebar(data));
     this.cazzeonService.request(`api/data/menu`, HttpMethod.GET, async (response: Response) => {
-      this.menuItems = await response.json();
+      const jsonResponse: ServerResponse = await response.json();
+      this.menuItems = jsonResponse.body;
       this.viewReady = true;
     }, async (response: Response) => {
-      console.error(`Error while retrieving menu items: ${await response.text()}`);
-    }, (error: any) => {
-      console.error("Timeout when fetching menu items");
+      const jsonResponse: ServerResponse = await response.json();
+      console.error(`Error while retrieving menu items: ${jsonResponse.message}`);
+    }, (error: Error) => {
+      console.error(error.message);
     });
   }
 

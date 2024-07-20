@@ -14,7 +14,7 @@ export class SnackbarComponent {
 
   constructor(private dialog: MatDialog) { }
 
-  snackBarRef = inject(MatSnackBarRef);
+  private snackBarRef = inject(MatSnackBarRef);
 
   /**
    * Open a modal with the stack trace information
@@ -34,7 +34,7 @@ export class SnackbarComponent {
    * Get the error icon of the application constants
    */
   get snackbarErrorIcon(): string {
-    return SNACKBAR.defaultErrorIcon;
+    return SNACKBAR.defaultMessageDetailIcon;
   }
 
 }

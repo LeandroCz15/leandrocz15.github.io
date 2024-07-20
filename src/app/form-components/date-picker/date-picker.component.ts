@@ -4,7 +4,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 
 class DateErrorMatcher implements ErrorStateMatcher {

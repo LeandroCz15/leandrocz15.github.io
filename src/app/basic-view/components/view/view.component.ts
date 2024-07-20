@@ -3,19 +3,16 @@ import { Subject, Subscription } from 'rxjs';
 import { GridComponent } from '../grid/grid.component';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { SelectPageService } from '../../services/select-page.service';
-import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, SNACKBAR, TABS_MODAL } from 'src/application-constants';
+import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, TABS_MODAL } from 'src/application-constants';
 import { ServerResponse, indexArrayByProperty } from 'src/application-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TabComponent } from '../tab/tab.component';
-import { TabData } from '../../interfaces/tab-structure'
-import { PaginationEventType } from '../pagination/pagination.component';
+import { PaginationComponent, PaginationEventType } from '../pagination/pagination.component';
 import { CazzeonFormBuilderService, DataType } from 'src/app/form-components/cazzeon-form-builder/cazzeon-form-builder.service';
 import { FormGroup } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackbarComponent } from '../snackbar/snackbar.component';
-import { CazzeonFormComponent } from 'src/app/form-components/cazzeon-form-component';
+import { CazzeonFormComponent } from 'src/app/form-components/cazzeon-form-component/cazzeon-form-component';
 import { FileUploaderFormComponent } from 'src/app/form-components/file-uploader/file-uploader.component';
 import { SelectorFormComponent } from 'src/app/form-components/selector/selector.component';
 import { DatePickerFormComponent } from 'src/app/form-components/date-picker/date-picker.component';
@@ -26,6 +23,8 @@ import { TextFormComponent } from 'src/app/form-components/text/text.component';
 import { LargeTextFormComponent } from 'src/app/form-components/large-text/large-text.component';
 import { CheckBoxFormComponent } from 'src/app/form-components/checkbox/checkbox.component';
 import { PasswordFormComponent } from 'src/app/form-components/password/password.component';
+import { HeaderComponent } from '../header/header.component';
+import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-view',
@@ -35,8 +34,9 @@ import { PasswordFormComponent } from 'src/app/form-components/password/password
 export class ViewComponent implements OnInit, OnDestroy {
 
   /********************** COMPONENT ATTRIBUTES **********************/
-  public viewReady: boolean = false; // Boolean used to render the child components once the main fetch is done
-  public mainTabData: TabData = {  // Details of the main tab
+  public viewReady: boolean = false;
+  public viewData: any;
+  public mainTabData: TabData = {
     contextMenuItems: [],
     formFields: [],
     gridFields: [],
@@ -53,43 +53,41 @@ export class ViewComponent implements OnInit, OnDestroy {
   private pageChangeSubscription!: Subscription;
 
   /********************** CHILD COMPONENTS  **********************/
-  @ViewChild(GridComponent) gridComponent!: GridComponent;
+  @ViewChild(HeaderComponent) header!: HeaderComponent;
+  @ViewChild(GridComponent) grid!: GridComponent;
+  @ViewChild(PaginationComponent) pagination!: PaginationComponent;
 
   constructor(
     private cazzeonService: CazzeonService,
-    private snackBar: MatSnackBar,
+    private snackbar: SnackbarService,
     private pageChangeService: SelectPageService,
     private dialog: MatDialog,
     private cazzeonFormBuilderService: CazzeonFormBuilderService
   ) { }
 
   ngOnInit(): void {
-    this.pageChangeSubscription = this.pageChangeService.getPageChangeObservable().subscribe(viewId => {
+    this.pageChangeSubscription = this.pageChangeService.getPageChangeObservable().subscribe(async viewId => {
       this.viewReady = false;
-      this.fetchMainTabData(viewId);
+      this.cazzeonService.request(`api/view?viewId=${viewId}`, HttpMethod.GET, async (response: Response) => {
+        const jsonResponse: ServerResponse = await response.json();
+        this.viewData = jsonResponse.body;
+        this.mainTabData.tab = jsonResponse.body.mainTab;
+        this.constructMenuItems(jsonResponse.body);
+        this.constructFields(jsonResponse.body.mainTab.fields);
+        this.viewReady = true;
+      }, async (response: Response) => {
+        const jsonResponse: ServerResponse = await response.json();
+        this.snackbar.showError(jsonResponse.message);
+        console.error(`Server response error: ${jsonResponse.message}`);
+      }, (error: Error) => {
+        this.snackbar.showError(error.message);
+        console.error(`Unexpected error: ${error.message}`);
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.pageChangeSubscription.unsubscribe();
-  }
-
-  /**
-   * Fetch information about the main tab of the current view
-   */
-  fetchMainTabData(viewId: string) {
-    this.cazzeonService.request(`api/data/view?viewId=${viewId}`, HttpMethod.GET, async (response: Response) => {
-      const jsonResponse: ServerResponse = await response.json();
-      this.mainTabData.tab = jsonResponse.body.mainTab;
-      this.constructMenuItems(jsonResponse.body);
-      this.constructFields(jsonResponse.body.mainTab.fields);
-      this.viewReady = true;
-    }, async (response: Response) => {
-      const jsonResponse: ServerResponse = await response.json();
-      console.error(`Error while fetching data of the view: ${jsonResponse.message}`);
-    }, (error: TypeError) => {
-      console.error(`Error while initializing the view: ${error.message}`);
-    });
   }
 
   /**
@@ -100,6 +98,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   constructFields(fields: any[]): void {
     const newGridFields: any[] = [];
     const newFormFields: any[] = [];
+    const newFields: any[] = [];
     fields.forEach(field => {
       field.lastValueUsedForSearch = undefined;
       field.value = undefined;
@@ -109,10 +108,11 @@ export class ViewComponent implements OnInit, OnDestroy {
       if (field.showInForm) {
         newFormFields.push(field);
       }
-      this.mainTabData.allFields.push(field);
+      newFields.push(field);
     });
     this.mainTabData.gridFields = newGridFields;
     this.mainTabData.formFields = newFormFields;
+    this.mainTabData.allFields = newFields;
   }
 
   /**
@@ -120,8 +120,7 @@ export class ViewComponent implements OnInit, OnDestroy {
    * @param items Items from response. This items needs to be converted into ContextMenuItem interface
    */
   constructMenuItems(viewData: any): void {
-    const deleteFunction = this.cazzeonService.deleteRowsWithPaginationComponent.bind(this.cazzeonService);
-    const viewComponent = this;
+    const view = this;
     this.mainTabData.contextMenuItems = [
       {
         label: CONTEXT_MENU.actionsLabel, imageSource: CONTEXT_MENU.actionsIcon, items: this.constructProcessItems(viewData.buttonAndProcess)
@@ -130,65 +129,128 @@ export class ViewComponent implements OnInit, OnDestroy {
         label: CONTEXT_MENU.tabsLabel, imageSource: CONTEXT_MENU.tabsIcon, items: this.constructTabItems(viewData.tabs)
       },
       {
-        label: CONTEXT_MENU.deleteLabel, imageSource: CONTEXT_MENU.deleteIcon, clickFn(row, item) {
-          deleteFunction(viewComponent, [row]);
+        label: CONTEXT_MENU.deleteLabel, imageSource: CONTEXT_MENU.deleteIcon, clickFn(clickedRow, item) {
+          view.cazzeonService.request(`api/entity/delete/${view.viewData.mainTab.entityName}`, HttpMethod.DELETE,
+            (response: Response) => {
+              view.grid.rows = view.grid.rows.filter(row => row !== clickedRow);
+            },
+            async (response: Response) => {
+              const jsonResponse = await response.json() as ServerResponse;
+              console.error(`Error while deleting: ${jsonResponse.message}`);
+            },
+            (error: Error) => {
+              console.error(`Unexpected error while deleting: ${error.message}`);
+            },
+            JSON.stringify({ delete: [clickedRow] }));
         }
       }
     ];
   }
 
   /**
-   * Construct the items in the context menu that will contain
-   * all the processes
+   * Construct process items for the context menu.
    * 
-   * @param items Object to construct the ContextMenuItem array
-   * @returns Array of ContextMenuItem representing processes
+   * @param processButtons Process buttons to convert into context menu items.
+   * @returns Context menu item array representing the process buttons of the current view.
    */
-  constructProcessItems(items: any[]): ContextMenuItem[] {
-    const view = this;
-    return items.map(obj => {
+  constructProcessItems(processButtons: any[]): ContextMenuItem[] {
+    const openProcessFunction = this.openProcess.bind(this);
+    return processButtons.map(processButton => {
       return {
-        label: obj.name,
-        imageSource: obj.iconSource,
-        javaClass: obj.javaClass,
-        buttonParameters: obj.buttonParameters,
+        label: processButton.name,
+        imageSource: processButton.iconSource,
+        extraData: processButton,
         clickFn(row: any, item: ContextMenuItem) {
-          const openedForm = view.cazzeonFormBuilderService.openCazzeonForm(
-            {
-              elements: view.buildElements(obj),
-              okLabel: 'Execute',
-              cancelLabel: 'Cancel',
-              executionFn: (event: Event, form: FormGroup) => {
-                if (!form.valid) {
-                  return;
-                }
-                view.cazzeonService.request(`api/execute/${obj.javaClass}`, HttpMethod.POST, async (response: Response) => {
-                  const jsonResponse = await response.json();
-                  view.snackBar.openFromComponent(SnackbarComponent, {
-                    duration: SNACKBAR.defaultSuccessDuration,
-                    data: jsonResponse as ServerResponse
-                  });
-                }, async (response: Response) => {
-                  const jsonResponse = await response.json();
-                  view.snackBar.openFromComponent(SnackbarComponent, {
-                    duration: SNACKBAR.defaultErrorDuration,
-                    data: jsonResponse as ServerResponse
-                  });
-                }, (error: TypeError) => {
-                  console.error(`Unexpected error: ${error.message}`);
-                }, JSON.stringify({ rows: row, processParameters: form.getRawValue() }));
-                openedForm.close(); // implementar cerrado segun check.
-              },
-              closeFn: () => { }
-            });
+          openProcessFunction(row, item);
         },
       }
     });
   }
 
-  buildElements(button: any): CazzeonFormComponent[] {
+  /**
+   * Construct tab items for the context menu.
+   * 
+   * @param tabs Tabs to convert into context menu items.
+   * @returns Context menu item array representing the tabs of the current view.
+   */
+  constructTabItems(tabs: any[]): ContextMenuItem[] {
+    const openTabFunction = this.openTab.bind(this);
+    return tabs.map(tab => {
+      return {
+        label: tab.name,
+        imageSource: tab.iconSource,
+        extraData: tab,
+        clickFn(row: any, item: ContextMenuItem) {
+          openTabFunction(row, item);
+        },
+      }
+    });
+  }
+
+  /**
+   * Open a cazzeon form to execute.
+   * 
+   * @param row Row from which the click was fired.
+   * @param item Selected item representing a process button.
+   */
+  openProcess(row: any, item: ContextMenuItem): void {
+    const openedForm = this.cazzeonFormBuilderService.openCazzeonForm(
+      {
+        elements: this.buildElements(item.extraData.buttonParameters),
+        okLabel: 'Execute',
+        cancelLabel: 'Cancel',
+        executionFn: (event: Event, form: FormGroup) => {
+          if (!form.valid) {
+            return;
+          }
+          this.cazzeonService.request(`api/execute/${item.extraData.javaClass}`, HttpMethod.POST,
+            async (response: Response) => {
+              const jsonResponse = await response.json() as ServerResponse;
+              this.snackbar.showSuccess(jsonResponse.message);
+            }, async (response: Response) => {
+              const jsonResponse = await response.json() as ServerResponse;
+              this.snackbar.showError(jsonResponse.message, jsonResponse.exceptionStackTrace);
+              console.error(jsonResponse.message);
+            }, (error: Error) => {
+              this.snackbar.showError(error.message);
+              console.error(error.message);
+            }, JSON.stringify({ rows: row, processParameters: form.getRawValue() }));
+          openedForm.close(); // implementar cerrado segun check.
+        },
+        closeFn: () => { }
+      });
+  }
+
+  /**
+   * Open the selected tab.
+   * 
+   * @param row Row from which the click was fired.
+   * @param item Selected item representing a tab.
+   */
+  openTab(row: any, item: ContextMenuItem): void {
+    this.dialog.open(TabComponent, {
+      data: { clickedRow: row, tab: item.extraData, parent: this },
+      height: TABS_MODAL.defaultHeight,
+      width: TABS_MODAL.defaultWidth
+    });
+  }
+
+  /**
+   * Function to handle the logic when dragging and dropping a header of the current view.
+   * 
+   * @param event Drag and drop event.
+   */
+  dropFilterColumn(event: CdkDragDrop<any[]>): void {
+    if (event.previousIndex !== event.currentIndex) {
+      moveItemInArray(this.mainTabData.gridFields, event.previousIndex, event.currentIndex);
+      this.grid.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.mainTabData.gridFields, HQL_PROPERTY);
+      this.reloadViewSubject.next();
+    }
+  }
+
+  buildElements(buttonParameters: any): CazzeonFormComponent[] {
     const components: CazzeonFormComponent[] = [];
-    button.buttonParameters.forEach((btnParamter: any) => {
+    buttonParameters.forEach((btnParamter: any) => {
       switch (btnParamter.type) {
         case DataType.FILE:
           components.push(new FileUploaderFormComponent(btnParamter.name, btnParamter.formName, btnParamter.required, { fileExtension: btnParamter.fileExtension, maxFileSize: btnParamter.fileSize }));
@@ -234,52 +296,13 @@ export class ViewComponent implements OnInit, OnDestroy {
     return components;
   }
 
-  /**
-   * Construct the items in the context menu that will contain
-   * all the tabs
-   * 
-   * @param items Object to construct the ContextMenuItem array
-   * @returns Array of ContextMenuItem representing tabs
-   */
-  constructTabItems(items: any[]): ContextMenuItem[] {
-    const openTabFunction = this.openTab.bind(this);
-    return items.map(obj => {
-      return {
-        label: obj.name,
-        imageSource: obj.iconSource,
-        clickFn(row: any, item: ContextMenuItem) {
-          openTabFunction(row, item);
-        },
-        tab: obj
-      }
-    });
-  }
+}
 
-  /**
-   * Open the selected tab
-   * 
-   * @param row Row from which the click was fired
-   * @param item Selected item representing a tab
-   */
-  openTab(row: any, item: ContextMenuItem): void {
-    this.dialog.open(TabComponent, {
-      data: { clickedRow: row, tab: item.tab },
-      height: TABS_MODAL.defaultHeight,
-      width: TABS_MODAL.defaultWidth
-    });
-  }
-
-  /**
-   * Function to handle the logic when dragging and dropping a header of the current view
-   * 
-   * @param event Drag and drop event
-   */
-  dropFilterColumn(event: CdkDragDrop<any[]>): void {
-    if (event.previousIndex !== event.currentIndex) {
-      moveItemInArray(this.mainTabData.gridFields, event.previousIndex, event.currentIndex);
-      this.gridComponent.currentGridFieldsIndexedByHqlProperty = indexArrayByProperty(this.mainTabData.gridFields, HQL_PROPERTY);
-      this.reloadViewSubject.next();
-    }
-  }
-
+export interface TabData {
+  clickedRow: any
+  tab: any
+  gridFields: any[]
+  formFields: any[]
+  allFields: any[]
+  contextMenuItems: ContextMenuItem[]
 }

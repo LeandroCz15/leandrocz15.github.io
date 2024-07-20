@@ -1,10 +1,10 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { TabData } from '../../interfaces/tab-structure';
 import { Subject } from 'rxjs';
 import { PaginationEventType } from '../pagination/pagination.component';
 import { CAZZEON_DATE_FORMAT } from 'src/app/form-components/date-picker/date-picker.component';
+import { TabData } from '../view/view.component';
 
 @Component({
   selector: 'app-header',

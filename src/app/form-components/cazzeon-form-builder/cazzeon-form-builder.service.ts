@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { FileUploaderComponent, FileUploaderData, FileUploaderFormComponent } from '../file-uploader/file-uploader.component';
 import { PROCESS_MODAL } from 'src/application-constants';
-import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
 import { LargeTextComponent, LargeTextFormComponent } from '../large-text/large-text.component';
 import { PasswordComponent } from '../password/password.component';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
@@ -128,7 +128,7 @@ export class CazzeonFormBuilderService {
     </div>
   </mat-dialog-content>
   <mat-dialog-actions class="h-25" align="end">
-    <button mat-dialog-close tabindex="-1" class="btn btn-secondary me-2" (click)="cazzeonFormData.closeFn($event, formGroup)">{{cazzeonFormData.cancelLabel}}</button>
+    <button tabindex="-1" class="btn btn-secondary me-2" (click)="cazzeonFormData.closeFn($event, formGroup)">{{cazzeonFormData.cancelLabel}}</button>
     <button tabindex="-1" class="btn btn-primary me-2" (click)="cazzeonFormData.executionFn($event, formGroup)">{{cazzeonFormData.okLabel}}</button>
   </mat-dialog-actions>
   `,

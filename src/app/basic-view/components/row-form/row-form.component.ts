@@ -6,12 +6,12 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ServerResponse, noWhitespaceValidator } from 'src/application-utils';
-import { TabData } from '../../interfaces/tab-structure';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 import { HttpMethod, SNACKBAR } from 'src/application-constants';
 import { DataType } from 'src/app/form-components/cazzeon-form-builder/cazzeon-form-builder.service';
 import { isObjectValidator } from 'src/app/form-components/selector/selector.component';
+import { TabData } from '../view/view.component';
 
 export interface DialogData {
   currentRow: any,

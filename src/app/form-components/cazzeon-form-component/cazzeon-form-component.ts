@@ -1,5 +1,5 @@
 import { FormControl } from "@angular/forms";
-import { DataType } from "./cazzeon-form-builder/cazzeon-form-builder.service";
+import { DataType } from "../cazzeon-form-builder/cazzeon-form-builder.service";
 
 export abstract class CazzeonFormComponent {
 

@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CommonModule } from '@angular/common';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
-import { CazzeonFormComponent } from '../cazzeon-form-component';
+import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
 
 /**
  * Validator to check if the control value is an object.

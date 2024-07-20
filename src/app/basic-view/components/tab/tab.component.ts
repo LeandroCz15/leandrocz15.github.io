@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { TabData } from '../../interfaces/tab-structure';
 import { GridComponent } from '../grid/grid.component';
 import { Subject } from 'rxjs';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -9,7 +8,7 @@ import { CONTEXT_MENU, HQL_PROPERTY, HttpMethod, SNACKBAR, TABS_MODAL } from 'sr
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
 import { ContextMenuItem } from '../context-menu/context-menu.component';
 import { PaginationEventType } from '../pagination/pagination.component';
-import { CazzeonFormComponent } from 'src/app/form-components/cazzeon-form-component';
+import { CazzeonFormComponent } from 'src/app/form-components/cazzeon-form-component/cazzeon-form-component';
 import { CazzeonFormBuilderService, DataType } from 'src/app/form-components/cazzeon-form-builder/cazzeon-form-builder.service';
 import { FileUploaderFormComponent } from 'src/app/form-components/file-uploader/file-uploader.component';
 import { SelectorFormComponent } from 'src/app/form-components/selector/selector.component';
@@ -24,6 +23,7 @@ import { PasswordFormComponent } from 'src/app/form-components/password/password
 import { FormGroup } from '@angular/forms';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TabData } from '../view/view.component';
 
 @Component({
   selector: 'app-tab',
@@ -63,10 +63,9 @@ export class TabComponent implements OnInit {
   }
 
   fetchTabData(): void {
+    const tab = this;
     this.cazzeonService.request(`api/data/tab?tabId=${this.data.tab.id}`, HttpMethod.GET, async (response: Response) => {
       const jsonResponse: ServerResponse = await response.json();
-      const gridComponent = this.gridComponent;
-      const deleteFunction = this.cazzeonService.deleteRows.bind(this.cazzeonService);
       this.tabData.contextMenuItems = [
         {
           label: CONTEXT_MENU.actionsLabel, imageSource: CONTEXT_MENU.actionsIcon, items: this.constructProcessItems(jsonResponse.body.buttonAndProcess)
@@ -75,8 +74,19 @@ export class TabComponent implements OnInit {
           label: CONTEXT_MENU.tabsLabel, imageSource: CONTEXT_MENU.tabsIcon, items: this.constructTabItems(jsonResponse.body.tabs)
         },
         {
-          label: CONTEXT_MENU.deleteLabel, imageSource: CONTEXT_MENU.deleteIcon, clickFn(row, item) {
-            deleteFunction(gridComponent, [row]);
+          label: CONTEXT_MENU.deleteLabel, imageSource: CONTEXT_MENU.deleteIcon, clickFn(clickedRow, item) {
+            tab.cazzeonService.request(`api/entity/delete/${tab.tabData.tab.entityName}`, HttpMethod.DELETE,
+              (response: Response) => {
+                tab.gridComponent.rows = tab.gridComponent.rows.filter(row => row !== clickedRow);
+              },
+              async (response: Response) => {
+                const jsonResponse = await response.json() as ServerResponse;
+                console.error(`Error while deleting: ${jsonResponse.message}`);
+              },
+              (error: Error) => {
+                console.error(`Unexpected error while deleting: ${error.message}`);
+              },
+              JSON.stringify({ data: [clickedRow] }));
           }
         }
       ];
@@ -216,7 +226,7 @@ export class TabComponent implements OnInit {
   */
   openTab(row: any, item: ContextMenuItem): void {
     this.dialog.open(TabComponent, {
-      data: { clickedRow: row, tab: item.tab },
+      data: { clickedRow: row, tab: item.extraData },
       height: TABS_MODAL.defaultHeight,
       width: TABS_MODAL.defaultWidth
     });
