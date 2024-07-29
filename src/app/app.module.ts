@@ -6,6 +6,7 @@ import { LoginModule } from './login-module/login.module';
 import { BasicViewModule } from './basic-view/basic-view.module';
 import { LeftTaskbarModule } from './left-task-bar/left-taskbar.module';
 import { TopNavbarModule } from './top-navbar/top-navbar.module';
+import { ViewFinderComponent } from './standalone/view-finder/view-finder.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { TopNavbarModule } from './top-navbar/top-navbar.module';
     LoginModule,
     BasicViewModule,
     LeftTaskbarModule,
-    TopNavbarModule
+    TopNavbarModule,
+    ViewFinderComponent
   ],
   bootstrap: [AppComponent]
 })

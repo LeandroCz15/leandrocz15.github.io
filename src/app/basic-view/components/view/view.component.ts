@@ -34,8 +34,8 @@ import { SnackbarService } from 'src/app/services/snackbar/snackbar.service';
 export class ViewComponent implements OnInit, OnDestroy {
 
   /********************** COMPONENT ATTRIBUTES **********************/
-  public viewReady: boolean = false;
   public viewData: any;
+  public viewReady: boolean = false;
   public mainTabData: TabData = {
     contextMenuItems: [],
     formFields: [],
@@ -93,7 +93,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   /**
    * This function will construct the grid and form fields of the current view.
    * 
-   * @param fields Properties of the entity to construct the header and form
+   * @param fields Properties of the entity to construct the header and form.
    */
   constructFields(fields: any[]): void {
     const newGridFields: any[] = [];
@@ -116,8 +116,9 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Construct the items of the context menu. This is made in the view component because the buttons and process are view related
-   * @param items Items from response. This items needs to be converted into ContextMenuItem interface
+   * Construct the items of the context menu. This is made in the view component because the buttons and process are view related.
+   * 
+   * @param items Items from response. This items needs to be converted into ContextMenuItem interface.
    */
   constructMenuItems(viewData: any): void {
     const view = this;
@@ -248,6 +249,13 @@ export class ViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * This function will take button parameters as input and create an array of cazzeon form components
+   * to use when opening a cazzeon form.
+   * 
+   * @param buttonParameters Button parameters retrieved from the database to build the button parameters of a process.
+   * @returns An array of cazzeon form components to use in a cazzeon form builder.
+   */
   buildElements(buttonParameters: any): CazzeonFormComponent[] {
     const components: CazzeonFormComponent[] = [];
     buttonParameters.forEach((btnParamter: any) => {

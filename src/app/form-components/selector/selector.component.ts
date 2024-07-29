@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, forwardRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, forwardRef } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, FormControl, FormGroup, FormGroupDirective, NG_VALUE_ACCESSOR, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CazzeonService } from 'src/app/cazzeon-service/cazzeon-service';
@@ -6,40 +6,10 @@ import { DEFAULT_SELECTOR_DEBOUNCE_TIME, HttpMethod } from 'src/application-cons
 import { ServerResponse } from 'src/application-utils';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { CommonModule } from '@angular/common';
 import { DataType } from '../cazzeon-form-builder/cazzeon-form-builder.service';
 import { CazzeonFormComponent } from '../cazzeon-form-component/cazzeon-form-component';
-
-/**
- * Validator to check if the control value is an object.
- * 
- * @param control Form control with the value to check.
- */
-export function isObjectValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    return typeof control.value === 'object' || control.value === null ? null : { 'notObject': true };
-  };
-}
-
-/**
- * Selector error state matcher class.
- */
-export class SelectorErrorMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    return !!(control && control.invalid);
-  }
-}
-
-/**
- * Selector interface with the attributes needed to properly communicate with the backend.
- */
-export interface SelectorData {
-  entityToSearch: string,
-  propertyForMatch: string,
-  identifiers: string,
-  predicateExtensorName?: string
-}
 
 @Component({
   selector: 'app-selector',
@@ -79,7 +49,10 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
   @Input() programmaticUpdate?: Subject<boolean>;
 
   /********************** OUTPUTS **********************/
-  @Output() enterOption = new EventEmitter<any>();
+  @Output() optionSelected = new EventEmitter<any>();
+
+  /********************** CHILD ELEMENTS **********************/
+  @ViewChild("selectorInput") selectorInput!: ElementRef;
 
   constructor(private cazzeonService: CazzeonService) { }
 
@@ -133,8 +106,8 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
    * 
    * @param value Option clicked.
    */
-  clickInOption(value: any): void {
-    this.enterOption.emit(value);
+  clickInOption(value: MatAutocompleteSelectedEvent): void {
+    this.optionSelected.emit(value);
   }
 
   /**
@@ -159,6 +132,36 @@ export class SelectorComponent implements OnInit, OnDestroy, ControlValueAccesso
     }, JSON.stringify({ selectorData: this.selectorData, value: value }));
   }
 
+}
+
+/**
+ * Selector interface with the attributes needed to properly communicate with the backend.
+ */
+export interface SelectorData {
+  entityToSearch: string,
+  propertyForMatch: string,
+  identifiers: string,
+  predicateExtensorName?: string
+}
+
+/**
+ * Validator to check if the control value is an object.
+ * 
+ * @param control Form control with the value to check.
+ */
+export function isObjectValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    return typeof control.value === 'object' || control.value === null ? null : { 'notObject': true };
+  };
+}
+
+/**
+ * Selector error state matcher class.
+ */
+export class SelectorErrorMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return !!(control && control.invalid);
+  }
 }
 
 export class SelectorFormComponent extends CazzeonFormComponent {

@@ -1,19 +1,23 @@
 <div class="d-flex flex-column">
     <mat-form-field [formGroup]="formGroup">
         <mat-label>{{labelText}}</mat-label>
-        <input type="text"
+        <input
+            #selectorInput
+            type="text"
             placeholder="{{placeHolderText}}"
             aria-label="Option"
             matInput
             [matAutocomplete]="auto"
             [formControl]="formControl"
             [errorStateMatcher]="matcher">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="showProperty">
-            <mat-option *ngFor="let option of options"
-                [value]="option"
-                (click)="clickInOption(option)">
-                {{option.identifier}}
-            </mat-option>
+        <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="showProperty"
+            (optionSelected)="clickInOption($event)">
+                <mat-option *ngFor="let option of options"
+                    [value]="option">
+                    {{option.identifier}}
+                </mat-option>
         </mat-autocomplete>
     </mat-form-field>
 </div>

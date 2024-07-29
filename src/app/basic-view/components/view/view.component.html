@@ -1,4 +1,5 @@
 <div class="d-flex flex-column h-100">
+    <!-- If -->
     <div
         *ngIf="viewReady; else elseBlock"
         class="overflow-auto flex-fill"
@@ -22,6 +23,7 @@
             [doFetchSubject]="doFetchSubject">
         </app-pagination>
     </div>
+    <!-- Else -->
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">
             <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>

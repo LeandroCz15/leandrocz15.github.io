@@ -1,13 +1,29 @@
-<div class="d-flex flex-column h-100 w-100 m-0 p-0">
-    <div class="overflow-scroll flex-fill p-0 border-0 m-0" cdkDropList cdkDropListOrientation="horizontal"
-        (cdkDropListDropped)="dropFilterColumn($event)" *ngIf="tabReady; else elseBlock">
-        <app-header [tabData]="tabData" [doFetchSubject]="doFetchSubject"></app-header>
-        <app-grid [reloadViewSubject]="reloadViewSubject" [doFetchSubject]="doFetchSubject" [tabData]="tabData"
-            [paginationComponent]="pagination"></app-grid>
+<div class="d-flex flex-column h-100">
+    <!-- If -->
+    <div
+        *ngIf="tabReady; else elseBlock"
+        class="overflow-auto flex-fill"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="dropFilterColumn($event)">
+            <app-header 
+                [tabData]="tabData"
+                [doFetchSubject]="doFetchSubject">
+            </app-header>
+            <app-grid
+                [tabData]="tabData"
+                [doFetchSubject]="doFetchSubject"
+                [reloadViewSubject]="reloadViewSubject"
+                [paginationComponent]="pagination">
+            </app-grid>
     </div>
     <div class="bg-dark">
-        <app-pagination #pagination [doFetchSubject]="doFetchSubject" [tabData]="tabData"></app-pagination>
+        <app-pagination
+            [tabData]="tabData"
+            [doFetchSubject]="doFetchSubject">
+        </app-pagination>
     </div>
+    <!-- Else -->
     <ng-template #elseBlock>
         <div class="d-flex h-100 w-100 justify-content-center align-items-center">
             <div class="spinner-border" role="status" style="width: 6rem; height: 6rem;"></div>

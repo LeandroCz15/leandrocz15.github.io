@@ -1,0 +1,14 @@
+<form
+  #viewFinderForm
+  *ngIf="isDisplayed"
+  [formGroup]="formGroup"
+  class="view-finder position-absolute">
+  <app-selector
+    [formGroup]="formGroup"
+    [formControl]="formControl"
+    [selectorData]="{ entityToSearch: 'com.app.core.classes.View', propertyForMatch: 'name', identifiers: 'name' }"
+    [labelText]="'Seach...'"
+    [placeHolderText]="'Search...'"
+    (optionSelected)="closeFinderAndOpenWindow($event)">
+  </app-selector>
+</form>
